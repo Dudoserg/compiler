@@ -417,6 +417,16 @@ public class TableRule {
 		tmpCell.rules.add(tmpRule);
 
 		table.put(new Pair<>(LLK._W7, Scaner._CONST), tmpCell);
+
+		////////////////////////////////////////////////////////////////////////////
+		////////////// <w7> }
+		tmpCell = new TableCell();
+
+		tmpRule = new Rule();
+		tmpRule.symbols.add(new OneSymbol(false, LLK._epsilon, "_epsilon"));
+		tmpCell.rules.add(tmpRule);
+
+		table.put(new Pair<>(LLK._W7, Scaner._BRACE_CLOSE), tmpCell);
 ////////////////////////////////////////////////////////////////////////////
 		////////////// <A6> id
 		tmpCell = new TableCell();
