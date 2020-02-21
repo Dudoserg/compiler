@@ -4,8 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
+
+/**
+ * Тут кажись косяк
+ * <список переменных>  -> <переменная> <W2>
+ * <W2> -> E | , <список переменных> <W2>
+ */
 public class LLK {
 
 	private static final int PRINTLOGS = 1;
@@ -17,7 +22,7 @@ public class LLK {
 	public static final Integer _A4 = 104;
 	public static final Integer _A5 = 105;
 	public static final Integer _A6 = 106;
-	public static final Integer _B = 107;
+	public static final Integer _B = 1007;
 	public static final Integer _C = 108;
 	public static final Integer _D = 109;
 	public static final Integer _E = 110;
@@ -57,15 +62,13 @@ public class LLK {
 	//private ArrayList<OneSymbol> magazin;
 	private Stack<OneSymbol> magazin;
 
-	private OneSymbol up;
-
 	private Scaner scaner;
 	private boolean flag = true;
 
 	private int countError = 0;
 
 
-	private void putRule(Stack stack, Rule rule) {
+	private void putRule(Stack<OneSymbol> stack, Rule rule) {
 		// Кладем все символы правила в СТЕК
 		for (OneSymbol oneSymbol : rule.symbols) {
 			stack.push(oneSymbol);
@@ -83,7 +86,7 @@ public class LLK {
 				//System.out.println("<" + oneSymbol.lexString +">");
 			}
 			for (OneSymbol oneSymbol : list) {
-				if (oneSymbol.terminal)
+				if (oneSymbol.isTerminal)
 					System.out.println(oneSymbol.lexString);
 				else
 					System.out.println("<" + oneSymbol.lexString + ">");
@@ -102,7 +105,7 @@ public class LLK {
 		}
 	}
 
-	public LLK() throws IOException {
+	public LLK() {
 		// Инициализируем таблицу
 		this.table = TableRule.initTable();
 
@@ -129,6 +132,13 @@ public class LLK {
 		magazin.push(new OneSymbol(true, Scaner._END, "#"));
 		magazin.push(new OneSymbol(false, LLK._A, "A"));
 
+
+		this.start();
+	}
+
+	private void start() {
+
+
 		ArrayList<Character> lex = new ArrayList<>();
 		Integer type;
 		type = scaner.next(lex);
@@ -138,20 +148,20 @@ public class LLK {
 
 			this.printStack(this.magazin);
 			// Проверить содержимое верхушки магазина
-			up = this.magazin.pop();
+			OneSymbol up = this.magazin.pop();
 			this.printLex(lex);
 			////////////////////////////////////////////////////////////////////////////////////////////////////////
 			// Случай когда эпсилон
-			if (up.typ == LLK._epsilon)
+			if (up.typ.equals(LLK._epsilon))
 				continue;
 			////////////////////////////////////////////////////////////////////////////////////////////////////////
 			// Терминал
-			if (up.terminal == true) {
+			if (up.isTerminal == true) {
 				System.out.print("");
 				//System.out.println("up.typ = " + up.typ + "\t type = " + type);
 				//int sukablydskay =  up.typ - type;
 				// Mag == lex
-				if (up.typ.intValue() == type.intValue()) {
+				if (up.typ.equals(type)) {
 					System.out.print("");
 					if (type == Scaner._END)
 						flag = false;
@@ -189,7 +199,7 @@ public class LLK {
 
 						// <B> int
 						// <B> double
-						if (up.typ == LLK._B && (type == Scaner._INT || type == Scaner._DOUBLE)) {
+						if (up.typ.equals(LLK._B) && (type.equals(Scaner._INT) || type.equals(Scaner._DOUBLE))) {
 							//int a,
 							//int a;
 							//int a=
@@ -212,7 +222,7 @@ public class LLK {
 							}
 						}
 						// <A6> id
-						if (up.typ == LLK._A6 && type == Scaner._ID) {
+						if (up.typ.equals(LLK._A6) && type.equals(Scaner._ID)) {
 							//a(        function
 							//a+-*/...  все символы, кроме скобки это идентификатор
 
@@ -231,7 +241,7 @@ public class LLK {
 							}
 						}
 						// <W7> else
-						if (up.typ == LLK._W7 && type == Scaner._ELSE) {
+						if (up.typ.equals(LLK._W7) && type.equals(Scaner._ELSE)) {
 
 							//else...                   // это значит "<O> else"
 							//все другое, нежели else   // это значит "e"
