@@ -12,29 +12,170 @@ import static maga.ElemType.TERMINAL;
 
 public class CreateGrammar {
 
+	// Считанные с файла строки
 	List<String> rows;
+	// строки в виде объектов
 	List<Rule> rules;
+
+	List<Relations> relations = new ArrayList<>();
+
+	// Все пары
+	List<Pair<Elem, Elem>> pairs;
 
 	String firstGrammarName = "программа";
 
 	public static void main(String[] args) {
+		long start = System.currentTimeMillis();
 		CreateGrammar createGrammar = new CreateGrammar();
+		long finish = System.currentTimeMillis();
+		System.out.println("\n\n\ntime = " + (finish - start) / 1000.0 + " s.");
 	}
 
 	public CreateGrammar() {
-//		this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_text.txt");
-		this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_change.txt");
+		this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_text.txt");
+		this.firstGrammarName = "S";
+//		this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_change.txt"); this.firstGrammarName = "программа";
 
 		this.initRules();
 
-		List<Pair<Elem, Elem>> pairs = this.createPair();
+		this.pairs = this.createPair();
 		String result =
 				pairs.stream()
-						.map(elemElemPair ->  elemElemPair.getKey().print() + "\t" + elemElemPair.getValue().print() )
+						.map(elemElemPair -> elemElemPair.getKey().print() + "\t" + elemElemPair.getValue().print())
 						.collect(Collectors.joining("\n"));
 
 		System.out.println("Список пар = \n" + result);
+
+		Great();
+
+		System.out.println();
+
+		Less();
+
+
+		System.out.println();
+
+		Equals();
+
+		//System.out.println("\n\nСписок отношений = \n");
+		//this.relations.forEach(elem -> System.out.println(elem.leftElem.print() + " " + elem.sign.getStr() + " " + elem.rightElem.print()));
 	}
+
+
+	private void Great() {
+		for (Pair<Elem, Elem> pair : this.pairs) {
+			Elem first = pair.getKey();
+			Elem second = pair.getValue();
+			// Нетерминал - терминал
+			if (first.elementType.equals(NOT_TERMINAL) && second.elementType.equals(TERMINAL)) {
+				// ищем ЧЕМ ЗАКАНЧИВАЮТСЯ правые части нетерминала
+				List<Elem> lastElem = new ArrayList<>();
+
+				final Rule rule = this.findRowByLeft(first);
+				for (RightPart rightPart : rule.parts) {
+					if (rightPart.elemList.size() == 0) {
+						try {
+							throw new Exception(" rightPart.elemList.size() == 0 ");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					} else {
+						lastElem.add(rightPart.elemList.get(rightPart.elemList.size() - 1));
+					}
+				}
+
+				System.out.print(this.printPair(pair) + ":\t{");
+				for (int i = 0; i < lastElem.size(); i++) {
+					Elem elem = lastElem.get(i);
+					Relations relations = new Relations(elem, second, Sign.GREAT);
+					this.relations.add(relations);
+					if (i != lastElem.size() - 1)
+						System.out.print(elem.print() + ", ");
+					else
+						System.out.print(elem.print());
+					//System.out.println(relations.leftElem.print() + " " + relations.sign.getStr() + " " + relations.rightElem.print());
+				}
+				System.out.print("}\tили\t");
+				for (int i = 0; i < lastElem.size(); i++) {
+					Elem elem = lastElem.get(i);
+					System.out.print(elem.print() + " > " + second.str);
+					if (i != lastElem.size() - 1)
+						System.out.print(", ");
+				}
+
+				System.out.print("\n");
+			}
+		}
+	}
+
+
+	private void Less() {
+		// TODO При этом, если символ b во всех правилах грамматики, где он встречается,
+		//  стоит последним, то отношение < становится бессмысленным
+
+		for (Pair<Elem, Elem> pair : this.pairs) {
+			Elem first = pair.getKey();
+			Elem second = pair.getValue();
+			// Нетерминал - терминал
+			if (first.elementType.equals(TERMINAL) || second.elementType.equals(NOT_TERMINAL)) {
+				// ищем ЧЕМ ЗАКАНЧИВАЮТСЯ правые части нетерминала
+				List<Elem> firstElems = new ArrayList<>();
+
+				final Rule rule = this.findRowByLeft(second);
+				for (RightPart rightPart : rule.parts) {
+					if (rightPart.elemList.size() == 0) {
+						try {
+							throw new Exception(" rightPart.elemList.size() == 0 ");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					} else {
+						firstElems.add(rightPart.elemList.get(0));
+					}
+				}
+
+				System.out.print(this.printPair(pair) + ":\t{");
+				for (int i = 0; i < firstElems.size(); i++) {
+					Elem elem = firstElems.get(i);
+					Relations relations = new Relations(first, elem, Sign.LESS);
+					this.relations.add(relations);
+					if (i != firstElems.size() - 1)
+						System.out.print(elem.print() + ", ");
+					else
+						System.out.print(elem.print());
+					//System.out.println(relations.leftElem.print() + " " + relations.sign.getStr() + " " + relations.rightElem.print());
+				}
+				System.out.print("}\tили\t");
+				for (int i = 0; i < firstElems.size(); i++) {
+					Elem elem = firstElems.get(i);
+					System.out.print(first.str + " < " + elem.print());
+					if (i != firstElems.size() - 1)
+						System.out.print(", ");
+				}
+
+				System.out.print("\n");
+			}
+		}
+	}
+
+
+	private void Equals() {
+		for (Rule rule : rules) {
+			for (RightPart rightPart : rule.parts) {
+				System.out.print(rule.left.str + " -> " + rightPart.print() + "\t\t");
+				for (int i = 0; i < rightPart.elemList.size() - 1; ++i) {
+					Relations relations = new Relations(
+							rightPart.elemList.get(i),
+							rightPart.elemList.get(i + 1),
+							Sign.EQUALS
+					);
+					System.out.print(relations.print() + "\t");
+				}
+				System.out.println();
+			}
+		}
+	}
+
 
 	private void initRules() {
 		rules = new ArrayList<>();
@@ -67,6 +208,7 @@ public class CreateGrammar {
 		}
 		System.out.print("");
 	}
+
 
 	public List<String> readFromFile(String pathToFIle) {
 		List<String> row = new ArrayList<>();
@@ -104,14 +246,14 @@ public class CreateGrammar {
 		String newCollect = "";
 
 		int countIteration = 0;
-		while (true){
+		while (true) {
 
 			pairs = this.changeTerminalToRight(pairs);
 			newCollect =
 					pairs.stream()
 							.map(elemElemPair -> elemElemPair.getKey().print() + "_" + elemElemPair.getValue().print())
 							.collect(Collectors.joining("\t"));
-			if( collect.compareTo(newCollect) == 0)
+			if (collect.compareTo(newCollect) == 0)
 				break;
 			countIteration++;
 			collect = newCollect;
@@ -119,6 +261,7 @@ public class CreateGrammar {
 		System.out.println("countIteration = " + countIteration);
 		return pairs;
 	}
+
 
 	public List<Pair<Elem, Elem>> changeTerminalToRight(List<Pair<Elem, Elem>> pairs) {
 
@@ -204,6 +347,7 @@ public class CreateGrammar {
 		return result;
 	}
 
+
 	public Rule findRowByLeft(Elem left) {
 		for (int i = 0; i < this.rules.size(); i++) {
 			if (this.rules.get(i).left.str.equals(left.str))
@@ -217,5 +361,9 @@ public class CreateGrammar {
 		return null;
 	}
 
+
+	public String printPair(Pair<Elem, Elem> pair) {
+		return pair.getKey().str + " " + pair.getValue().str;
+	}
 
 }
