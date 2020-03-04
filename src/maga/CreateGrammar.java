@@ -179,9 +179,11 @@ public class CreateGrammar {
 				}
 			}
 		}
-		//result.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + "_" + elemElemPair.getValue().print() + "\t"));
-		//System.out.println("\n\n");
+		result.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + "_" + elemElemPair.getValue().print() + "\t"));
+		System.out.println("\n\n");
 
+		result.add(0, pairs.get(1));
+		result.add(0, pairs.get(0));
 		// Ищем повторения
 		for (int i = result.size() - 1; i >= 0; --i) {
 			Pair<Elem, Elem> pair = result.get(i);
@@ -193,11 +195,7 @@ public class CreateGrammar {
 				}
 			}
 		}
-		//result.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + "_" + elemElemPair.getValue().print() + "\t"));
-		//System.out.println("\n\n");
 
-		result.add(0, pairs.get(1));
-		result.add(0, pairs.get(0));
 		System.out.print("result = { ");
 		result.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + "_" + elemElemPair.getValue().print() + "\t\t"));
 		System.out.print(" }");
