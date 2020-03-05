@@ -19,8 +19,8 @@ public class CreateGrammar {
 
 	List<Relations> relations = new ArrayList<>();
 
-//	HashMap<String, String> relations_Hashmap = new HashMap<String, String>();
-	Map<MyPair<Elem,Elem>, List<Relations>> relations_Hashmap = new HashMap<MyPair<Elem,Elem>, List<Relations>>();
+	//	HashMap<String, String> relations_Hashmap = new HashMap<String, String>();
+	Map<MyPair<Elem, Elem>, List<Relations>> relations_Hashmap = new HashMap<MyPair<Elem, Elem>, List<Relations>>();
 
 	// Все пары
 	List<Pair<Elem, Elem>> pairs;
@@ -32,23 +32,13 @@ public class CreateGrammar {
 		CreateGrammar createGrammar = new CreateGrammar();
 		long finish = System.currentTimeMillis();
 		System.out.println("\n\n\ntime = " + (finish - start) / 1000.0 + " s.");
-//
-//		Elem elem_1 = new Elem("1", TERMINAL);
-//		Elem elem_2 = new Elem("2", TERMINAL);
-//
-//		Elem elem_3 = new Elem("1", TERMINAL);
-//		Elem elem_4 = new Elem("2", NOT_TERMINAL);
-//
-//		MyPair<Elem,Elem> pair_1 = new MyPair<>(elem_1, elem_2);
-//		MyPair<Elem,Elem> pair_2 = new MyPair<>(elem_3, elem_2);
-//		System.out.println(pair_1.equals(pair_2));
 	}
 
 	public CreateGrammar() throws IOException {
 //		this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_text.txt");
 //		this.firstGrammarName = "S";
 		this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_change.txt");
-		 this.firstGrammarName = "программа";
+		this.firstGrammarName = "программа";
 
 		this.initRules();
 
@@ -107,7 +97,7 @@ public class CreateGrammar {
 		Set<Elem> set = new HashSet<>();
 		set.add(new Elem("#", TERMINAL));
 		//
-		for(int i = 0 ; i < this.rules.size(); i++){
+		for (int i = 0; i < this.rules.size(); i++) {
 			final Rule rule = this.rules.get(i);
 			set.add(rule.left);
 
@@ -326,6 +316,8 @@ public class CreateGrammar {
 			pairs = this.changeTerminalToRight(pairs);
 			newCollect =
 					pairs.stream()
+							.sorted((o1, o2) ->
+									(o1.getKey().str + o1.getValue().str).compareTo(o2.getKey().str + o2.getValue().str) )
 							.map(elemElemPair -> elemElemPair.getKey().print() + "_" + elemElemPair.getValue().print())
 							.collect(Collectors.joining("\t"));
 			if (collect.compareTo(newCollect) == 0)

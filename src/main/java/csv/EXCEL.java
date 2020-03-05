@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
+
 public class EXCEL {
 	public static void main(String[] args) throws IOException {
 		EXCEL excel = new EXCEL();
@@ -54,7 +57,11 @@ public class EXCEL {
 		for (int i = 0; i < set_list.size(); i++) {
 			Row row = sheet.getRow(0);
 			Cell cell = row.createCell(i + 1);
-			cell.setCellValue(set_list.get(i).str);
+			cell.setCellValue(
+					set_list.get(i).elementType.equals(ElemType.NOT_TERMINAL) ?
+							"<" + set_list.get(i).str + ">"
+							: set_list.get(i).str
+			);
 
 			CellStyle cellStyle = book.createCellStyle();
 			cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
@@ -66,7 +73,11 @@ public class EXCEL {
 		for (int i = 0; i < set_list.size(); i++) {
 			Row row = sheet.getRow(i + 1);
 			Cell cell = row.createCell(0);
-			cell.setCellValue(set_list.get(i).str);
+			cell.setCellValue(
+					set_list.get(i).elementType.equals(ElemType.NOT_TERMINAL) ?
+							"<" + set_list.get(i).str + ">"
+							: set_list.get(i).str
+			);
 
 			CellStyle cellStyle = book.createCellStyle();
 			cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
@@ -90,7 +101,22 @@ public class EXCEL {
 
 				Cell cell = row.createCell(j + 1);
 				List<Relations> relations = relations_Hashmap.get(new MyPair<Elem, Elem>(elem_first, elem_second));
-				final String cellValue = relations.stream().map(r -> r.sign.getStr()).collect(Collectors.joining("\n"));
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////УДАЛЕНИЕ ДУБЛИКАТОВ знаков//////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				if (relations.size() > 1) {
+					System.out.println();
+					HashSet<String> seen = new HashSet<>();
+					relations.removeIf(e -> !seen.add(e.sign.getStr()));
+				}
+
+
+				final String cellValue = relations
+						.stream()
+						.distinct()
+						.map(r -> r.sign.getStr()).collect(Collectors.joining("\n"));
 				cell.setCellValue(cellValue);
 
 				CellStyle cellStyle = book.createCellStyle();
