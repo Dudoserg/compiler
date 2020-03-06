@@ -122,6 +122,7 @@ public class EXCEL {
 				CellStyle cellStyle = book.createCellStyle();
 				cellStyle.setWrapText(true);
 				cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+				cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
 				cell.setCellStyle(cellStyle);
 			}
 		}
