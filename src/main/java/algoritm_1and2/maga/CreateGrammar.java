@@ -49,7 +49,7 @@ public class CreateGrammar {
 	}
 
 	public CreateGrammar() throws IOException {
-		int algoritm = 2;
+		int algoritm = 1;
 		switch (algoritm) {
 			case 1: {
 				//		this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_text.txt");
@@ -527,9 +527,13 @@ public class CreateGrammar {
 		String newCollect = "";
 
 		int countIteration = 0;
+		List<Pair<Elem, Elem>> allPairs = new ArrayList<>(pairs);
+
 		while (true) {
 
-			pairs = this.changeTerminalToRight(pairs);
+			pairs = this.changeTerminalToRight(pairs, allPairs, countIteration);
+
+
 			newCollect =
 					pairs.stream()
 							.sorted((o1, o2) ->
@@ -546,11 +550,19 @@ public class CreateGrammar {
 	}
 
 
-	public List<Pair<Elem, Elem>> changeTerminalToRight(List<Pair<Elem, Elem>> pairs) {
+	public List<Pair<Elem, Elem>> changeTerminalToRight(
+			List<Pair<Elem, Elem>> oldPairs,
+			List<Pair<Elem, Elem>> allPairs,
+			int countIteration
+	) {
+
+		for (int i = 0; i < 100; i++)
+			System.out.print("=");
+		System.out.println();
 
 		List<RightPart> rightPartList = new ArrayList<>();
 
-		for (Pair<Elem, Elem> pair : pairs) {
+		for (Pair<Elem, Elem> pair : oldPairs) {
 			List<RightPart> tmp = new ArrayList<>();
 
 			Elem first = pair.getKey();
@@ -585,7 +597,7 @@ public class CreateGrammar {
 				System.out.print("");
 			}
 			rightPartList.addAll(tmp);
-			System.out.print(first.str + "_" + second.print() + "\t->\t");
+			System.out.print(first.str + " " + second.print() + "    ->    ");
 			tmp.forEach(rightPart -> System.out.print(rightPart.print() + "| "));
 			System.out.println();
 
@@ -596,38 +608,85 @@ public class CreateGrammar {
 
 		// Теперь полученные правые части надо разбить на пары
 		// Хотя бы один символ в такой паре должен быть нетерминальным.
-		List<Pair<Elem, Elem>> result = new ArrayList<>();
+		List<Pair<Elem, Elem>> newPairs = new ArrayList<>();
+
 		for (RightPart rightPart : rightPartList) {
 			for (int i = 0; i < rightPart.elemList.size() - 1; ++i) {
 				if (rightPart.elemList.get(i).elementType.equals(NOT_TERMINAL) ||
 						rightPart.elemList.get(i + 1).elementType.equals(NOT_TERMINAL)) {
-					result.add(new Pair<>(rightPart.elemList.get(i), rightPart.elemList.get(i + 1)));
+					newPairs.add(new Pair<>(rightPart.elemList.get(i), rightPart.elemList.get(i + 1)));
 				}
 			}
 		}
-		result.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + "_" + elemElemPair.getValue().print() + "\t"));
+
+		newPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + "_" + elemElemPair.getValue().print() + "\t"));
 		System.out.println("\n\n");
 
-		result.add(0, pairs.get(1));
-		result.add(0, pairs.get(0));
+		if( countIteration == 8)
+			System.out.print("");
+
 		// Ищем повторения
-		for (int i = result.size() - 1; i >= 0; --i) {
-			Pair<Elem, Elem> pair = result.get(i);
-			for (int j = 0; j < i; j++) {
-				if (result.get(j).getKey().str.compareTo(pair.getKey().str) == 0 &&
-						result.get(j).getValue().str.compareTo(pair.getValue().str) == 0) {
-					result.remove(pair);
+		for (int i = 0; i < newPairs.size(); i++) {
+			Pair<Elem, Elem> pair = newPairs.get(i);
+			for (int j = newPairs.size() - 1; j > 0; j--) {
+				if (newPairs.get(j).getKey().str.compareTo(pair.getKey().str) == 0 &&
+						newPairs.get(j).getValue().str.compareTo(pair.getValue().str) == 0) {
+					if (i != j)
+						newPairs.remove(j);
+				}
+			}
+		}
+
+		// Среди новых ищем старые и удаляем их
+		for (int i = 0; i < allPairs.size(); ++i) {
+			Pair<Elem, Elem> pair = allPairs.get(i);
+
+			if( pair.getKey().str.equals("1_оператор") && pair.getValue().str.equals("if"))
+				System.out.print("");
+			for (int j = newPairs.size() - 1; j >= 0; j--) {
+				if (newPairs.get(j).getKey().str.compareTo(pair.getKey().str) == 0 &&
+						newPairs.get(j).getValue().str.compareTo(pair.getValue().str) == 0) {
+					newPairs.remove(j);
+				}
+			}
+		}
+
+		// добавляем новые в общий список
+		List<Pair<Elem, Elem>> tmp = new ArrayList<>();
+		for (Pair<Elem, Elem> newPair : newPairs) {
+			Elem newLeft = newPair.getKey();
+			Elem newRight = newPair.getValue();
+			boolean isfound = false;
+			for (Pair<Elem, Elem> allPair : allPairs) {
+				Elem oldLeft = allPair.getKey();
+				Elem oldRight = allPair.getValue();
+				if (oldLeft.equals(newLeft) && oldRight.equals(newRight)) {
+					isfound = true;
 					break;
 				}
 			}
+			if (!isfound) {
+				tmp.add(newPair);
+			}
 		}
+		for (Pair<Elem, Elem> elemElemPair : tmp) {
+			allPairs.add(elemElemPair);
+		}
+		System.out.println("countIteration = " + countIteration);
+		System.out.print("oldPairs = { ");
+		oldPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + " " + elemElemPair.getValue().print() + "     "));
+		System.out.print(" }\n");
 
-		System.out.print("result = { ");
-		result.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + "_" + elemElemPair.getValue().print() + "\t\t"));
+		System.out.print("newPairs = { ");
+		newPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + " " + elemElemPair.getValue().print() + "     "));
+		System.out.print(" }\n");
+
+		System.out.print("allPairs = { ");
+		allPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + " " + elemElemPair.getValue().print() + "     "));
 		System.out.print(" }");
 		System.out.println("\n\n");
 
-		return result;
+		return newPairs;
 	}
 
 
