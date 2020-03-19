@@ -38,7 +38,7 @@ public class CreateGrammar {
 //		this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_text.txt");
 //		this.firstGrammarName = "S";
 		this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_change.txt");
-		this.firstGrammarName = "программа";
+		this.firstGrammarName = "S";
 
 		this.initRules();
 

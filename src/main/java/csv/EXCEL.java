@@ -118,12 +118,12 @@ public class EXCEL {
 						.distinct()
 						.map(r -> r.sign.getStr()).collect(Collectors.joining("\n"));
 				cell.setCellValue(cellValue);
-
-				CellStyle cellStyle = book.createCellStyle();
-				cellStyle.setWrapText(true);
-				cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-				cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-				cell.setCellStyle(cellStyle);
+//
+//				CellStyle cellStyle = book.createCellStyle();
+//				cellStyle.setWrapText(true);
+//				cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+//				cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+//				cell.setCellStyle(cellStyle);
 			}
 		}
 
