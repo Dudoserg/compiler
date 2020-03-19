@@ -1,16 +1,30 @@
-package maga;
+package algoritm_2.maga;
 
-import csv.EXCEL;
+import algoritm_2.csv.EXCEL;
 import javafx.util.Pair;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static maga.ElemType.NOT_TERMINAL;
-import static maga.ElemType.TERMINAL;
+import static algoritm_2.maga.ElemType.NOT_TERMINAL;
+import static algoritm_2.maga.ElemType.TERMINAL;
 
 public class CreateGrammar {
+
+	private static <T> List<T> reversedView(final List<T> list) {
+		return new AbstractList<T>() {
+			@Override
+			public T get(int index) {
+				return list.get(list.size() - 1 - index);
+			}
+
+			@Override
+			public int size() {
+				return list.size();
+			}
+		};
+	}
 
 	// Считанные с файла строки
 	List<String> rows;
@@ -27,14 +41,14 @@ public class CreateGrammar {
 
 	String firstGrammarName = "программа";
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		long start = System.currentTimeMillis();
 		CreateGrammar createGrammar = new CreateGrammar();
 		long finish = System.currentTimeMillis();
 		System.out.println("\n\n\ntime = " + (finish - start) / 1000.0 + " s.");
 	}
 
-	public CreateGrammar() throws IOException {
+	public CreateGrammar() throws Exception {
 //		this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_text.txt");
 //		this.firstGrammarName = "S";
 		this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_change.txt");
@@ -43,53 +57,204 @@ public class CreateGrammar {
 		this.initRules();
 
 		this.pairs = this.createPair();
-		String result =
-				pairs.stream()
-						.map(elemElemPair -> elemElemPair.getKey().print() + "\t" + elemElemPair.getValue().print())
-						.collect(Collectors.joining("\n"));
 
-		result = "";
-		for (int i = 0; i < pairs.size(); i++) {
-			String tmp = "";
-			final Pair<Elem, Elem> pair = pairs.get(i);
-			if (pair.getKey().elementType.equals(TERMINAL)) {
-				tmp += pair.getKey().str;
-			} else {
-				tmp += "<# " + pair.getKey().str + " #>";
-			}
-			tmp += "\t";
-			if (pair.getValue().elementType.equals(TERMINAL)) {
-				tmp += pair.getValue().str;
-			} else {
-				tmp += "<# " + pair.getValue().str + " #>";
-			}
-			tmp += "\n";
-			result += tmp;
+		this.removeElemWithLastPlace(this.pairs);
+
+//		String result =
+//				pairs.stream()
+//						.map(elemElemPair -> elemElemPair.getKey().print() + "\t" + elemElemPair.getValue().print())
+//						.collect(Collectors.joining("\n"));
+//
+		// ALGORITM  2
+		List<Relations> alg2 = new ArrayList<>();
+		int countExceptions = 0;
+		for (Pair<Elem, Elem> pair : pairs) {
+			final Elem key = pair.getKey();
+			final Elem value = pair.getValue();
+			// a    <   <#B#>
+			if (key.elementType.equals(TERMINAL) && value.elementType.equals(NOT_TERMINAL)) {
+				// ищем правило
+				final Rule rule = this.findRowByLeft(value);
+				// перебираем правые части правила, и ищем его ПЕРВЫЙ нетерминал
+				for (RightPart part : rule.parts) {
+					Elem firstTerminal = null;
+					for (Elem elem : part.elemList) {
+						// Если терминал
+						if (elem.elementType.equals(TERMINAL)) {
+							firstTerminal = elem;
+							break;
+						}
+					}
+					// Теперь мы знаем первый нетерминал
+					if (firstTerminal != null){
+						alg2.add(new Relations(key, firstTerminal, Sign.LESS));
+						if( key.str.equals("}") && firstTerminal.str.equals("int"))
+							System.out.println();
+					}
+				}
+			} else
+				// <#B#>    >   a
+				if (key.elementType.equals(NOT_TERMINAL) && value.elementType.equals(TERMINAL)) {
+					// ищем правило
+					final Rule rule = this.findRowByLeft(key);
+					// перебираем правые части правила, и ищем его ПОСЛЕДНИЙ нетерминал
+					for (RightPart part : rule.parts) {
+						Elem lastTerminal = null;
+
+						for (Elem elem : reversedView(part.elemList)) {
+							// Если терминал
+							if (elem.elementType.equals(TERMINAL)) {
+								lastTerminal = elem;
+								break;
+							}
+						}
+						// Теперь мы знаем первый нетерминал
+						if (lastTerminal != null) {
+							alg2.add(new Relations(lastTerminal, value, Sign.GREAT));
+							if( lastTerminal.str.equals("}") && value.str.equals("int"))
+								System.out.println();
+						}
+					}
+				} else {
+					countExceptions++;
+					String errorMessage =
+							"TERMINAL & TERMINAL || NOT_TERMINAL & NOT_TERMINAL" + "\t\t" + key.str + "\t" + value.str;
+					System.out.println(errorMessage);
+				}
+
 		}
 
-		System.out.println("Список пар = \n" + result);
-		System.out.println("\n\n\t\tСписок пар закончился\n\n");
+		alg2 = alg2.stream().distinct().collect(Collectors.toList());
+		final String s = this.pairsToString(alg2);
+		System.out.println("==================sqs=======================");
+		System.out.println(s);
+		System.out.println("=========================================");
+		this.relations = alg2;
 
-		System.out.println("===========================================================");
-		System.out.println("Отношения Great \n");
-		Great();
-		System.out.println("\nОтношения Great кончились \n\n");
-
-
-		System.out.println("===========================================================");
-		System.out.println("Отношения Less \n");
-		Less();
-		System.out.println("\nОтношения Less кончились \n\n");
-
-		System.out.println("===========================================================");
-		System.out.println("Отношения Equals \n");
-		Equals();
-		System.out.println("\nОтношения Equals кончились \n\n");
+//		result = "";
+//		for (int i = 0; i < pairs.size(); i++) {
+//			String tmp = "";
+//			final Pair<Elem, Elem> pair = pairs.get(i);
+//			if (pair.getKey().elementType.equals(TERMINAL)) {
+//				tmp += pair.getKey().str;
+//			} else {
+//				tmp += "<# " + pair.getKey().str + " #>";
+//			}
+//			tmp += "\t";
+//			if (pair.getValue().elementType.equals(TERMINAL)) {
+//				tmp += pair.getValue().str;
+//			} else {
+//				tmp += "<# " + pair.getValue().str + " #>";
+//			}
+//			tmp += "\n";
+//			result += tmp;
+//		}
+//
+//		System.out.println("Список пар = \n" + result);
+//		System.out.println("\n\n\t\tСписок пар закончился\n\n");
+//
+//		System.out.println("===========================================================");
+//		System.out.println("Отношения Great \n");
+//		Great();
+//		System.out.println("\nОтношения Great кончились \n\n");
+//
+//
+//		System.out.println("===========================================================");
+//		System.out.println("Отношения Less \n");
+//		Less();
+//		System.out.println("\nОтношения Less кончились \n\n");
+//
+//		System.out.println("===========================================================");
+//		System.out.println("Отношения Equals \n");
+//		Equals();
+//		System.out.println("\nОтношения Equals кончились \n\n");
 
 		//System.out.println("\n\nСписок отношений = \n");
 		//this.relations.forEach(elem -> System.out.println(elem.leftElem.print() + " " + elem.sign.getStr() + " " + elem.rightElem.print()));
 
 		this.createHashMap();
+	}
+
+	/**
+	 * Удалим из расмотрения правила bS (если b во всех правилах только на конце)
+	 * @param pairs
+	 */
+	private void removeElemWithLastPlace(List<Pair<Elem, Elem>> pairs) {
+
+		// Boolean  - true - значит везде последний
+		List<Elem> set_list = new ArrayList<>();
+		{
+			Set<Elem> set = new HashSet<>();
+			set.add(new Elem("#", TERMINAL));
+			//
+			for (int i = 0; i < this.rules.size(); i++) {
+				final Rule rule = this.rules.get(i);
+				set.add(rule.left);
+
+				for (RightPart part : rule.parts) {
+					for (Elem elem : part.elemList) {
+						set.add(elem);
+					}
+				}
+			}
+
+			for (Elem elem : set) {
+				if (elem.elementType.equals(TERMINAL))
+					set_list.add(elem);
+			}
+		}
+
+		List<Elem> elemAlwaysLast = new ArrayList<>();
+		for (Elem elem : set_list) {
+			if(!elem.str.equals("#"))
+			elemAlwaysLast.add(elem.copy());
+		}
+
+		// Ищем ТЕРМИНАЛЫ которые всегда на последнем месте
+		for (Rule rule : this.rules) {
+			for (RightPart part : rule.parts) {
+				Elem endELem = part.elemList.get(part.elemList.size() - 1);    // последний элемент
+				Elem lastElem = endELem; // последний рассматриваемый элемент
+				for( int i = part.elemList.size() - 2; i >= 0; i--){
+					Elem current = part.elemList.get(i);
+					// если текущий рассматриваемый элемент не равен последнему, значит он уже точно не последний
+					// A d a d , тут a != d, значит a не последний
+					if(!current.str.equals(endELem.str)){
+						elemAlwaysLast.remove(current);
+					}else {
+						if(current.equals(lastElem)){
+							// A d a d d ,
+							// current d(-2), lastElem = d(-1), endElem = d(-1)
+							// тут current = endElem
+							// тут current = lastElem в этом случае current последний
+
+						} else {
+							// ============
+							// A d a d d ,
+							// current d(-4), lastElem = a(-3), endElem = d(-1)
+							// тут current = endElem
+							// тут current != lastElem в этом случае current НЕ последний
+							elemAlwaysLast.remove(current);
+						}
+					}
+					lastElem = current;
+				}
+			}
+		}
+
+		for(int i = pairs.size() - 1; i >= 0; i--){
+			Pair<Elem, Elem> currentPair = pairs.get(i);
+			Elem left = currentPair.getKey();
+			Elem right = currentPair.getValue();
+			// гавнокод, обход каждый раз это конечно дно, но мне впадлу делать нормально
+			for (Elem lastElem : elemAlwaysLast) {
+				if(lastElem.equals(left)){
+					pairs.remove(currentPair);
+					break;
+				}
+			}
+		}
+		System.out.println();
 	}
 
 	private void createHashMap() throws IOException {
@@ -317,7 +482,7 @@ public class CreateGrammar {
 			newCollect =
 					pairs.stream()
 							.sorted((o1, o2) ->
-									(o1.getKey().str + o1.getValue().str).compareTo(o2.getKey().str + o2.getValue().str) )
+									(o1.getKey().str + o1.getValue().str).compareTo(o2.getKey().str + o2.getValue().str))
 							.map(elemElemPair -> elemElemPair.getKey().print() + "_" + elemElemPair.getValue().print())
 							.collect(Collectors.joining("\t"));
 			if (collect.compareTo(newCollect) == 0)
@@ -433,4 +598,17 @@ public class CreateGrammar {
 		return pair.getKey().str + " " + pair.getValue().str;
 	}
 
+
+	private String pairsToString(List<Relations> pairs) {
+		String result = "";
+		for (Relations pair : pairs) {
+			String tmp = "";
+			final Elem leftElem = pair.leftElem;
+			final Elem rightElem = pair.rightElem;
+			final Sign sign = pair.sign;
+			tmp += leftElem.str + "\t" + sign.getStr() + "\t" + rightElem.str + "\n";
+			result += tmp;
+		}
+		return result;
+	}
 }

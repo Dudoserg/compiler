@@ -1,4 +1,4 @@
-package maga;
+package algoritm_2.maga;
 
 public enum Sign {
 	GREAT(">"),
@@ -15,4 +15,6 @@ public enum Sign {
 	public String getStr() {
 		return str;
 	}
+
+
 }

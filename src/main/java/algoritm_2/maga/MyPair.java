@@ -1,4 +1,4 @@
-package maga;
+package algoritm_2.maga;
 
 import javafx.util.Pair;
 

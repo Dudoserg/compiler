@@ -1,16 +1,11 @@
-package csv;
+package algoritm_2.csv;
 
 import com.opencsv.*;
-import com.sun.deploy.ref.Helpers;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class CSV {
 
@@ -19,7 +14,7 @@ public class CSV {
 	}
 
 	public CSV() throws Exception {
-		String csvFile = "book.csv";
+		String csvFile = "book.algoritm_2.csv";
 
 // 		CSVReader reader = null;
 //		reader = new CSVReader(new FileReader(csvFile));
@@ -71,7 +66,7 @@ public class CSV {
 	}
 
 	public List<String[]> readAllExample() throws Exception {
-		Reader reader = new FileReader("book.csv");
+		Reader reader = new FileReader("book.algoritm_2.csv");
 		return this.readAll(reader);
 	}
 
@@ -88,7 +83,7 @@ public class CSV {
 	}
 
 	public List<String[]> oneByOneExample() throws Exception {
-		Reader reader = new FileReader("book.csv");
+		Reader reader = new FileReader("book.algoritm_2.csv");
 		return this.oneByOne(reader);
 	}
 

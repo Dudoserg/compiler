@@ -1,4 +1,4 @@
-package maga;
+package algoritm_2.maga;
 
 import java.util.Objects;
 
@@ -24,16 +24,22 @@ public class Elem {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		Elem elem = (Elem) o;
-		return elementType == elem.elementType &&
-				Objects.equals(str, elem.str);
+		return this.elementType.equals(elem.elementType) &&
+				this.str.equals(elem.str);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(elementType, str);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.elementType == null) ? 0 : this.elementType.hashCode());
+		result = prime * result + ((this.str == null) ? 0 : this.str .hashCode());
+		return result;
 	}
 
 

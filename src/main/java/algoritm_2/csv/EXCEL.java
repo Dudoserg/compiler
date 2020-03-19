@@ -1,11 +1,10 @@
-package csv;
+package algoritm_2.csv;
 
-import maga.Elem;
-import maga.ElemType;
-import maga.MyPair;
-import maga.Relations;
+import algoritm_2.maga.Elem;
+import algoritm_2.maga.ElemType;
+import algoritm_2.maga.MyPair;
+import algoritm_2.maga.Relations;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.functions.Column;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.FileNotFoundException;
@@ -13,9 +12,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toCollection;
 
 public class EXCEL {
 	public static void main(String[] args) throws IOException {
@@ -37,7 +33,8 @@ public class EXCEL {
 //		);
 		List<Elem> set_list = new ArrayList<>();
 		for (Elem elem : set) {
-			set_list.add(elem);
+			if (!elem.elementType.equals(ElemType.NOT_TERMINAL))
+				set_list.add(elem);
 		}
 
 		// Начинаем создавать документ
