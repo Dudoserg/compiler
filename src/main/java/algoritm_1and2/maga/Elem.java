@@ -34,16 +34,23 @@ public class Elem {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		Elem elem = (Elem) o;
-		return this.elementType.equals(elem.elementType )&&
-				this.str.equals(elem.str);
+		return  (this.elementType == elem.elementType  || (this.elementType  != null && this.elementType.equals(elem.elementType)))
+				&& (this.str == elem.str || (this.str != null && this.str.equals(elem.str)
+		));
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(elementType, str);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((elementType == null) ? 0 : elementType.hashCode());
+		result = prime * result + ((str == null) ? 0 : str.hashCode());
+		return result;
 	}
 
 
