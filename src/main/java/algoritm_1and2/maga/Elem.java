@@ -22,13 +22,23 @@ public class Elem {
 		return result;
 	}
 
+	public String getStrByType(){
+		String result = "";
+		if( this.elementType.equals(ElemType.NOT_TERMINAL)){
+			result += "<#" + this.str + "#>";
+		}else if( this.elementType.equals(ElemType.TERMINAL)){
+			result += this.str;
+		}
+		return result;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Elem elem = (Elem) o;
-		return elementType == elem.elementType &&
-				Objects.equals(str, elem.str);
+		return this.elementType.equals(elem.elementType )&&
+				this.str.equals(elem.str);
 	}
 
 	@Override

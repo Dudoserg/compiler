@@ -26,6 +26,7 @@ public class CreateGrammar {
 		};
 	}
 
+	public int ALGORITM = 2;
 	// Считанные с файла строки
 	List<String> rows;
 	// строки в виде объектов
@@ -49,8 +50,8 @@ public class CreateGrammar {
 	}
 
 	public CreateGrammar() throws IOException {
-		int algoritm = 1;
-		switch (algoritm) {
+
+		switch (ALGORITM) {
 			case 1: {
 				//		this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_text.txt");
 //		CreateGrammar.firstGrammarName = "S";
@@ -108,7 +109,7 @@ public class CreateGrammar {
 				//System.out.println("\n\nСписок отношений = \n");
 				//this.relations.forEach(elem -> System.out.println(elem.leftElem.print() + " " + elem.sign.getStr() + " " + elem.rightElem.print()));
 
-				this.createHashMap(algoritm);
+				this.createHashMap(ALGORITM);
 				break;
 			}
 			case 2: {
@@ -217,7 +218,7 @@ public class CreateGrammar {
 				System.out.println("=========================================");
 				this.relations = alg2;
 
-				this.createHashMap(algoritm);
+				this.createHashMap(ALGORITM);
 			}
 		}
 
@@ -260,37 +261,85 @@ public class CreateGrammar {
 				elemAlwaysLast.add(elem.copy());
 		}
 
-		// Ищем ТЕРМИНАЛЫ которые всегда на последнем месте
-		for (Rule rule : this.rules) {
-			for (RightPart part : rule.parts) {
-				Elem endELem = part.elemList.get(part.elemList.size() - 1);    // последний элемент
-				Elem lastElem = endELem; // последний рассматриваемый элемент
-				for (int i = part.elemList.size() - 2; i >= 0; i--) {
-					Elem current = part.elemList.get(i);
-					// если текущий рассматриваемый элемент не равен последнему, значит он уже точно не последний
-					// A d a d , тут a != d, значит a не последний
-					if (!current.str.equals(endELem.str)) {
-						elemAlwaysLast.remove(current);
-					} else {
-						if (current.equals(lastElem)) {
-							// A d a d d ,
-							// current d(-2), lastElem = d(-1), endElem = d(-1)
-							// тут current = endElem
-							// тут current = lastElem в этом случае current последний
+		switch (ALGORITM) {
+			case 1: {
+				// Ищем ТЕРМИНАЛЫ которые всегда на последнем месте
+				for (Rule rule : this.rules) {
+					for (RightPart part : rule.parts) {
+						Elem endELem = part.elemList.get(part.elemList.size() - 1);    // последний элемент
+						Elem lastElem = endELem; // последний рассматриваемый элемент
+						for (int i = part.elemList.size() - 2; i >= 0; i--) {
+							Elem current = part.elemList.get(i);
+							// если текущий рассматриваемый элемент не равен последнему, значит он уже точно не последний
+							// A d a d , тут a != d, значит a не последний
+							if (!current.str.equals(endELem.str)) {
+								elemAlwaysLast.remove(current);
+							} else {
+								if (current.equals(lastElem)) {
+									// A d a d d ,
+									// current d(-2), lastElem = d(-1), endElem = d(-1)
+									// тут current = endElem
+									// тут current = lastElem в этом случае current последний
 
-						} else {
-							// ============
-							// A d a d d ,
-							// current d(-4), lastElem = a(-3), endElem = d(-1)
-							// тут current = endElem
-							// тут current != lastElem в этом случае current НЕ последний
-							elemAlwaysLast.remove(current);
+								} else {
+									// ============
+									// A d a d d ,
+									// current d(-4), lastElem = a(-3), endElem = d(-1)
+									// тут current = endElem
+									// тут current != lastElem в этом случае current НЕ последний
+									elemAlwaysLast.remove(current);
+								}
+							}
+							lastElem = current;
 						}
 					}
-					lastElem = current;
 				}
+				break;
+			}
+			case 2: {
+				// Ищем ТЕРМИНАЛЫ которые всегда на последнем месте
+				for (Rule rule : this.rules) {
+					for (RightPart part : rule.parts) {
+						// РАССМАТРИВАЕМ ТОЛЬКО ТЕРМИНАЛЫ
+						RightPart copyPart = new RightPart();
+						copyPart.elemList = new ArrayList<>(part.elemList);
+						copyPart.elemList = copyPart.elemList.stream()
+								.filter(elem -> elem.elementType.equals(TERMINAL))
+								.collect(Collectors.toList());
+						if (copyPart.elemList.size() < 2)
+							continue;
+						Elem endELem = copyPart.elemList.get(copyPart.elemList.size() - 1);    // последний элемент
+						Elem lastElem = endELem; // последний рассматриваемый элемент
+						for (int i = copyPart.elemList.size() - 2; i >= 0; i--) {
+							Elem current = copyPart.elemList.get(i);
+							// если текущий рассматриваемый элемент не равен последнему, значит он уже точно не последний
+							// A d a d , тут a != d, значит a не последний
+							if (!current.str.equals(endELem.str)) {
+								elemAlwaysLast.remove(current);
+							} else {
+								if (current.equals(lastElem)) {
+									// A d a d d ,
+									// current d(-2), lastElem = d(-1), endElem = d(-1)
+									// тут current = endElem
+									// тут current = lastElem в этом случае current последний
+
+								} else {
+									// ============
+									// A d a d d ,
+									// current d(-4), lastElem = a(-3), endElem = d(-1)
+									// тут current = endElem
+									// тут current != lastElem в этом случае current НЕ последний
+									elemAlwaysLast.remove(current);
+								}
+							}
+							lastElem = current;
+						}
+					}
+				}
+				break;
 			}
 		}
+
 
 		for (int i = pairs.size() - 1; i >= 0; i--) {
 			Pair<Elem, Elem> currentPair = pairs.get(i);
@@ -545,6 +594,7 @@ public class CreateGrammar {
 			countIteration++;
 			collect = newCollect;
 		}
+		pairs = allPairs;
 		System.out.println("countIteration = " + countIteration);
 		return pairs;
 	}
@@ -597,7 +647,7 @@ public class CreateGrammar {
 				System.out.print("");
 			}
 			rightPartList.addAll(tmp);
-			System.out.print(first.str + " " + second.print() + "    ->    ");
+			System.out.print(first.getStrByType() + " " + second.getStrByType() + "    ->    ");
 			tmp.forEach(rightPart -> System.out.print(rightPart.print() + "| "));
 			System.out.println();
 
@@ -619,20 +669,24 @@ public class CreateGrammar {
 			}
 		}
 
-		newPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + "_" + elemElemPair.getValue().print() + "\t"));
+		System.out.print("На этом шаге получили следующие пары:\n");
+		newPairs.forEach(
+				elemElemPair -> System.out.print(elemElemPair.getKey().getStrByType() + " " + elemElemPair.getValue().getStrByType() + "     ")
+		);
 		System.out.println("\n\n");
 
-		if( countIteration == 8)
+		if (countIteration == 8)
 			System.out.print("");
 
 		// Ищем повторения
 		for (int i = 0; i < newPairs.size(); i++) {
 			Pair<Elem, Elem> pair = newPairs.get(i);
 			for (int j = newPairs.size() - 1; j > 0; j--) {
-				if (newPairs.get(j).getKey().str.compareTo(pair.getKey().str) == 0 &&
-						newPairs.get(j).getValue().str.compareTo(pair.getValue().str) == 0) {
+				if (newPairs.get(j).getKey().equals(pair.getKey()) &&
+						newPairs.get(j).getValue().equals(pair.getValue())) {
 					if (i != j)
 						newPairs.remove(j);
+
 				}
 			}
 		}
@@ -641,11 +695,11 @@ public class CreateGrammar {
 		for (int i = 0; i < allPairs.size(); ++i) {
 			Pair<Elem, Elem> pair = allPairs.get(i);
 
-			if( pair.getKey().str.equals("1_оператор") && pair.getValue().str.equals("if"))
+			if (pair.getKey().str.equals("1_оператор") && pair.getValue().str.equals("if"))
 				System.out.print("");
 			for (int j = newPairs.size() - 1; j >= 0; j--) {
-				if (newPairs.get(j).getKey().str.compareTo(pair.getKey().str) == 0 &&
-						newPairs.get(j).getValue().str.compareTo(pair.getValue().str) == 0) {
+				if (newPairs.get(j).getKey().equals(pair.getKey()) &&
+						newPairs.get(j).getValue().equals(pair.getValue())) {
 					newPairs.remove(j);
 				}
 			}
@@ -672,17 +726,17 @@ public class CreateGrammar {
 		for (Pair<Elem, Elem> elemElemPair : tmp) {
 			allPairs.add(elemElemPair);
 		}
-		System.out.println("countIteration = " + countIteration);
+		//System.out.println("countIteration = " + countIteration);
 		System.out.print("oldPairs = { ");
-		oldPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + " " + elemElemPair.getValue().print() + "     "));
+		oldPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().getStrByType() + " " + elemElemPair.getValue().getStrByType() + "     "));
 		System.out.print(" }\n");
 
 		System.out.print("newPairs = { ");
-		newPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + " " + elemElemPair.getValue().print() + "     "));
+		newPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().getStrByType() + " " + elemElemPair.getValue().getStrByType() + "     "));
 		System.out.print(" }\n");
 
 		System.out.print("allPairs = { ");
-		allPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().print() + " " + elemElemPair.getValue().print() + "     "));
+		allPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().getStrByType() + " " + elemElemPair.getValue().getStrByType() + "     "));
 		System.out.print(" }");
 		System.out.println("\n\n");
 

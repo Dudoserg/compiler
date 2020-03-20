@@ -2,6 +2,7 @@ package algoritm_1and2.csv;
 
 import algoritm_1and2.maga.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.FileNotFoundException;
@@ -135,15 +136,19 @@ public class EXCEL {
 					relations.removeIf(e -> !seen.add(e.sign.getStr()));
 				}
 
-				if(relations.size() >= 2){
-					colision_count++;
-				}
+
 				final String cellValue = relations
 						.stream()
 						.distinct()
 						.map(r -> r.sign.getStr()).collect(Collectors.joining("\n"));
+
 				cell.setCellValue(cellValue);
 //
+				if( relations.size() >= 2){
+					colision_count++;
+
+
+				}
 //				CellStyle cellStyle = book.createCellStyle();
 //				cellStyle.setWrapText(true);
 //				cellStyle.setAlignment(CellStyle.ALIGN_CENTER);

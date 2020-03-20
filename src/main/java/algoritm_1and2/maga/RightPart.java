@@ -14,7 +14,7 @@ public class RightPart {
 	public String print(){
 		String result = "";
 		for(Elem elem: this.elemList){
-			result += elem.print() + " ";
+			result += elem.getStrByType() + " ";
 		}
 		return result;
 	}
