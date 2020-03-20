@@ -26,7 +26,7 @@ public class CreateGrammar {
 		};
 	}
 
-	public int ALGORITM = 2;
+	public int ALGORITM = 1;
 	// Считанные с файла строки
 	List<String> rows;
 	// строки в виде объектов
@@ -65,7 +65,7 @@ public class CreateGrammar {
 
 //		String result =
 //				pairs.stream()
-//						.map(elemElemPair -> elemElemPair.getKey().print() + "\t" + elemElemPair.getValue().print())
+//						.map(elemElemPair -> elemElemPair.getKey().getStrByType() + "\t" + elemElemPair.getValue().getStrByType())
 //						.collect(Collectors.joining("\n"));
 //
 				String result = "";
@@ -107,7 +107,7 @@ public class CreateGrammar {
 				System.out.println("\nОтношения Equals кончились \n\n");
 
 				//System.out.println("\n\nСписок отношений = \n");
-				//this.relations.forEach(elem -> System.out.println(elem.leftElem.print() + " " + elem.sign.getStr() + " " + elem.rightElem.print()));
+				//this.relations.forEach(elem -> System.out.println(elem.leftElem.getStrByType() + " " + elem.sign.getStr() + " " + elem.rightElem.getStrByType()));
 
 				this.createHashMap(ALGORITM);
 				break;
@@ -146,7 +146,7 @@ public class CreateGrammar {
 							}
 							// Теперь мы знаем первый нетерминал
 							if (firstTerminal != null) {
-								alg2.add(new Relations(key, firstTerminal, Sign.LESS));
+								alg2.add(new Relations(key, firstTerminal, Sign.LESS, new Pair<Elem,Elem>(key, value)));
 								if (key.str.equals("}") && firstTerminal.str.equals("int"))
 									System.out.println();
 							}
@@ -169,7 +169,7 @@ public class CreateGrammar {
 								}
 								// Теперь мы знаем первый нетерминал
 								if (lastTerminal != null) {
-									alg2.add(new Relations(lastTerminal, value, Sign.GREAT));
+									alg2.add(new Relations(lastTerminal, value, Sign.GREAT, new Pair<Elem,Elem>(key, value)));
 									if (lastTerminal.str.equals("}") && value.str.equals("int"))
 										System.out.println();
 								}
@@ -211,7 +211,29 @@ public class CreateGrammar {
 					}
 				}
 
-				alg2 = alg2.stream().distinct().collect(Collectors.toList());
+				alg2 = alg2.stream()
+						.distinct()
+						.sorted((o1, o2) -> {
+							int left = o1.leftElem.str.compareTo(o2.leftElem.str);
+							int right = o1.rightElem.str.compareTo(o2.rightElem.str);
+							int sight = o1.sign.compareTo(o2.sign);
+
+							if (right == 0) {
+								if (left == 0) {
+									if (sight == 0) {
+										return 0;
+									} else {
+										return sight;
+									}
+								} else {
+									return left;
+								}
+							} else {
+								return right;
+							}
+
+						})
+						.collect(Collectors.toList());
 				final String s = this.pairsToString(alg2);
 				System.out.println("==================sqs=======================");
 				System.out.println(s);
@@ -419,15 +441,15 @@ public class CreateGrammar {
 					Relations relations = new Relations(elem, second, Sign.GREAT);
 					this.relations.add(relations);
 					if (i != lastElem.size() - 1)
-						System.out.print(elem.print() + ", ");
+						System.out.print(elem.getStrByType() + ", ");
 					else
-						System.out.print(elem.print());
-					//System.out.println(relations.leftElem.print() + " " + relations.sign.getStr() + " " + relations.rightElem.print());
+						System.out.print(elem.getStrByType());
+					//System.out.println(relations.leftElem.getStrByType() + " " + relations.sign.getStr() + " " + relations.rightElem.getStrByType());
 				}
 				System.out.print("}\tили\t");
 				for (int i = 0; i < lastElem.size(); i++) {
 					Elem elem = lastElem.get(i);
-					System.out.print(elem.print() + " > " + second.str);
+					System.out.print(elem.getStrByType() + " > " + second.str);
 					if (i != lastElem.size() - 1)
 						System.out.print(", ");
 				}
@@ -469,15 +491,15 @@ public class CreateGrammar {
 					Relations relations = new Relations(first, elem, Sign.LESS);
 					this.relations.add(relations);
 					if (i != firstElems.size() - 1)
-						System.out.print(elem.print() + ", ");
+						System.out.print(elem.getStrByType() + ", ");
 					else
-						System.out.print(elem.print());
-					//System.out.println(relations.leftElem.print() + " " + relations.sign.getStr() + " " + relations.rightElem.print());
+						System.out.print(elem.getStrByType());
+					//System.out.println(relations.leftElem.getStrByType() + " " + relations.sign.getStr() + " " + relations.rightElem.getStrByType());
 				}
 				System.out.print("}\tили\t");
 				for (int i = 0; i < firstElems.size(); i++) {
 					Elem elem = firstElems.get(i);
-					System.out.print(first.str + " < " + elem.print());
+					System.out.print(first.str + " < " + elem.getStrByType());
 					if (i != firstElems.size() - 1)
 						System.out.print(", ");
 				}
@@ -571,7 +593,7 @@ public class CreateGrammar {
 
 		String collect =
 				pairs.stream()
-						.map(elemElemPair -> elemElemPair.getKey().print() + "_" + elemElemPair.getValue().print())
+						.map(elemElemPair -> elemElemPair.getKey().getStrByType() + "_" + elemElemPair.getValue().getStrByType())
 						.collect(Collectors.joining("\t"));
 		String newCollect = "";
 
@@ -587,7 +609,7 @@ public class CreateGrammar {
 					pairs.stream()
 							.sorted((o1, o2) ->
 									(o1.getKey().str + o1.getValue().str).compareTo(o2.getKey().str + o2.getValue().str))
-							.map(elemElemPair -> elemElemPair.getKey().print() + "_" + elemElemPair.getValue().print())
+							.map(elemElemPair -> elemElemPair.getKey().getStrByType() + "_" + elemElemPair.getValue().getStrByType())
 							.collect(Collectors.joining("\t"));
 			if (collect.compareTo(newCollect) == 0)
 				break;
@@ -750,7 +772,7 @@ public class CreateGrammar {
 				return this.rules.get(i);
 		}
 		try {
-			throw new Exception("Чета не то дядя {\t" + left.print() + "\t}");
+			throw new Exception("Чета не то дядя {\t" + left.getStrByType() + "\t}");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -759,7 +781,7 @@ public class CreateGrammar {
 
 
 	public String printPair(Pair<Elem, Elem> pair) {
-		return pair.getKey().str + " " + pair.getValue().str;
+		return pair.getKey().getStrByType() + " " + pair.getValue().getStrByType();
 	}
 
 	private String pairsToString(List<Relations> pairs) {
@@ -769,7 +791,11 @@ public class CreateGrammar {
 			final Elem leftElem = pair.leftElem;
 			final Elem rightElem = pair.rightElem;
 			final Sign sign = pair.sign;
-			tmp += leftElem.str + "\t" + sign.getStr() + "\t" + rightElem.str + "\n";
+			final Pair<Elem, Elem> fromPair = pair.fromPair;
+			tmp += leftElem.str + "    " + sign.getStr() + "    " + rightElem.str ;
+			if(fromPair != null)
+				tmp += "    from    " + fromPair.getKey().getStrByType() + " " + fromPair.getValue().getStrByType();
+			tmp += "\n";
 			result += tmp;
 		}
 		return result;
