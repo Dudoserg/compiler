@@ -1,8 +1,11 @@
 package main.algoritm_1and2.maga;
 
+import main.Lab2.LexType;
+
 public class Elem {
 	public ElemType elementType;
 	public String str;
+	public LexType lexType;
 
 	public Elem(String str, ElemType elementType) {
 		this.elementType = elementType;

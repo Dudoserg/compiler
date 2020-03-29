@@ -1,7 +1,12 @@
 package main.algoritm_1and2.maga;
 
+import lombok.Getter;
+import lombok.Setter;
+import main.Lab2.LexType;
+
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class RightPart {
 	public List<Elem> elemList;
