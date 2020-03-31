@@ -1,6 +1,5 @@
 package main.Lab2;
 
-import main.Scaner;
 import main.algoritm_1and2.maga.*;
 import javafx.util.Pair;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -13,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static main.Lab2.LexType._SSS_;
+import static main.Lab2.LexType.*;
 import static main.algoritm_1and2.maga.ElemType.NOT_TERMINAL;
 import static main.algoritm_1and2.maga.ElemType.TERMINAL;
 
@@ -113,20 +112,7 @@ public class Lab2 {
 
         // Отношения между парами в магазине
         List<List<Sign>> rel = new ArrayList<>();
-        for (int i = 0; i < magazin.size() - 1; ++i) {
-            Elem left = magazin.get(i);
-            Elem right = magazin.get(i + 1);
-
-            // X _SSS_ значит смотрим сквозь _SSS_
-            if( right.lexType == _SSS_){
-                right = magazin.get(i + 2);
-            }
-            if( left.lexType == _SSS_){
-                left = magazin.get(i - 1);
-            }
-            List<Sign> strings = this.table.get(new Pair<>(left.lexType, right.lexType));
-            rel.add(strings);
-        }
+        createRelBetweenMagazin(rel);
         if (rel.size() == 0)
             return false;
         // Если в последнем отношении есть знак больше
@@ -135,10 +121,10 @@ public class Lab2 {
             // TODO Сворачиваем до знака <=
             // Ищем индекс начала свертки
             List<Elem> partRoll = new ArrayList<>();
-            int index = findStartRoll(rel, partRoll);
+            int index = findPartRoll(rel, partRoll);
 
             // Напечатаем ее
-            System.out.println( "Ща сворачиваем\t\t" + partRoll.stream()
+            System.out.println("Ща сворачиваем\t\t" + partRoll.stream()
                     .map(elem -> elem.getStrByType()).collect(Collectors.joining("  ")));
 
             RightPart rightPartEqual = null;
@@ -167,9 +153,16 @@ public class Lab2 {
                             break;
                         }
                     }
+                    // если ниче не нашли, нужно попробовать свернуть поменьше
+                    if (rightPartEqual == null) {
+                        index += cutPartRoll(partRoll);
+                        // i = data.size() - 1;    // заново начинаем обход всех правых частей
+                    }
+
                 }
                 if (rightPartEqual != null)
                     break;
+
             }
             // Если нашли совпадение, то все отлично, просто в магазине меняем эту вырезанную часть на <# S #>
             if (rightPartEqual != null) {
@@ -184,8 +177,63 @@ public class Lab2 {
         return false;
     }
 
+    private void createRelBetweenMagazin(List<List<Sign>> rel) throws Exception {
+        for (int i = 0; i < magazin.size() - 1; ++i) {
+            Elem left = magazin.get(i);
+            Elem right = magazin.get(i + 1);
+            // Если встретили аксиому, то отношение в массив положим дважды _ASSIGN    >=    _SSS_    >=    _SEMICOLON
+            boolean isSSS = false;
+            // X _SSS_ значит смотрим сквозь _SSS_
+            if (right.lexType == _SSS_) {
+                right = magazin.get(i + 2);
+                isSSS = true;
+            }
+            if (left.lexType == _SSS_) {
+                //left = magazin.get(i - 1);
+                //isSSS = true;
+                throw new Exception("так далеко я еще не думал!!2");
+            }
+            List<Sign> strings = this.table.get(new Pair<>(left.lexType, right.lexType));
+            if ((strings.contains(Sign.GREAT) && strings.contains(Sign.EQUALS)) ||
+                    (strings.contains(Sign.LESS) && strings.contains(Sign.GREAT))) {
+                // КОЛЛИЗИЯ МАТЬ ЕГО ЗА НОГУ
+                System.out.println("коллизия");
+                // _ASSIGN <= _SEMICOLON
+                if (left.lexType == _ASSIGN && right.lexType == _SEMICOLON) {
+                    if ((i - 2) >= 0 && magazin.get(i - 1).lexType == _ID && magazin.get(i - 2).lexType == _DOUBLE ){
+                        // тогда отношение >
+                        rel.add(Arrays.asList(Sign.GREAT));       // Если встретили аксиому, то отношение в массив положим дважды
+                        if (isSSS){
+                            rel.add(Arrays.asList(Sign.GREAT));
+                            i++;
+                        }
+                    }
 
-    private int findStartRoll(List<List<Sign>> rel, List<Elem> partRoll ){
+                }
+            } else {
+                rel.add(strings);       // Если встретили аксиому, то отношение в массив положим дважды
+                // _ASSIGN    >=    _SSS_    >=    _SEMICOLON
+                if (isSSS){
+                    rel.add(strings);
+                    i++;
+                }
+            }
+        }
+        //
+        for(int i = 0 ;  i < magazin.size() - 1; i++){
+            System.out.print(String.format("%15s", magazin.get(i).getStrByType()));
+            System.out.print("   ");
+            System.out.print(rel.get(i).stream().map(sign -> sign.getStr()).collect(Collectors.joining("")));
+            System.out.print("   ");
+        }
+        System.out.print(String.format("%15s", magazin.get(magazin.size() - 1).getStrByType()));
+        System.out.println();
+    }
+
+
+
+
+    private int findPartRoll(List<List<Sign>> rel, List<Elem> partRoll) {
         int index = -1;
         for (int i = rel.size() - 1; i >= 0; --i) {
             // если встретили конкретно <, НЕ <=
@@ -202,6 +250,39 @@ public class Lab2 {
             partRoll.add(magazin.get(i));
         }
         return index;
+    }
+    // Возвращает количество отрезанных элементов
+
+    private int cutPartRoll(List<Elem> partRoll) throws Exception {
+        // обрезаем до первого <=
+        int countCut = 0;
+        for (int i = 0; i < partRoll.size() - 1; i++) {
+            Elem left = partRoll.get(i);
+            Elem right = partRoll.get(i + 1);
+
+            // X _SSS_ значит смотрим сквозь _SSS_
+            if (right.lexType == _SSS_) {
+//                right = partRoll.get(i + 2);
+                throw new Exception("А тут я еще не думал! 1");
+            }
+            if (left.lexType == _SSS_) {
+//                left = partRoll.get(i - 1);
+                throw new Exception("А тут я еще не думал! 1");
+            }
+            List<Sign> strings = this.table.get(new Pair<>(left.lexType, right.lexType));
+
+            partRoll.remove(i);
+            i--;
+//            //проверяем ситуацию  = _SSS_ = XXX
+//            if (left.lexType == _SSS_)
+//                partRoll.remove(i); i--;    // remove XXX
+            // Когда дошли до <=
+            countCut++;
+            if (strings.contains(Sign.LESS) && strings.contains(Sign.EQUALS)) {
+                break;
+            }
+        }
+        return countCut;
     }
 
     private void printMagazine(Stack<Elem> magazin) {
@@ -387,8 +468,8 @@ public class Lab2 {
                     if (rowNum == 0)
                         headers.add(name);
                     currentRow.add(name);
-                    if (name.equals("константа_8сс"));
-                        //System.out.println();
+                    if (name.equals("константа_8сс")) ;
+                    //System.out.println();
                 } else {
                     //System.out.println("cellNum = " + cellNum);
                     break;
