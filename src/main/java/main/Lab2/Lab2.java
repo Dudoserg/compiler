@@ -13,15 +13,26 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static main.Lab2.LexType._SSS_;
 import static main.algoritm_1and2.maga.ElemType.NOT_TERMINAL;
 import static main.algoritm_1and2.maga.ElemType.TERMINAL;
 
 public class Lab2 {
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         Lab2 lab2 = new Lab2();
     }
+
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
 
     Map<String, LexType> convertMap = new HashMap<>();
 
@@ -65,11 +76,11 @@ public class Lab2 {
 
     List<List<RightPart>> data = new ArrayList<>();
 
-    Stack<ReadSymbol> magazin = new Stack<>();
+    Stack<Elem> magazin = new Stack<>();
 
     Map<Pair<LexType, LexType>, List<Sign>> table;
 
-    public Lab2() throws IOException {
+    public Lab2() throws Exception {
         table = readFromExcel("book_2.xls");
         this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_change.txt");
         this.initRules();
@@ -81,88 +92,126 @@ public class Lab2 {
     }
 
 
-    private void start() throws IOException {
+    private void start() throws Exception {
         ScanerV2 scanerV2 = new ScanerV2(System.getProperty("user.dir") + "\\test.txt");
-        magazin.push(new ReadSymbol(LexType._END, "#", NOT_TERMINAL));
+        magazin.push(new Elem(LexType._END, "#", NOT_TERMINAL));
 
         while (true) {
             List<Character> lexem = new ArrayList<>();
             LexType next = scanerV2.next(lexem);
-            magazin.push(new ReadSymbol(next, lexem, TERMINAL));
-            printMagazine(magazin);
-            roll(magazin);
+            magazin.push(new Elem(next, lexem, TERMINAL));
+            boolean rolled = false;
+            do {
+                printMagazine(magazin);
+                rolled = roll(magazin);
+            } while (rolled);
             System.out.print("");
         }
     }
 
-    private void roll(Stack<ReadSymbol> magazin) {
+    private boolean roll(Stack<Elem> magazin) throws Exception {
+
         // Отношения между парами в магазине
         List<List<Sign>> rel = new ArrayList<>();
         for (int i = 0; i < magazin.size() - 1; ++i) {
-            ReadSymbol left = magazin.get(i);
-            ReadSymbol right = magazin.get(i + 1);
+            Elem left = magazin.get(i);
+            Elem right = magazin.get(i + 1);
 
-            List<Sign> strings = this.table.get(new Pair<>(left.typ, right.typ));
+            // X _SSS_ значит смотрим сквозь _SSS_
+            if( right.lexType == _SSS_){
+                right = magazin.get(i + 2);
+            }
+            if( left.lexType == _SSS_){
+                left = magazin.get(i - 1);
+            }
+            List<Sign> strings = this.table.get(new Pair<>(left.lexType, right.lexType));
             rel.add(strings);
         }
+        if (rel.size() == 0)
+            return false;
         // Если в последнем отношении есть знак больше
         if (rel.get(rel.size() - 1).contains(Sign.GREAT)) {
             // Надо свернуть. Сворачиваем до знака <
             // TODO Сворачиваем до знака <=
             // Ищем индекс начала свертки
-            int index = -1;
-            for (int i = rel.size() - 1; i >= 0; --i) {
-                if (rel.get(i).contains(Sign.LESS)) {
-                    index = i;
-                    break;
-                }
-            }
-            index++;
+            List<Elem> partRoll = new ArrayList<>();
+            int index = findStartRoll(rel, partRoll);
 
-            // Теперь получаем часть магазина, для свертки
-            List<ReadSymbol> partRoll = new ArrayList<>();
-            for (int i = index; i < rel.size(); ++i) {
-                partRoll.add(magazin.get(i));
-            }
+            // Напечатаем ее
+            System.out.println( "Ща сворачиваем\t\t" + partRoll.stream()
+                    .map(elem -> elem.getStrByType()).collect(Collectors.joining("  ")));
+
+            RightPart rightPartEqual = null;
+
             // Ищем эту штуку в наших возможных правых частях (data)
             for (int i = data.size() - 1; i >= 0; --i) {
                 List<RightPart> rightParts = data.get(i);
                 // Если есть правила такой длины, и длина нам подходит
                 if (rightParts.size() > 0 && rightParts.get(0).elemList.size() == partRoll.size()) {
-                    RightPart rightPartEqual = null;
+
                     // перебираем правые части, и ищем, совпала ли хоть одна из них с тем что имеем в магазине
                     for (RightPart rightPart : rightParts) {
                         // Проверим, чтобы она совпала с нашей вырезанной из магазина последовательностью
                         boolean isCurrentRuleEqual = true;
                         for (int k = 0; k < rightPart.elemList.size(); k++) {
-                            if (!rightPart.elemList.get(k).equals(partRoll.get(k))) {
+                            // Если LexType НЕ совпадает , Значит эта правая часть не подходит
+                            Elem currentElem = partRoll.get(k);
+                            Elem rightPartElem = rightPart.elemList.get(k);
+                            if (!currentElem.lexType.equals(rightPartElem.lexType)) {
                                 isCurrentRuleEqual = false;        // Если хоть одно несовпадение в одном из правил
                                 break;
                             }
                         }
                         if (isCurrentRuleEqual) {    // Если правая часть полностью совпала
                             rightPartEqual = rightPart;
+                            break;
                         }
                     }
-                    // Если нашли совпадение, то все отлично, просто в магазине меняем эту вырезанную часть на <# S #>
-                    if (rightPartEqual != null) {
-                        System.out.print("");
-                        break;
-                    }
                 }
+                if (rightPartEqual != null)
+                    break;
             }
-            System.out.print("");
+            // Если нашли совпадение, то все отлично, просто в магазине меняем эту вырезанную часть на <# S #>
+            if (rightPartEqual != null) {
+                System.out.print("");
+                partRoll.forEach(elem -> this.magazin.remove(elem));
+                this.magazin.add(index, new Elem(_SSS_, "S", NOT_TERMINAL));
+                return true;
+            } else {
+                throw new Exception("Ошибка!!1");
+            }
         }
+        return false;
     }
 
-    private void printMagazine(Stack<ReadSymbol> magazin) {
+
+    private int findStartRoll(List<List<Sign>> rel, List<Elem> partRoll ){
+        int index = -1;
+        for (int i = rel.size() - 1; i >= 0; --i) {
+            // если встретили конкретно <, НЕ <=
+            if (rel.get(i).contains(Sign.LESS) && rel.get(i).size() == 1) {
+                index = i;
+                break;
+            }
+        }
+        index++;
+
+        // Теперь получаем часть магазина, для свертки
+        //List<Elem> partRoll = new ArrayList<>();
+        for (int i = index; i < rel.size(); ++i) {
+            partRoll.add(magazin.get(i));
+        }
+        return index;
+    }
+
+    private void printMagazine(Stack<Elem> magazin) {
         System.out.println("================================================================");
         List<String> strList = new ArrayList<>();
         List<LexType> typeList = new ArrayList<>();
-        for (ReadSymbol readSymbol : magazin) {
-            System.out.println(readSymbol.lexString + "    " + readSymbol.typ.getString());
-            strList.add(readSymbol.lexString);
-            typeList.add(readSymbol.typ);
+        for (Elem Elem : magazin) {
+            System.out.println(Elem.str + "    " + Elem.lexType.getString());
+            strList.add(Elem.str);
+            typeList.add(Elem.lexType);
         }
         System.out.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
 
@@ -172,8 +221,14 @@ public class Lab2 {
             String str = strList.get(i);
             LexType type = typeList.get(i);
 
-            strRes += str;
-            typeRes += type.getString();
+            if (typeList.get(i) == _SSS_) {
+                strRes += ANSI_GREEN + str + ANSI_RESET;
+                typeRes += ANSI_GREEN + type.getString() + ANSI_RESET;
+            } else {
+                strRes += str;
+                typeRes += type.getString();
+            }
+
             if (str.length() >= type.getString().length()) {
                 for (int q = 0; q < Math.abs(type.getString().length() - str.length()); q++)
                     typeRes += " ";
@@ -184,9 +239,21 @@ public class Lab2 {
             strRes += "    ";
             typeRes += "    ";
 
-            List<Sign> strings = table.get(new Pair<>(typeList.get(i), typeList.get(i + 1)));
-            strRes += strings.stream().map(Sign::getStr).collect(Collectors.joining());
-            typeRes += strings.stream().map(Sign::getStr).collect(Collectors.joining());
+
+            /// Тут уже может оказаться S, с которым нет отношения, он прозрачный, смотрим дальше
+            if (typeList.get(i + 1) == _SSS_) {
+                List<Sign> strings = table.get(new Pair<>(typeList.get(i), typeList.get(i + 2)));
+                strRes += ANSI_RED + strings.stream().map(Sign::getStr).collect(Collectors.joining()) + ANSI_RESET;
+                typeRes += ANSI_RED + strings.stream().map(Sign::getStr).collect(Collectors.joining()) + ANSI_RESET;
+            } else if (typeList.get(i) == _SSS_) {
+                List<Sign> strings = table.get(new Pair<>(typeList.get(i - 1), typeList.get(i + 1)));
+                strRes += ANSI_RED + strings.stream().map(Sign::getStr).collect(Collectors.joining()) + ANSI_RESET;
+                typeRes += ANSI_RED + strings.stream().map(Sign::getStr).collect(Collectors.joining()) + ANSI_RESET;
+            } else {
+                List<Sign> strings = table.get(new Pair<>(typeList.get(i), typeList.get(i + 1)));
+                strRes += strings.stream().map(Sign::getStr).collect(Collectors.joining());
+                typeRes += strings.stream().map(Sign::getStr).collect(Collectors.joining());
+            }
 
             strRes += "    ";
             typeRes += "    ";
@@ -227,6 +294,15 @@ public class Lab2 {
                 }
             }
         }
+        /// ПРОПИСЫВАЕМ _SSS_ нетерминалам
+        for (List<RightPart> datum : data) {
+            for (RightPart rightPart : datum) {
+                for (Elem elem : rightPart.elemList) {
+                    if (elem.elementType == NOT_TERMINAL)
+                        elem.lexType = _SSS_;
+                }
+            }
+        }
     }
 
     // Читаем грамматику
@@ -241,7 +317,7 @@ public class Lab2 {
             // считаем сначала первую строку
             String line = reader.readLine();
             while (line != null) {
-                System.out.println(line);
+                //System.out.println(line);
                 row.add(line);
                 // считываем остальные строки в цикле
                 line = reader.readLine();
@@ -281,7 +357,7 @@ public class Lab2 {
             }
             rules.add(rule);
         }
-        System.out.print("");
+        //System.out.print("");
     }
 
     // Читаем таблицу с экселя
@@ -307,14 +383,14 @@ public class Lab2 {
             while (isReadCells) {
                 if (row.getCell(cellNum) != null && row.getCell(cellNum).getCellType() == HSSFCell.CELL_TYPE_STRING) {
                     String name = row.getCell(cellNum).getStringCellValue();
-                    System.out.println("name : " + name);
+                    //System.out.println("name : " + name);
                     if (rowNum == 0)
                         headers.add(name);
                     currentRow.add(name);
-                    if (name.equals("константа_8сс"))
-                        System.out.println();
+                    if (name.equals("константа_8сс"));
+                        //System.out.println();
                 } else {
-                    System.out.println("cellNum = " + cellNum);
+                    //System.out.println("cellNum = " + cellNum);
                     break;
                 }
                 cellNum++;
@@ -341,12 +417,12 @@ public class Lab2 {
 
 
         // Переконвертируем наш хешмап в другой формат
-//        Map<Pair<ReadSymbol, ReadSymbol>, List<String>> mapAfter = new HashMap<>();
+//        Map<Pair<Elem, Elem>, List<String>> mapAfter = new HashMap<>();
 //
 //        for (Pair<String, String> key : map.keySet()) {
 //            List<String> value = map.get(key);
-//            ReadSymbol letf = new ReadSymbol(convertMap.get(key.getKey()), key.getKey());
-//            ReadSymbol right = new ReadSymbol(convertMap.get(key.getValue()), key.getValue());
+//            Elem letf = new Elem(convertMap.get(key.getKey()), key.getKey());
+//            Elem right = new Elem(convertMap.get(key.getValue()), key.getValue());
 //            mapAfter.put(new Pair<>(letf, right), value);
 //        }
 //        System.out.print("");
