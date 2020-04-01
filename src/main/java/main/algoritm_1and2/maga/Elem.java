@@ -15,6 +15,12 @@ public class Elem {
 		this.elementType = elementType;
 		this.str = str;
 	}
+	// Конструктор для поиска коллизий checkCollision
+	public Elem(LexType lexType) {
+		this.lexType = lexType;
+		this.elementType = null;
+		this.str = null;
+	}
 	public Elem(LexType lexType, String str, ElemType elementType) {
 		this.lexType = lexType;
 		this.elementType = elementType;

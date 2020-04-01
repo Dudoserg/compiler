@@ -6,6 +6,8 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 
 import java.io.*;
 import java.util.*;
@@ -22,7 +24,6 @@ public class Lab2 {
     public static void main(String[] args) throws Exception {
         Lab2 lab2 = new Lab2();
     }
-
 
 
     Map<String, LexType> convertMap = new HashMap<>();
@@ -72,8 +73,19 @@ public class Lab2 {
 
     Map<Pair<LexType, LexType>, List<Sign>> table;
 
+    Boolean flagEnd = false;
+
     public Lab2() throws Exception {
-        table = readFromExcel("book_2.xls");
+        table = readFromExcel("book_LR.xls");
+        System.out.println("===========table===============");
+        for (Pair<LexType, LexType> lexTypeLexTypePair : table.keySet()) {
+            LexType left = lexTypeLexTypePair.getKey();
+            LexType right = lexTypeLexTypePair.getValue();
+            List<Sign> signs = table.get(lexTypeLexTypePair);
+            System.out.println(left + "    " + right + "      " +
+                    signs.stream().map(sign -> sign.getStr()).collect(Collectors.joining()));
+        }
+        System.out.println("===========table-end===============");
         this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_change.txt");
         this.initRules();
 
@@ -89,28 +101,38 @@ public class Lab2 {
         magaz = new Magaz(table, data);
         magaz.push(new Elem(LexType._END, "#", NOT_TERMINAL));
 
+        int countRead = 0;
         while (true) {
             List<Character> lexem = new ArrayList<>();
             LexType next = scanerV2.next(lexem);
             magaz.push(new Elem(next, lexem, TERMINAL));
             boolean rolled = false;
+            System.out.println("countRead = " + (++countRead));
+            if (countRead == 17)
+                System.out.print("");
+
             do {
                 magaz.printMagazineByTable();
                 magaz.createRelBetweenMagazin();
                 magaz.printMagazineByRel();
 
                 rolled = magaz.roll();
-                if(rolled){
+                if (rolled) {
+                    if (magaz.checkEnd()) {
+                        flagEnd = true;
+                        break;
+                    }
                     magaz.printMagazineByTable();
                     magaz.createRelBetweenMagazin();
                     magaz.printMagazineByRel();
                 }
             } while (rolled);
+            if( flagEnd ) break;
             System.out.print("");
         }
+        if( flagEnd)
+            System.out.println("НУ ТУТ Я НЕ ВИЖУ ОШИБОК (НЕ ФАКТ КОНЕЧНО ЧТО ИХ НЕТ)");
     }
-
-
 
 
     // Объединяем все правые части в S, сортируем по размеру
@@ -206,6 +228,7 @@ public class Lab2 {
         }
         //System.out.print("");
     }
+
     // Читаем таблицу с экселя
     public Map<Pair<LexType, LexType>, List<Sign>> readFromExcel(String file) throws IOException {
         HSSFWorkbook myExcelBook = new HSSFWorkbook(new FileInputStream(file));
@@ -218,46 +241,46 @@ public class Lab2 {
 
         Map<Pair<String, String>, List<String>> map = new HashMap<>();
 
-        while (isReadRows) {
-            HSSFRow row = myExcelSheet.getRow(rowNum);  // Читаем строку
-            if (row == null)
-                break;
-            boolean isReadCells = true;
-            int cellNum = 0;
 
-            List<String> currentRow = new ArrayList<>();
-            while (isReadCells) {
-                if (row.getCell(cellNum) != null && row.getCell(cellNum).getCellType() == HSSFCell.CELL_TYPE_STRING) {
-                    String name = row.getCell(cellNum).getStringCellValue();
-                    //System.out.println("name : " + name);
-                    if (rowNum == 0)
-                        headers.add(name);
-                    currentRow.add(name);
-                    if (name.equals("константа_8сс")) ;
-                    //System.out.println();
-                } else {
-                    //System.out.println("cellNum = " + cellNum);
-                    break;
-                }
-                cellNum++;
+        // все строки
+        List<Row> rowlList = new ArrayList<Row>();
+        myExcelSheet.rowIterator().forEachRemaining(rowlList::add);
+
+        /// ячейки первой строки
+        List<Cell> firstRowCellList = new ArrayList<>();
+        rowlList.get(0).cellIterator().forEachRemaining(firstRowCellList::add);
+
+        // строим массив элементов ШАПКИ
+        // firstRowCellList.remove(0);
+        firstRowCellList.forEach(cell -> headers.add(cell.getStringCellValue()));
+
+        // проходим все строки начиная со второй
+        for (int r = 1; r < rowlList.size(); r++) {
+            Row currentRow = rowlList.get(r);
+
+            // список ячеек очередной строки
+            List<Cell> currentRowCellList = new ArrayList<>();
+            for (int i = 0; i < rowlList.size(); i++) {
+                Cell cell = currentRow.getCell(i);
+                currentRowCellList.add(cell);
             }
 
-            // Если не первая строка, то начинаем обрабатывать
-            if (rowNum != 0) {
-                String terminalFirst = currentRow.get(0);
-                for (int i = 1; i < currentRow.size(); i++) {
-                    String terminalSecond = headers.get(i);
-                    String cell = currentRow.get(i);
-                    if (cell.isEmpty())
-                        continue;
-                    cell = cell.trim();
-                    List<String> cellItems = Arrays.asList(cell.split(""));
-                    cellItems = cellItems.stream().filter(s -> !s.equals("\n")).collect(Collectors.toList());
-                    map.put(new Pair<>(terminalFirst, terminalSecond), cellItems);
-                }
+            String firstTerminal = currentRowCellList.get(0).getStringCellValue();
+            for (int c = 1; c < currentRowCellList.size(); c++) {
+                String secondTerminal = headers.get(c);
+                if (currentRowCellList.get(c) == null)
+                    continue;
+                String cell = currentRowCellList.get(c).getStringCellValue();
+                if (cell.isEmpty())
+                    continue;
+                cell = cell.trim();
+                List<String> cellItems = Arrays.asList(cell.split(""));
+                cellItems = cellItems.stream().filter(s -> !s.equals("\n")).collect(Collectors.toList());
+                System.out.println(firstTerminal + "    " + secondTerminal + "    " + cellItems);
+                map.put(new Pair<>(firstTerminal, secondTerminal), cellItems);
             }
-            rowNum++;
         }
+
 
         myExcelBook.close();
 
@@ -283,6 +306,8 @@ public class Lab2 {
                 else
                     return Sign.LESS;
             }).collect(Collectors.toList());
+            if (key.getKey().equals("=="))
+                System.out.print("");
             mapAfter.put(new Pair<>(convertMap.get(key.getKey()), convertMap.get(key.getValue())), value);
         }
         System.out.print("");

@@ -62,6 +62,8 @@ public class Magaz {
         String strRes = "";
         String typeRes = "";
         for (int i = 0; i < strList.size() - 1; i++) {
+            if (i == 10)
+                System.out.print("");
             String str = strList.get(i);
             LexType type = typeList.get(i);
 
@@ -110,7 +112,7 @@ public class Magaz {
         System.out.println(typeRes);
     }
 
-    public void printMagazineByRel(){
+    public void printMagazineByRel() {
 //        System.out.println("================================================================");
         List<String> strList = new ArrayList<>();
         List<LexType> typeList = new ArrayList<>();
@@ -240,8 +242,8 @@ public class Magaz {
             // Если нашли совпадение, то все отлично, просто в магазине меняем эту вырезанную часть на <# S #>
             if (rightPartEqual != null) {
                 System.out.print("");
-               // partRoll.forEach(elem -> this.magazin.remove(elem));
-                for(int i = 0; i < partRoll.size(); i++){
+                // partRoll.forEach(elem -> this.magazin.remove(elem));
+                for (int i = 0; i < partRoll.size(); i++) {
                     this.magazin.remove(index);
                 }
                 this.magazin.add(index, new Elem(_SSS_, "S", NOT_TERMINAL));
@@ -257,8 +259,11 @@ public class Magaz {
         int index = -1;
         for (int i = rel.size() - 1; i >= 0; --i) {
             // если встретили конкретно <, НЕ <=
+            Elem elem = magazin.get(i);
             if (rel.get(i).contains(Sign.LESS) && rel.get(i).size() == 1) {
                 index = i;
+                if (elem.lexType == _SSS_)
+                    index--;
                 break;
             }
         }
@@ -318,17 +323,22 @@ public class Magaz {
         for (int i = 0; i < magazin.size() - 1; ++i) {
             Elem left = magazin.get(i);
             Elem right = magazin.get(i + 1);
+            int index_LEFT = i;
+            int index_RIGHT = i + 1;
             // Если встретили аксиому, то отношение в массив положим дважды _ASSIGN    >=    _SSS_    >=    _SEMICOLON
             boolean isSSS = false;
+
             // X _SSS_ значит смотрим сквозь _SSS_
             if (right.lexType == _SSS_) {
                 right = magazin.get(i + 2);
+                index_RIGHT = i + 2;
                 isSSS = true;
             }
             if (left.lexType == _SSS_) {
-                //left = magazin.get(i - 1);
-                //isSSS = true;
-                throw new Exception("так далеко я еще не думал!!2");
+                left = magazin.get(i - 1);
+                index_LEFT = i - 1;
+                isSSS = true;
+                //throw new Exception("так далеко я еще не думал!!2");
             }
             List<Sign> strings = this.table.get(new Pair<>(left.lexType, right.lexType));
             if ((strings.contains(Sign.GREAT) && strings.contains(Sign.EQUALS)) ||
@@ -357,7 +367,7 @@ public class Magaz {
                             i++;
                         }
                     }
-                    if ((i - 4) >= 0 && magazin.get(i - 1).lexType == _SSS_  && magazin.get(i - 2).lexType == _PARENTHESIS_OPEN &&
+                    if ((i - 4) >= 0 && magazin.get(i - 1).lexType == _SSS_ && magazin.get(i - 2).lexType == _PARENTHESIS_OPEN &&
                             magazin.get(i - 3).lexType == _ID && magazin.get(i - 4).lexType == _INT) {
                         // тогда отношение >
                         rel.add(Arrays.asList(Sign.LESS));       // Если встретили аксиому, то отношение в массив положим дважды
@@ -367,7 +377,51 @@ public class Magaz {
                         }
                     }
                 }
+                //  _PARENTHESIS_CLOSE    <>    _ID
+                if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _ID) {
+                    //   _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    <>    _ID
+                    if ((i - 3) >= 0 && magazin.get(i - 1).lexType == _SSS_ && magazin.get(i - 2).lexType == _PARENTHESIS_OPEN &&
+                            magazin.get(i - 3).lexType == _IF) {
 
+                        rel.add(Arrays.asList(Sign.LESS));       // Если встретили аксиому, то отношение в массив положим дважды
+                        if (isSSS) {
+                            rel.add(Arrays.asList(Sign.LESS));
+                            i++;
+                        }
+                    }
+                }
+                // _PARENTHESIS_CLOSE    <>=    _SEMICOLON
+                if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _SEMICOLON) {
+                    //  _ID    =    _PARENTHESIS_OPEN    =    _PARENTHESIS_CLOSE    <>=    _SEMICOLON
+                    if ((i - 2) >= 0 && magazin.get(i - 1).lexType == _PARENTHESIS_OPEN && magazin.get(i - 2).lexType == _ID) {
+                        rel.add(Arrays.asList(Sign.GREAT));       // Если встретили аксиому, то отношение в массив положим дважды
+                        if (isSSS) {
+                            rel.add(Arrays.asList(Sign.GREAT));
+                            i++;
+                        }
+                    } else
+                        //  _ID    =    _PARENTHESIS_OPEN    = _SSS_ =   _PARENTHESIS_CLOSE    <>=    _SEMICOLON
+                        if ((i - 3) >= 0 && magazin.get(i - 1).lexType == _SSS_ && magazin.get(i - 2).lexType == _PARENTHESIS_OPEN
+                                && magazin.get(i - 2).lexType == _ID) {
+                            rel.add(Arrays.asList(Sign.GREAT));       // Если встретили аксиому, то отношение в массив положим дважды
+                            if (isSSS) {
+                                rel.add(Arrays.asList(Sign.GREAT));
+                                i++;
+                            }
+                        } else {
+                            boolean isEqual = checkCollision(index_RIGHT, Arrays.asList(
+                                    new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_PARENTHESIS_CLOSE), new Elem(_SEMICOLON)
+                            ));
+                            if (isEqual) {
+                                rel.add(Arrays.asList(Sign.LESS));       // Если встретили аксиому, то отношение в массив положим дважды
+                                if (isSSS) {
+                                    rel.add(Arrays.asList(Sign.LESS));
+                                    i++;
+                                }
+                            }
+                        }
+
+                }
             } else {
                 rel.add(strings);       // Если встретили аксиому, то отношение в массив положим дважды
                 // _ASSIGN    >=    _SSS_    >=    _SEMICOLON
@@ -382,6 +436,42 @@ public class Magaz {
         return rel;
     }
 
+    private boolean checkCollision(int index_RIGHT, List<Elem> list) {
+        // ПРоверяем действительно ли в магазине сейчас лежит такое сверху
+        int countSSS = 0;
+        boolean isEqual = true;
+        for (int i = 0; i < list.size(); i++) {
+            Elem listElem = list.get(list.size() - 1 - i);
+            Elem magazElem = null;
+            do {
+                magazElem = magazin.get(index_RIGHT - i - countSSS);
+
+                // Если в листе сейчас тоже _SSS_ то мы просто выйдем, и сравним их
+                if (magazElem.lexType == _SSS_ && listElem.lexType == _SSS_)
+                    break;
+                // Если в листе не _SSS_ То и в магазине надо найти следующий не _SSS_
+                if (magazElem.lexType == _SSS_)
+                    countSSS++;
+            } while (magazElem.lexType == _SSS_);
+            if (listElem.lexType != magazElem.lexType) {
+                isEqual = false;
+                break;
+            }
+        }
+        return isEqual;
+    }
 
 
+    public boolean checkEnd() {
+        if (magazin.size() == 3) {
+            if (magazin.get(0).lexType == _END &&
+                    magazin.get(1).lexType == _SSS_ &&
+                    magazin.get(2).lexType == _END
+            ) {
+                System.out.println("Ну все норм, заканчиваю");
+                return true;
+            }
+        }
+        return false;
+    }
 }
