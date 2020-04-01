@@ -356,6 +356,7 @@ public class Magaz {
                         }
                     }
                 }
+
                 if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _BRACE_OPEN) {
                     // _END    <    _INT    <=    _ID        =    _PARENTHESIS_OPEN    =    _PARENTHESIS_CLOSE    ><    _BRACE_OPEN
                     if ((i - 3) >= 0 && magazin.get(i - 1).lexType == _PARENTHESIS_OPEN && magazin.get(i - 2).lexType == _ID &&
@@ -378,20 +379,47 @@ public class Magaz {
                     }
                 }
                 //  _PARENTHESIS_CLOSE    <>    _ID
-                if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _ID) {
-                    //   _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    <>    _ID
-                    if ((i - 3) >= 0 && magazin.get(i - 1).lexType == _SSS_ && magazin.get(i - 2).lexType == _PARENTHESIS_OPEN &&
-                            magazin.get(i - 3).lexType == _IF) {
 
-                        rel.add(Arrays.asList(Sign.LESS));       // Если встретили аксиому, то отношение в массив положим дважды
-                        if (isSSS) {
-                            rel.add(Arrays.asList(Sign.LESS));
-                            i++;
-                        }
+                if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _ID) {
+                    boolean isEqual ;
+                    //   _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    <>    _ID
+                    isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                            new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_), new Elem(_PARENTHESIS_CLOSE), new Elem(_ID)
+                    ));
+                    if( isEqual){
+                        rel.add(Arrays.asList(Sign.LESS));
+                        if (isSSS) { rel.add(Arrays.asList(Sign.LESS)); i++; }
+                        continue;
                     }
+                    //  _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    <>    _SSS_    <>    _ID
+                    isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                            new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_), new Elem(_PARENTHESIS_CLOSE), new Elem(_SSS_), new Elem(_ID)
+                    ));
+                    if( isEqual ){
+                        rel.add(Arrays.asList(Sign.GREAT));
+                        if (isSSS) { rel.add(Arrays.asList(Sign.GREAT)); i++; }
+                        continue;
+                    }
+
+
                 }
+
+
                 // _PARENTHESIS_CLOSE    <>=    _SEMICOLON
                 if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _SEMICOLON) {
+                    boolean isEqual;
+                    //   {              <    S        <    heh    =    (                    =    )                     >    ;
+                    //   _BRACE_OPEN    <    _SSS_    <    _ID    =    _PARENTHESIS_OPEN    =    _PARENTHESIS_CLOSE    >    _SEMICOLON
+                    isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                            new Elem(_BRACE_OPEN), new Elem(_SSS_), new Elem(_ID),
+                            new Elem(_PARENTHESIS_OPEN), new Elem(_PARENTHESIS_CLOSE), new Elem(_SEMICOLON)
+                    ));
+                    if (isEqual) {
+                        rel.add(Arrays.asList(Sign.EQUALS));
+                        if (isSSS) { rel.add(Arrays.asList(Sign.EQUALS));i++; }
+                        continue;
+                    }
+
                     //  _ID    =    _PARENTHESIS_OPEN    =    _PARENTHESIS_CLOSE    <>=    _SEMICOLON
                     if ((i - 2) >= 0 && magazin.get(i - 1).lexType == _PARENTHESIS_OPEN && magazin.get(i - 2).lexType == _ID) {
                         rel.add(Arrays.asList(Sign.GREAT));       // Если встретили аксиому, то отношение в массив положим дважды
@@ -409,7 +437,7 @@ public class Magaz {
                                 i++;
                             }
                         } else {
-                            boolean isEqual = checkCollision(index_RIGHT, Arrays.asList(
+                             isEqual = checkCollision(index_RIGHT, Arrays.asList(
                                     new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_PARENTHESIS_CLOSE), new Elem(_SEMICOLON)
                             ));
                             if (isEqual) {
@@ -461,6 +489,17 @@ public class Magaz {
         return isEqual;
     }
 
+    private boolean checkCollision_STRONG(int index_RIGHT, List<Elem> list) {
+        // ПРоверяем действительно ли в магазине сейчас лежит такое сверху
+        for (int i = 0; i < list.size(); i++) {
+            Elem listElem = list.get(list.size() - 1 - i);
+            Elem  magazElem = magazin.get(index_RIGHT - i );
+            if (listElem.lexType != magazElem.lexType) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public boolean checkEnd() {
         if (magazin.size() == 3) {

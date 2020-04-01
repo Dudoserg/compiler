@@ -107,10 +107,10 @@ public class Lab2 {
             LexType next = scanerV2.next(lexem);
             magaz.push(new Elem(next, lexem, TERMINAL));
             boolean rolled = false;
-            System.out.println("countRead = " + (++countRead));
-            if (countRead == 17)
+            System.out.println("countRead = " + (countRead));
+            if (countRead == 20)
                 System.out.print("");
-
+            countRead++;
             do {
                 magaz.printMagazineByTable();
                 magaz.createRelBetweenMagazin();
@@ -125,6 +125,7 @@ public class Lab2 {
                     magaz.printMagazineByTable();
                     magaz.createRelBetweenMagazin();
                     magaz.printMagazineByRel();
+
                 }
             } while (rolled);
             if( flagEnd ) break;
