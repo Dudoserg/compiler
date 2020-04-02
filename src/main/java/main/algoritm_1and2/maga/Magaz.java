@@ -319,9 +319,6 @@ public class Magaz {
     }
 
 
-
-
-
     private int rel_ADD(Sign sign, Boolean isSSS, int i) {
         rel.add(Arrays.asList(sign));       // Если встретили аксиому, то отношение в массив положим дважды
         if (isSSS) {
@@ -380,7 +377,6 @@ public class Magaz {
         }
         return false;
     }
-
 
 
     public List<List<Sign>> createRelBetweenMagazin() throws Exception {
@@ -490,13 +486,18 @@ public class Magaz {
                 }
 
                 // _ELSE  ><  _ID
-                if( left.lexType == _ELSE && right.lexType == _ID){
+                if (left.lexType == _ELSE && right.lexType == _ID) {
                     i = ELSE___ID(i, index_RIGHT, isSSS);
                 }
                 // _ELSE  ><  _SEMICOLON
-                if( left.lexType == _ELSE && right.lexType == _SEMICOLON){
+                if (left.lexType == _ELSE && right.lexType == _SEMICOLON) {
                     i = ELSE___SEMICOLON(i, index_RIGHT, isSSS);
                 }
+                // _ELSE    <>    _BRACE_OPEN
+                if (left.lexType == _ELSE && right.lexType == _BRACE_OPEN) {
+                    i = ELSE_____BRACE_OPEN(i, index_RIGHT, isSSS);
+                }
+
             } else {
                 rel.add(strings);       // Если встретили аксиому, то отношение в массив положим дважды
                 // _ASSIGN    >=    _SSS_    >=    _SEMICOLON
@@ -541,6 +542,22 @@ public class Magaz {
         return i;
     }
 
+    // _ELSE    <>    _BRACE_OPEN
+    private int ELSE_____BRACE_OPEN(int i, int index_RIGHT, boolean isSSS) {
+        boolean isEqual;
+        //   if     =    (                    =    S        =    )                     >=    S        >=    else     <>    {
+        //  _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    >=    _SSS_    >=    _ELSE    <>    _BRACE_OPEN
+        isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_),
+                new Elem(_PARENTHESIS_CLOSE), new Elem(_SSS_), new Elem(_ELSE), new Elem(_BRACE_OPEN)
+        ));
+        if (isEqual) {
+            i = rel_ADD(Sign.LESS, isSSS, i);
+            return i;
+        }
+        return i;
+    }
+
     // _PARENTHESIS_CLOSE  >=  _ELSE
     private int PARENTHESIS_CLOSE____ELSE(int i, int index_RIGHT, boolean isSSS) {
         boolean isEqual;
@@ -573,7 +590,6 @@ public class Magaz {
         return i;
     }
 
-
     private int ELSE___SEMICOLON(int i, int index_RIGHT, boolean isSSS) {
         boolean isEqual;
         //  if     =    (                    =    S        =    )                     >=    S        >=    else     <>    S        <>    ;
@@ -581,7 +597,7 @@ public class Magaz {
         isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
                 new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_),
                 new Elem(_PARENTHESIS_CLOSE), new Elem(_SSS_), new Elem(_ELSE)
-                , new Elem(_SSS_) , new Elem(_SEMICOLON)
+                , new Elem(_SSS_), new Elem(_SEMICOLON)
         ));
         if (isEqual) {
             i = rel_ADD(Sign.GREAT, isSSS, i);

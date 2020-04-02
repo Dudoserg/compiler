@@ -23,6 +23,7 @@ public class Lab2 {
 
     public static void main(String[] args) throws Exception {
         Lab2 lab2 = new Lab2();
+        lab2.start(System.getProperty("user.dir") + "/test.txt");
     }
 
 
@@ -91,13 +92,12 @@ public class Lab2 {
 
         this.createLongRigthPart();
 
-        this.start();
-        System.out.println();
+//        System.out.println();
     }
 
 
-    private void start() throws Exception {
-        ScanerV2 scanerV2 = new ScanerV2(System.getProperty("user.dir") + "\\test.txt");
+    public boolean start(String filePath) throws Exception {
+        ScanerV2 scanerV2 = new ScanerV2(filePath);
         magaz = new Magaz(table, data);
         magaz.push(new Elem(LexType._END, "#", NOT_TERMINAL));
 
@@ -131,8 +131,12 @@ public class Lab2 {
             if( flagEnd ) break;
             System.out.print("");
         }
-        if( flagEnd)
+        if( flagEnd){
             System.out.println("НУ ТУТ Я НЕ ВИЖУ ОШИБОК (НЕ ФАКТ КОНЕЧНО ЧТО ИХ НЕТ)");
+            return true;
+        }
+        return false;
+
     }
 
 

@@ -1,0 +1,11 @@
+//double c = 136;
+
+int privet2(int c){
+    if(c == 3){
+       heh();
+       heh();
+       heh();
+       heh();;;;;;;{;;}
+    }else
+       kek();
+}
