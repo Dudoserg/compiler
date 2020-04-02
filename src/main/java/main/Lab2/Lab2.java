@@ -1,9 +1,7 @@
 package main.Lab2;
 
-import main.algoritm_1and2.maga.*;
 import javafx.util.Pair;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
+import main.algoritm_1and2.maga.*;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -14,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static main.Lab2.LexType.*;
+import static main.Lab2.LexType._SSS_;
 import static main.algoritm_1and2.maga.ElemType.NOT_TERMINAL;
 import static main.algoritm_1and2.maga.ElemType.TERMINAL;
 
@@ -22,7 +20,7 @@ public class Lab2 {
 
 
     public static void main(String[] args) throws Exception {
-        Lab2 lab2 = new Lab2();
+        Lab2 lab2 = new Lab2(true);
         lab2.start(System.getProperty("user.dir") + "/test.txt");
     }
 
@@ -75,16 +73,19 @@ public class Lab2 {
     Map<Pair<LexType, LexType>, List<Sign>> table;
 
     Boolean flagEnd = false;
+    Boolean devMode;
 
-    public Lab2() throws Exception {
+    public Lab2(Boolean devMode) throws Exception {
+        this.devMode = devMode;
         table = readFromExcel("book_LR.xls");
         System.out.println("===========table===============");
         for (Pair<LexType, LexType> lexTypeLexTypePair : table.keySet()) {
             LexType left = lexTypeLexTypePair.getKey();
             LexType right = lexTypeLexTypePair.getValue();
             List<Sign> signs = table.get(lexTypeLexTypePair);
-            System.out.println(left + "    " + right + "      " +
-                    signs.stream().map(sign -> sign.getStr()).collect(Collectors.joining()));
+            if (devMode)
+                System.out.println(left + "    " + right + "      " +
+                        signs.stream().map(sign -> sign.getStr()).collect(Collectors.joining()));
         }
         System.out.println("===========table-end===============");
         this.rows = this.readFromFile(System.getProperty("user.dir") + "/grammar_change.txt");
@@ -98,7 +99,7 @@ public class Lab2 {
 
     public boolean start(String filePath) throws Exception {
         ScanerV2 scanerV2 = new ScanerV2(filePath);
-        magaz = new Magaz(table, data);
+        magaz = new Magaz(devMode, table, data);
         magaz.push(new Elem(LexType._END, "#", NOT_TERMINAL));
 
         int countRead = 0;
@@ -128,10 +129,10 @@ public class Lab2 {
 
                 }
             } while (rolled);
-            if( flagEnd ) break;
+            if (flagEnd) break;
             System.out.print("");
         }
-        if( flagEnd){
+        if (flagEnd) {
             System.out.println("НУ ТУТ Я НЕ ВИЖУ ОШИБОК (НЕ ФАКТ КОНЕЧНО ЧТО ИХ НЕТ)");
             return true;
         }
@@ -281,7 +282,8 @@ public class Lab2 {
                 cell = cell.trim();
                 List<String> cellItems = Arrays.asList(cell.split(""));
                 cellItems = cellItems.stream().filter(s -> !s.equals("\n")).collect(Collectors.toList());
-                System.out.println(firstTerminal + "    " + secondTerminal + "    " + cellItems);
+                if (devMode)
+                    System.out.println(firstTerminal + "    " + secondTerminal + "    " + cellItems);
                 map.put(new Pair<>(firstTerminal, secondTerminal), cellItems);
             }
         }

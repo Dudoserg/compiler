@@ -27,8 +27,10 @@ public class Magaz {
 
     List<List<Sign>> rel = new ArrayList<>();       // отношения между элементами
     int countCollision = 0;
+    Boolean devMode;
 
-    public Magaz(Map<Pair<LexType, LexType>, List<Sign>> table, List<List<RightPart>> data) {
+    public Magaz(Boolean devMode, Map<Pair<LexType, LexType>, List<Sign>> table, List<List<RightPart>> data) {
+        this.devMode = devMode;
         this.table = table;
         this.data = data;
     }
@@ -50,6 +52,8 @@ public class Magaz {
     }
 
     public void printMagazineByTable() {
+        if(!devMode)
+            return;
         System.out.println("================================================================");
         List<String> strList = new ArrayList<>();
         List<LexType> typeList = new ArrayList<>();
@@ -114,6 +118,8 @@ public class Magaz {
     }
 
     public void printMagazineByRel() {
+        if(!devMode)
+            return;
 //        System.out.println("================================================================");
         List<String> strList = new ArrayList<>();
         List<LexType> typeList = new ArrayList<>();
