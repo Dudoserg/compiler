@@ -10,7 +10,7 @@ int privet2(int c){
            }else
               {{}kek();{}}
 
-        heh();{;;;}
+        heh(){;;;}                  // heh();
 
         ; ;heh();;
     }else{

@@ -1,6 +1,6 @@
 int privet2(int c){
     if(heh() == heh()){
-        ;;heh();;;
+        ;;heh(;;;                                       // )
         ;;;heh( 5 + 3 * 5 + heh() * 9 * (2 - 1));;
 
         if(c == 3){
