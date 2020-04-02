@@ -61,4 +61,28 @@ public class Lab2Test {
         boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_5");
         Assert.assertTrue(isOk);
     }
+    @Test
+    public void test_ok_6() throws Exception {
+        Lab2 lab2 = new Lab2();
+        boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_6");
+        Assert.assertTrue(isOk);
+    }
+    @Test
+    public void test_ok_7() throws Exception {
+        Lab2 lab2 = new Lab2();
+        boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_7");
+        Assert.assertTrue(isOk);
+    }
+    @Test
+    public void test_ok_8() throws Exception {
+        Lab2 lab2 = new Lab2();
+        boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_8");
+        Assert.assertTrue(isOk);
+    }
+    @Test
+    public void test_ok_9() throws Exception {
+        Lab2 lab2 = new Lab2();
+        boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_9");
+        Assert.assertTrue(isOk);
+    }
 }

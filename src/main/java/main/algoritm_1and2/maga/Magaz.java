@@ -465,6 +465,10 @@ public class Magaz {
                 if (left.lexType == _ELSE && right.lexType == _BRACE_OPEN) {
                     i = ELSE_____BRACE_OPEN(i, index_RIGHT, isSSS);
                 }
+                // _ELSE    ><    _IF
+                if (left.lexType == _ELSE && right.lexType == _IF) {
+                    i = ELSE____IF(i, index_RIGHT, isSSS);
+                }
 
             } else {
                 rel.add(strings);       // Если встретили аксиому, то отношение в массив положим дважды
@@ -478,6 +482,22 @@ public class Magaz {
         //
 
         return rel;
+    }
+
+    // _ELSE    ><    _IF
+    private int ELSE____IF(int i, int index_RIGHT, boolean isSSS) {
+        boolean isEqual;
+
+        //  else     ><    S        ><    if
+        //  _ELSE    ><    _SSS_    ><    _IF
+        isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                new Elem(_ELSE), new Elem(_SSS_), new Elem(_IF)
+        ));
+        if (isEqual) {
+            i = rel_ADD(Sign.GREAT, isSSS, i);
+            return i;
+        }
+        return i;
     }
 
     private int PARENTHESIS_CLOSE____BRACE_OPEN(int i, int index_RIGHT, boolean isSSS) {
@@ -544,6 +564,35 @@ public class Magaz {
             i = rel_ADD(Sign.LESS, isSSS, i);
             return i;
         }
+
+
+        //    S        <    heh    =    (                    =    S        =    )                     <>=    ;
+        //    _SSS_    <    _ID    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    <>=    _SEMICOLON
+        isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                new Elem(_SSS_), new Elem(_ID), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_),
+                new Elem(_PARENTHESIS_CLOSE), new Elem(_SEMICOLON)
+        ));
+        if (isEqual) {
+            i = rel_ADD(Sign.EQUALS, isSSS, i);
+            return i;
+        }
+        // эта и ситуация сверху оч похожи, но разные)00
+        // <#оператор#> ->  <#вызов_функции#> ; это ситуация снизу, там надо сначала выззов свернуть
+        // <#операторы_и_описания#> ->  <#операторы_и_описания#> идентификатор ( <#параметры#> ) ; это ситуация сверху,
+        // тут закрывающая скобка равна точке запятой, нужно сворачивать все вместе
+
+        //   heh    =    (                    =    S        =    )                     <>=    ;
+        //   _ID    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    <>=    _SEMICOLON
+        isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                new Elem(_ID), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_),
+                new Elem(_PARENTHESIS_CLOSE), new Elem(_SEMICOLON)
+        ));
+        if (isEqual) {
+            i = rel_ADD(Sign.GREAT, isSSS, i);
+            return i;
+        }
+
+
         return i;
     }
 

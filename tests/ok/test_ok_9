@@ -1,10 +1,13 @@
 int privet2(int c){
     if(c == 3){
        heh();
-       heh( 5 + 3 * 5 + 9 * (2 - 1));
+    }else{
+       heh();
+    }
+
+    if(c == 3){
        heh();
     }else{
-       {{}kek();{}}
-       heh();{;;;}
+       heh();
     }
 }
