@@ -1,7 +1,10 @@
-package main.algoritm_1and2.maga;
+package main.Lab2;
 
 import javafx.util.Pair;
 import main.Lab2.LexType;
+import main.algoritm_1and2.maga.Elem;
+import main.algoritm_1and2.maga.RightPart;
+import main.algoritm_1and2.maga.Sign;
 
 import java.util.*;
 import java.util.stream.Collectors;

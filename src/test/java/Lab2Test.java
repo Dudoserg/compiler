@@ -4,7 +4,7 @@ import org.junit.Test;
 
 public class Lab2Test {
 
-    Boolean devMode = true;
+    Boolean devMode = false;
 
     @Test(expected = Exception.class)
     public void test_error_1() throws Exception {
