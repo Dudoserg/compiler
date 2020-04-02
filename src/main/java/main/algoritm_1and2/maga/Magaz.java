@@ -359,6 +359,13 @@ public class Magaz {
             Elem listElem = list.get(list.size() - 1 - i);
             Elem magazElem = magazin.get(index_RIGHT - i);
             if (listElem.lexType != magazElem.lexType) {
+                // ИСКЛЮЧИТЕЛЬНАЯ СИТУАЦИЯ
+                // может быть _INT _DOUBLE
+                if ((listElem.lexType == _INT || listElem.lexType == _DOUBLE) &&
+                        (magazElem.lexType == _INT || magazElem.lexType == _DOUBLE)
+                ) {
+                    continue;
+                }
                 return false;
             }
         }
@@ -492,8 +499,6 @@ public class Magaz {
         //  _INT    <=    _ID    =    _ASSIGN    >=    _SSS_    >=    _SEMICOLON
         // или _DOUBLE
         isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
-                new Elem(_INT), new Elem(_ID), new Elem(_ASSIGN), new Elem(_SSS_), new Elem(_SEMICOLON)
-        )) || checkCollision_STRONG(index_RIGHT, Arrays.asList(
                 new Elem(_DOUBLE), new Elem(_ID), new Elem(_ASSIGN), new Elem(_SSS_), new Elem(_SEMICOLON)
         ));
         if (isEqual) {
