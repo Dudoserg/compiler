@@ -26,6 +26,7 @@ public class Magaz {
     List<List<RightPart>> data;
 
     List<List<Sign>> rel = new ArrayList<>();       // отношения между элементами
+    int countCollision = 0;
 
     public Magaz(Map<Pair<LexType, LexType>, List<Sign>> table, List<List<RightPart>> data) {
         this.table = table;
@@ -318,129 +319,8 @@ public class Magaz {
     }
 
 
-    public List<List<Sign>> createRelBetweenMagazin() throws Exception {
-        rel.clear();
-        for (int i = 0; i < magazin.size() - 1; ++i) {
-            Elem left = magazin.get(i);
-            Elem right = magazin.get(i + 1);
-            int index_LEFT = i;
-            int index_RIGHT = i + 1;
-            // Если встретили аксиому, то отношение в массив положим дважды _ASSIGN    >=    _SSS_    >=    _SEMICOLON
-            boolean isSSS = false;
-
-            // X _SSS_ значит смотрим сквозь _SSS_
-            if (right.lexType == _SSS_) {
-                right = magazin.get(i + 2);
-                index_RIGHT = i + 2;
-                isSSS = true;
-            }
-            if (left.lexType == _SSS_) {
-                left = magazin.get(i - 1);
-                index_LEFT = i - 1;
-                isSSS = true;
-                //throw new Exception("так далеко я еще не думал!!2");
-            }
-            List<Sign> strings = this.table.get(new Pair<>(left.lexType, right.lexType));
-            if ((strings.contains(Sign.GREAT) && strings.contains(Sign.EQUALS)) ||
-                    (strings.contains(Sign.LESS) && strings.contains(Sign.GREAT))) {
-                // КОЛЛИЗИЯ МАТЬ ЕГО ЗА НОГУ
-                System.out.println("коллизия");
-                // _ASSIGN <= _SEMICOLON
-                if (left.lexType == _ASSIGN && right.lexType == _SEMICOLON) {
-                    if ((i - 2) >= 0 && magazin.get(i - 1).lexType == _ID && magazin.get(i - 2).lexType == _DOUBLE) {
-                        // тогда отношение >
-                        i = rel_ADD(Sign.GREAT, isSSS, i);
-                        continue;
-                    }
-                }
-
-                if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _BRACE_OPEN) {
-                    // _END    <    _INT    <=    _ID        =    _PARENTHESIS_OPEN    =    _PARENTHESIS_CLOSE    ><    _BRACE_OPEN
-                    if ((i - 3) >= 0 && magazin.get(i - 1).lexType == _PARENTHESIS_OPEN && magazin.get(i - 2).lexType == _ID &&
-                            magazin.get(i - 3).lexType == _INT) {
-                        // тогда отношение <
-                        i = rel_ADD(Sign.LESS, isSSS, i);
-                        continue;
-                    }
-                    if ((i - 4) >= 0 && magazin.get(i - 1).lexType == _SSS_ && magazin.get(i - 2).lexType == _PARENTHESIS_OPEN &&
-                            magazin.get(i - 3).lexType == _ID && magazin.get(i - 4).lexType == _INT) {
-                        // тогда отношение >
-                        i = rel_ADD(Sign.LESS, isSSS, i);
-                        continue;
-                    }
-                }
-                //  _PARENTHESIS_CLOSE    <>    _ID
-
-                if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _ID) {
-                    boolean isEqual;
-                    //   _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    <>    _ID
-                    isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
-                            new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_), new Elem(_PARENTHESIS_CLOSE), new Elem(_ID)
-                    ));
-                    if (isEqual) {
-                        i = rel_ADD(Sign.LESS, isSSS, i);
-                        continue;
-                    }
-                    //  _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    <>    _SSS_    <>    _ID
-                    isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
-                            new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_), new Elem(_PARENTHESIS_CLOSE), new Elem(_SSS_), new Elem(_ID)
-                    ));
-                    if (isEqual) {
-                        i = rel_ADD(Sign.GREAT, isSSS, i);
-                        continue;
-                    }
-                }
 
 
-                // _PARENTHESIS_CLOSE    <>=    _SEMICOLON
-                if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _SEMICOLON) {
-                    boolean isEqual;
-                    //   {              <    S        <    heh    =    (                    =    )                     >    ;
-                    //   _BRACE_OPEN    <    _SSS_    <    _ID    =    _PARENTHESIS_OPEN    =    _PARENTHESIS_CLOSE    >    _SEMICOLON
-                    isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
-                            new Elem(_BRACE_OPEN), new Elem(_SSS_), new Elem(_ID),
-                            new Elem(_PARENTHESIS_OPEN), new Elem(_PARENTHESIS_CLOSE), new Elem(_SEMICOLON)
-                    ));
-                    if (isEqual) {
-                        i = rel_ADD(Sign.EQUALS, isSSS, i);
-                        continue;
-                    }
-
-                    //  _ID    =    _PARENTHESIS_OPEN    =    _PARENTHESIS_CLOSE    <>=    _SEMICOLON
-                    if ((i - 2) >= 0 && magazin.get(i - 1).lexType == _PARENTHESIS_OPEN && magazin.get(i - 2).lexType == _ID) {
-                        i = rel_ADD(Sign.GREAT, isSSS, i);
-                        continue;
-                    }
-                    //  _ID    =    _PARENTHESIS_OPEN    = _SSS_ =   _PARENTHESIS_CLOSE    <>=    _SEMICOLON
-                    if ((i - 3) >= 0 && magazin.get(i - 1).lexType == _SSS_ && magazin.get(i - 2).lexType == _PARENTHESIS_OPEN
-                            && magazin.get(i - 2).lexType == _ID) {
-                        i = rel_ADD(Sign.GREAT, isSSS, i);
-                        continue;
-                    }
-
-
-                    isEqual = checkCollision(index_RIGHT, Arrays.asList(
-                            new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_PARENTHESIS_CLOSE), new Elem(_SEMICOLON)
-                    ));
-                    if (isEqual) {
-                        i = rel_ADD(Sign.LESS, isSSS, i);
-                        continue;
-                    }
-
-                }
-            } else {
-                rel.add(strings);       // Если встретили аксиому, то отношение в массив положим дважды
-                // _ASSIGN    >=    _SSS_    >=    _SEMICOLON
-                if (isSSS) {
-                    rel.add(strings);
-                    i++;
-                }
-            }
-        }
-        //
-
-        return rel;
-    }
 
     private int rel_ADD(Sign sign, Boolean isSSS, int i) {
         rel.add(Arrays.asList(sign));       // Если встретили аксиому, то отношение в массив положим дважды
@@ -500,4 +380,214 @@ public class Magaz {
         }
         return false;
     }
+
+
+
+    public List<List<Sign>> createRelBetweenMagazin() throws Exception {
+        rel.clear();
+        for (int i = 0; i < magazin.size() - 1; ++i) {
+            Elem left = magazin.get(i);
+            Elem right = magazin.get(i + 1);
+            int index_LEFT = i;
+            int index_RIGHT = i + 1;
+            // Если встретили аксиому, то отношение в массив положим дважды _ASSIGN    >=    _SSS_    >=    _SEMICOLON
+            boolean isSSS = false;
+
+            // X _SSS_ значит смотрим сквозь _SSS_
+            if (right.lexType == _SSS_) {
+                right = magazin.get(i + 2);
+                index_RIGHT = i + 2;
+                isSSS = true;
+            }
+            if (left.lexType == _SSS_) {
+                left = magazin.get(i - 1);
+                index_LEFT = i - 1;
+                isSSS = true;
+                //throw new Exception("так далеко я еще не думал!!2");
+            }
+            List<Sign> strings = this.table.get(new Pair<>(left.lexType, right.lexType));
+            if ((strings.contains(Sign.GREAT) && strings.contains(Sign.EQUALS)) ||
+                    (strings.contains(Sign.LESS) && strings.contains(Sign.GREAT))) {
+                // КОЛЛИЗИЯ МАТЬ ЕГО ЗА НОГУ
+                countCollision++;
+                System.out.println("коллизия # " + countCollision);
+                if (countCollision == 24)
+                    System.out.print("");
+                // _ASSIGN <= _SEMICOLON
+                if (left.lexType == _ASSIGN && right.lexType == _SEMICOLON) {
+                    if ((i - 2) >= 0 && magazin.get(i - 1).lexType == _ID && magazin.get(i - 2).lexType == _DOUBLE) {
+                        // тогда отношение >
+                        i = rel_ADD(Sign.GREAT, isSSS, i);
+                        continue;
+                    }
+                }
+
+                if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _BRACE_OPEN) {
+                    i = PARENTHESIS_CLOSE____BRACE_OPEN(i, index_RIGHT, isSSS);
+                }
+
+                //  _PARENTHESIS_CLOSE    <>    _ID
+                if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _ID) {
+                    boolean isEqual;
+                    //   _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    <>    _ID
+                    isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                            new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_), new Elem(_PARENTHESIS_CLOSE), new Elem(_ID)
+                    ));
+                    if (isEqual) {
+                        i = rel_ADD(Sign.LESS, isSSS, i);
+                        continue;
+                    }
+                    //  _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    <>    _SSS_    <>    _ID
+                    isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                            new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_), new Elem(_PARENTHESIS_CLOSE), new Elem(_SSS_), new Elem(_ID)
+                    ));
+                    if (isEqual) {
+                        i = rel_ADD(Sign.GREAT, isSSS, i);
+                        continue;
+                    }
+                }
+
+                // _PARENTHESIS_CLOSE    <>=    _SEMICOLON
+                if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _SEMICOLON) {
+                    boolean isEqual;
+                    //   {              <    S        <    heh    =    (                    =    )                     >    ;
+                    //   _BRACE_OPEN    <    _SSS_    <    _ID    =    _PARENTHESIS_OPEN    =    _PARENTHESIS_CLOSE    >    _SEMICOLON
+                    isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                            new Elem(_BRACE_OPEN), new Elem(_SSS_), new Elem(_ID),
+                            new Elem(_PARENTHESIS_OPEN), new Elem(_PARENTHESIS_CLOSE), new Elem(_SEMICOLON)
+                    ));
+                    if (isEqual) {
+                        i = rel_ADD(Sign.EQUALS, isSSS, i);
+                        continue;
+                    }
+
+                    //  _ID    =    _PARENTHESIS_OPEN    =    _PARENTHESIS_CLOSE    <>=    _SEMICOLON
+                    if ((i - 2) >= 0 && magazin.get(i - 1).lexType == _PARENTHESIS_OPEN && magazin.get(i - 2).lexType == _ID) {
+                        i = rel_ADD(Sign.GREAT, isSSS, i);
+                        continue;
+                    }
+                    //  _ID    =    _PARENTHESIS_OPEN    = _SSS_ =   _PARENTHESIS_CLOSE    <>=    _SEMICOLON
+                    if ((i - 3) >= 0 && magazin.get(i - 1).lexType == _SSS_ && magazin.get(i - 2).lexType == _PARENTHESIS_OPEN
+                            && magazin.get(i - 2).lexType == _ID) {
+                        i = rel_ADD(Sign.GREAT, isSSS, i);
+                        continue;
+                    }
+
+
+                    isEqual = checkCollision(index_RIGHT, Arrays.asList(
+                            new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_PARENTHESIS_CLOSE), new Elem(_SEMICOLON)
+                    ));
+                    if (isEqual) {
+                        i = rel_ADD(Sign.LESS, isSSS, i);
+                        continue;
+                    }
+
+                }
+
+                // _PARENTHESIS_CLOSE  >=  _ELSE
+                if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _ELSE) {
+                    i = PARENTHESIS_CLOSE____ELSE(i, index_RIGHT, isSSS);
+                }
+
+                // _ELSE  ><  _ID
+                if( left.lexType == _ELSE && right.lexType == _ID){
+                    i = ELSE___ID(i, index_RIGHT, isSSS);
+                }
+                // _ELSE  ><  _SEMICOLON
+                if( left.lexType == _ELSE && right.lexType == _SEMICOLON){
+                    i = ELSE___SEMICOLON(i, index_RIGHT, isSSS);
+                }
+            } else {
+                rel.add(strings);       // Если встретили аксиому, то отношение в массив положим дважды
+                // _ASSIGN    >=    _SSS_    >=    _SEMICOLON
+                if (isSSS) {
+                    rel.add(strings);
+                    i++;
+                }
+            }
+        }
+        //
+
+        return rel;
+    }
+
+    private int PARENTHESIS_CLOSE____BRACE_OPEN(int i, int index_RIGHT, boolean isSSS) {
+        boolean isEqual;
+        // _END    <    _INT    <=    _ID        =    _PARENTHESIS_OPEN    =    _PARENTHESIS_CLOSE    ><    _BRACE_OPEN
+        if ((i - 3) >= 0 && magazin.get(i - 1).lexType == _PARENTHESIS_OPEN && magazin.get(i - 2).lexType == _ID &&
+                magazin.get(i - 3).lexType == _INT) {
+            // тогда отношение <
+            i = rel_ADD(Sign.LESS, isSSS, i);
+            return i;
+        }
+        if ((i - 4) >= 0 && magazin.get(i - 1).lexType == _SSS_ && magazin.get(i - 2).lexType == _PARENTHESIS_OPEN &&
+                magazin.get(i - 3).lexType == _ID && magazin.get(i - 4).lexType == _INT) {
+            // тогда отношение >
+            i = rel_ADD(Sign.LESS, isSSS, i);
+            return i;
+        }
+
+
+        //  if     =    (                    =    S        =    )                     <>    {
+        //  _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    <>    _BRACE_OPEN
+        isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_),
+                new Elem(_PARENTHESIS_CLOSE), new Elem(_BRACE_OPEN)
+        ));
+        if (isEqual) {
+            i = rel_ADD(Sign.LESS, isSSS, i);
+            return i;
+        }
+        return i;
+    }
+
+    // _PARENTHESIS_CLOSE  >=  _ELSE
+    private int PARENTHESIS_CLOSE____ELSE(int i, int index_RIGHT, boolean isSSS) {
+        boolean isEqual;
+        //   if     =    (                    =    S        =    )                     >=    S        >=    else
+        //  _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    >=    _SSS_    >=    _ELSE
+        isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_),
+                new Elem(_PARENTHESIS_CLOSE), new Elem(_SSS_), new Elem(_ELSE)
+        ));
+        if (isEqual) {
+            i = rel_ADD(Sign.EQUALS, isSSS, i);
+            return i;
+        }
+        return i;
+    }
+
+    // _ELSE  ><  _ID
+    private int ELSE___ID(int i, int index_RIGHT, boolean isSSS) {
+        boolean isEqual;
+        //  if     =    (                    =    S        =    )                     >=    S        >=    else     ><    kek
+        //  _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    >=    _SSS_    >=    _ELSE    ><    _ID
+        isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_),
+                new Elem(_PARENTHESIS_CLOSE), new Elem(_SSS_), new Elem(_ELSE), new Elem(_ID)
+        ));
+        if (isEqual) {
+            i = rel_ADD(Sign.LESS, isSSS, i);
+            return i;
+        }
+        return i;
+    }
+
+
+    private int ELSE___SEMICOLON(int i, int index_RIGHT, boolean isSSS) {
+        boolean isEqual;
+        //  if     =    (                    =    S        =    )                     >=    S        >=    else     <>    S        <>    ;
+        //  _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    >=    _SSS_    >=    _ELSE    <>    _SSS_    <>    _SEMICOLON
+        isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_),
+                new Elem(_PARENTHESIS_CLOSE), new Elem(_SSS_), new Elem(_ELSE)
+                , new Elem(_SSS_) , new Elem(_SEMICOLON)
+        ));
+        if (isEqual) {
+            i = rel_ADD(Sign.GREAT, isSSS, i);
+            return i;
+        }
+        return i;
+    }
+
 }
