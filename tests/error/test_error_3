@@ -1,7 +1,7 @@
 double c = 136 + 88;
 
 int privet2(int c){
-    +
+    +                       // +
     if(c == 3){
        heh();
        heh();

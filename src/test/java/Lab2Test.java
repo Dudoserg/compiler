@@ -40,6 +40,11 @@ public class Lab2Test {
         Lab2 lab2 = new Lab2();
         boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_7");
     }
+    @Test(expected = Exception.class)
+    public void test_error_8() throws Exception {
+        Lab2 lab2 = new Lab2();
+        boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_8");
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Test
     public void test_ok_1() throws Exception {

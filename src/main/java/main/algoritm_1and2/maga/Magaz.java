@@ -407,15 +407,11 @@ public class Magaz {
                 // КОЛЛИЗИЯ МАТЬ ЕГО ЗА НОГУ
                 countCollision++;
                 System.out.println("коллизия # " + countCollision);
-                if (countCollision == 24)
+                if (countCollision == 15)
                     System.out.print("");
                 // _ASSIGN <= _SEMICOLON
                 if (left.lexType == _ASSIGN && right.lexType == _SEMICOLON) {
-                    if ((i - 2) >= 0 && magazin.get(i - 1).lexType == _ID && magazin.get(i - 2).lexType == _DOUBLE) {
-                        // тогда отношение >
-                        i = rel_ADD(Sign.GREAT, isSSS, i);
-                        continue;
-                    }
+                    i = ASSIGN____SEMICOLON(i, index_RIGHT, isSSS);
                 }
 
                 if (left.lexType == _PARENTHESIS_CLOSE && right.lexType == _BRACE_OPEN) {
@@ -482,6 +478,29 @@ public class Magaz {
         //
 
         return rel;
+    }
+
+    private int ASSIGN____SEMICOLON(int i, int index_RIGHT, boolean isSSS) {
+        boolean isEqual;
+//        if ((i - 2) >= 0 && magazin.get(i - 1).lexType == _ID && magazin.get(i - 2).lexType == _DOUBLE) {
+//            // тогда отношение >
+//            i = rel_ADD(Sign.GREAT, isSSS, i);
+//            return i;
+//        }
+
+        //  int     <=    c      =    =          >=    S        >=    ;
+        //  _INT    <=    _ID    =    _ASSIGN    >=    _SSS_    >=    _SEMICOLON
+        // или _DOUBLE
+        isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                new Elem(_INT), new Elem(_ID), new Elem(_ASSIGN), new Elem(_SSS_), new Elem(_SEMICOLON)
+        )) || checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                new Elem(_DOUBLE), new Elem(_ID), new Elem(_ASSIGN), new Elem(_SSS_), new Elem(_SEMICOLON)
+        ));
+        if (isEqual) {
+            i = rel_ADD(Sign.GREAT, isSSS, i);
+            return i;
+        }
+        return i;
     }
 
     // _ELSE    ><    _IF
