@@ -417,6 +417,8 @@ public class Magaz {
                         i = rel_ADD(Sign.GREAT, isSSS, i);
                         continue;
                     }
+
+
                     isEqual = checkCollision(index_RIGHT, Arrays.asList(
                             new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_PARENTHESIS_CLOSE), new Elem(_SEMICOLON)
                     ));
