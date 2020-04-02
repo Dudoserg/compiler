@@ -1,4 +1,4 @@
-//double c = 136;
+double c = 136;
 
 int privet2(int c){
     if(c == 3){

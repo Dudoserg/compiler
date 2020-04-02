@@ -1,4 +1,4 @@
-double c = 136;
+double c = 136 + 88;            // +
 
 int privet2(int c){
     if(c == 3){
@@ -6,6 +6,7 @@ int privet2(int c){
        heh();
        heh();
        heh();;;;;;;{;;}
-    }else
+    }else{
        kek();
+    }
 }

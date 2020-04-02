@@ -1,11 +1,12 @@
-double c = 136;
+double c = 136 + 88;
 
 int privet2(int c){
-    if(c == 3){
+    if(c = 3){
        heh();
        heh();
        heh();
        heh();;;;;;;{;;}
-    }else
+    }else{
        kek();
+    }
 }
