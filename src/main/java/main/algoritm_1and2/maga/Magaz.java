@@ -641,6 +641,17 @@ public class Magaz {
             i = rel_ADD(Sign.LESS, isSSS, i);
             return i;
         }
+        //  if     =    (                    =    S        =    )                     >=    S        >=    else     ><    S        ><    heh
+        //  _IF    =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    >=    _SSS_    >=    _ELSE    ><    _SSS_    ><    _ID
+        isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                new Elem(_IF), new Elem(_PARENTHESIS_OPEN), new Elem(_SSS_),
+                new Elem(_PARENTHESIS_CLOSE), new Elem(_SSS_), new Elem(_ELSE),
+                new Elem(_SSS_), new Elem(_ID)
+        ));
+        if (isEqual) {
+            i = rel_ADD(Sign.GREAT, isSSS, i);
+            return i;
+        }
         return i;
     }
 
