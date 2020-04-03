@@ -30,7 +30,6 @@ public class Magaz {
     List<List<Sign>> rel = new ArrayList<>();       // отношения между элементами
     int countCollision = 0;
     int countFindRoll = 0;
-    Boolean flag_PARENTHESIS_OPEN = false;
 
 
     Boolean devMode;
@@ -442,6 +441,50 @@ public class Magaz {
         return false;
     }
 
+    int countCheckError = 0;
+    public void checkError() throws MyException {
+
+        List<String> strList = new ArrayList<>();
+        List<LexType> typeList = new ArrayList<>();
+        for (int i = 0; i < magazin.size() - 1; ++i) {
+            System.out.println("countCheckError = " + ++countCheckError);
+            if( countCheckError == 26)
+                System.out.print("");
+            int index_Left = i;
+            int index_Right = i + 1;
+            Elem left = magazin.get(index_Left);
+            Elem right = magazin.get(index_Right);
+
+//            if(left.lexType == _SSS_){
+//                left = magazin.get(++index_Left);
+//                right = magazin.get(++index_Right);
+//            }
+            if(right.lexType == _SSS_){
+                right = magazin.get(++index_Right);
+                i++;
+            }
+
+            List<Sign> strings = table.get(new Pair<>(left.lexType, right.lexType));
+            if (strings == null || strings.size() == 0) {
+                // error
+                int lines = right.savePoint.lines;
+                int position = right.savePoint.position;
+                int position_old = right.savePoint.position_old;
+                int uk1 = right.savePoint.uk1;
+                String errorMessage = "";
+                errorMessage += "left : " + left.getStrByType() + "\n";
+                errorMessage += "right : " + right.getStrByType() + "\n";
+                errorMessage += "lines : " + lines + ";" + "\n";
+                errorMessage += "position: " + position + ";" + "\n";
+                errorMessage += "position_old: " + position_old + ";" + "\n";
+                errorMessage += "uk1: " + uk1 + ";" + "\n";
+
+                throw new MyException("Ну вот и ошибочка: " + right.getStrByType() + "\n" + errorMessage);
+            }
+
+        }
+
+    }
 
     public List<List<Sign>> createRelBetweenMagazin() throws Exception {
         rel.clear();
@@ -783,5 +826,6 @@ public class Magaz {
         }
         return i;
     }
+
 
 }

@@ -1,6 +1,7 @@
 package main.algoritm_1and2.maga;
 
 import main.Lab2.LexType;
+import main.SavePoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,8 @@ public class Elem {
 	public ElemType elementType;	// терминал или нет
 	public String str;			//
 	public LexType lexType;		// Лексема со сканера
+
+	public SavePoint savePoint;	/// это инфа о лексеме из сканера
 
 	public Elem(String str, ElemType elementType) {
 		this.elementType = elementType;
@@ -31,6 +34,13 @@ public class Elem {
 		this.elementType = elementType;
 		this.str = str.stream().map(character -> character.toString()).collect(Collectors.joining());
 	}
+	public Elem(LexType lexType, List<Character> str, ElemType elementType, SavePoint savePoint) {
+		this.lexType = lexType;
+		this.elementType = elementType;
+		this.str = str.stream().map(character -> character.toString()).collect(Collectors.joining());
+		this.savePoint = savePoint;
+	}
+
 	public Elem copy() {
 		Elem tmp = new Elem(this.str, this.elementType);
 		return tmp;

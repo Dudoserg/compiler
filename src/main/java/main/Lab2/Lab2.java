@@ -2,6 +2,7 @@ package main.Lab2;
 
 import com.sun.xml.internal.fastinfoset.algorithm.BooleanEncodingAlgorithm;
 import javafx.util.Pair;
+import main.SavePoint;
 import main.algoritm_1and2.maga.*;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -115,20 +116,16 @@ public class Lab2 {
         int countRead = 0;
         while (true) {
             List<Character> lexem = new ArrayList<>();
+            SavePoint savePoint = scanerV2.getSavePoint();
             LexType next = scanerV2.next(lexem);
-            magaz.push(new Elem(next, lexem, TERMINAL));
-            if(next == _PARENTHESIS_OPEN){
-                magaz.flag_PARENTHESIS_OPEN = true;
-            }
-            if(next == _PARENTHESIS_CLOSE){
-                magaz.flag_PARENTHESIS_OPEN = false;
-            }
+            magaz.push(new Elem(next, lexem, TERMINAL,savePoint));
             boolean rolled = false;
             System.out.println("countRead = " + (countRead));
             if (countRead == 20)
                 System.out.print("");
             countRead++;
             do {
+                magaz.checkError();
                 magaz.printMagazineByTable();
                 magaz.createRelBetweenMagazin();
                 magaz.printMagazineByRel();
@@ -139,6 +136,7 @@ public class Lab2 {
                         flagEnd = true;
                         break;
                     }
+                    magaz.checkError();
                     magaz.printMagazineByTable();
                     magaz.createRelBetweenMagazin();
                     magaz.printMagazineByRel();
