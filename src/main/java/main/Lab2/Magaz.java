@@ -348,15 +348,16 @@ public class Magaz {
             if (right.lexType == _SSS_) {
 //                right = partRoll.get(i + 2);
                 System.out.print("");
-                //throw new Exception("А тут я еще не думал! 1");
+                throw new Exception("А тут я еще не думал! 1");
             }
             if (left.lexType == _SSS_) {
 //                left = partRoll.get(i - 1);
-//                System.out.print("");
-//                partRoll.remove(i);
-//                left = partRoll.get(index_Left);
-//                right = partRoll.get(index_Right);
-                throw new Exception("А тут я еще не думал! 1");
+                System.out.print("");
+                partRoll.remove(i);
+                countCut++;
+                left = partRoll.get(index_Left);
+                right = partRoll.get(index_Right);
+                //throw new Exception("А тут я еще не думал! 1");
             }
             List<Sign> strings = this.table.get(new Pair<>(left.lexType, right.lexType));
 
