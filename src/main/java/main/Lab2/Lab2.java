@@ -116,8 +116,8 @@ public class Lab2 {
         int countRead = 0;
         while (true) {
             List<Character> lexem = new ArrayList<>();
-            SavePoint savePoint = scanerV2.getSavePoint();
             LexType next = scanerV2.next(lexem);
+            SavePoint savePoint = scanerV2.getSavePoint();
             magaz.push(new Elem(next, lexem, TERMINAL,savePoint));
             boolean rolled = false;
             System.out.println("countRead = " + (countRead));

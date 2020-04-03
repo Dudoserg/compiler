@@ -178,7 +178,7 @@ public class ScanerV2 {
 
 
     public SavePoint getSavePoint() {
-        return new SavePoint(this.uk, this.lines, this.position_in_lines, this.position_in_lines_old);
+        return new SavePoint(this.uk, this.lines, this.position_in_lines, this.position_in_lines_old, startLexemPositionInLine);
     }
 
 
@@ -231,10 +231,13 @@ public class ScanerV2 {
 
         // все игнорируемые элементы:
 
+        Character character = t.get(uk);
         while ((t.get(uk) == ' ') || (t.get(uk) == '\n') || (t.get(uk) == '\t')) {
+
             if (t.get(uk) == '\n')
                 inc_lines();
             inc_uk();
+            character = t.get(uk);
         }
 
 

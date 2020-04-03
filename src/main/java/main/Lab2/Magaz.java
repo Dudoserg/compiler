@@ -442,13 +442,14 @@ public class Magaz {
     }
 
     int countCheckError = 0;
+
     public void checkError() throws MyException {
 
         List<String> strList = new ArrayList<>();
         List<LexType> typeList = new ArrayList<>();
         for (int i = 0; i < magazin.size() - 1; ++i) {
             System.out.println("countCheckError = " + ++countCheckError);
-            if( countCheckError == 26)
+            if (countCheckError == 26)
                 System.out.print("");
             int index_Left = i;
             int index_Right = i + 1;
@@ -459,7 +460,7 @@ public class Magaz {
 //                left = magazin.get(++index_Left);
 //                right = magazin.get(++index_Right);
 //            }
-            if(right.lexType == _SSS_){
+            if (right.lexType == _SSS_) {
                 right = magazin.get(++index_Right);
                 i++;
             }
@@ -470,14 +471,16 @@ public class Magaz {
                 int lines = right.savePoint.lines;
                 int position = right.savePoint.position;
                 int position_old = right.savePoint.position_old;
+                int startPosition = right.savePoint.startPosition;
                 int uk1 = right.savePoint.uk1;
                 String errorMessage = "";
                 errorMessage += "left : " + left.getStrByType() + "\n";
                 errorMessage += "right : " + right.getStrByType() + "\n";
-                errorMessage += "lines : " + lines + ";" + "\n";
-                errorMessage += "position: " + position + ";" + "\n";
-                errorMessage += "position_old: " + position_old + ";" + "\n";
-                errorMessage += "uk1: " + uk1 + ";" + "\n";
+                errorMessage += "lines : " + (lines + 1) + ";" + "\n";
+                errorMessage += "start lexem position: " + startPosition + ";" + "\n";
+                errorMessage += "end lexem position: " + position + ";" + "\n";
+                //errorMessage += "position_old: " + position_old + ";" + "\n";
+                //errorMessage += "uk1: " + uk1 + ";" + "\n";
 
                 throw new MyException("Ну вот и ошибочка: " + right.getStrByType() + "\n" + errorMessage);
             }
