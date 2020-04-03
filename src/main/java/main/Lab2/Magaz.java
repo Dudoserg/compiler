@@ -1,7 +1,6 @@
 package main.Lab2;
 
 import javafx.util.Pair;
-import main.Lab2.LexType;
 import main.algoritm_1and2.maga.Elem;
 import main.algoritm_1and2.maga.RightPart;
 import main.algoritm_1and2.maga.Sign;
@@ -30,6 +29,10 @@ public class Magaz {
 
     List<List<Sign>> rel = new ArrayList<>();       // отношения между элементами
     int countCollision = 0;
+    int countFindRoll = 0;
+    Boolean flag_PARENTHESIS_OPEN = false;
+
+
     Boolean devMode;
 
     public Magaz(Boolean devMode, Map<Pair<LexType, LexType>, List<Sign>> table, List<List<RightPart>> data) {
@@ -55,7 +58,7 @@ public class Magaz {
     }
 
     public void printMagazineByTable() {
-        if(!devMode)
+        if (!devMode)
             return;
         System.out.println("================================================================");
         List<String> strList = new ArrayList<>();
@@ -121,7 +124,7 @@ public class Magaz {
     }
 
     public void printMagazineByRel() {
-        if(!devMode)
+        if (!devMode)
             return;
 //        System.out.println("================================================================");
         List<String> strList = new ArrayList<>();
@@ -284,9 +287,46 @@ public class Magaz {
         for (int i = index; i < rel.size(); ++i) {
             partRoll.add(magazin.get(i));
         }
+
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
+        // и без коллизий бывают косяки
+        // вот тут, он сначала сворачивает INT ID, как буд-то это список параметров функции, А ЭТО список переменных, и тут сначала надо свернуть _ID
+        // int     <=    privet2    =    (                    =    S        =    )                     <    {              <    int     <=    c      >    ,
+        //  _INT    <=    _ID        =    _PARENTHESIS_OPEN    =    _SSS_    =    _PARENTHESIS_CLOSE    <    _BRACE_OPEN    <    _INT    <=    _ID    >    _COMMA
+        // сейчас мы НЕ в списке параметров, значит сворачиваем только _ID
+
+        System.out.println("countFindRoll = " + countFindRoll);
+
+        if (!(findFirst_PARENTHESIS() == _PARENTHESIS_OPEN)) {
+            //  <    _INT    _IDугу
+            if (partRoll.size() == 2 && partRoll.get(0).lexType == _INT && partRoll.get(1).lexType == _ID) {
+                partRoll.remove(0);
+                index++;
+            }
+            //  <    _INT    <    _SSS_    <    _COMMA    <=    _ID    >    _SEMICOLON
+            // тут надо свернуть сначала _ID, поэтому удаляем _SSS_ и _COMMA
+            if (partRoll.size() == 3 && partRoll.get(0).lexType == _SSS_ && partRoll.get(1).lexType == _COMMA && partRoll.get(2).lexType == _ID) {
+                partRoll.remove(0); // _SSS_
+                partRoll.remove(0); // _COMMA
+                index++;
+                index++;
+            }
+        }
+        countFindRoll++;
         return index;
     }
 
+    // Ищем первую скобку от знака > До дна магазина. Это небходимо для разрешения проблемы int x
+    // ( понять это список переменны или список параметров функции)
+    public LexType findFirst_PARENTHESIS() {
+        for (int i = magazin.size() - 2; i >= 0; i--) {
+            if (magazin.get(i).lexType == _PARENTHESIS_CLOSE)
+                return _PARENTHESIS_CLOSE;
+            if (magazin.get(i).lexType == _PARENTHESIS_OPEN)
+                return _PARENTHESIS_OPEN;
+        }
+        return null;
+    }
 
     /**
      * метод укорачивает часть для свертки, удалив элементы из начала, до отношения <=
@@ -299,16 +339,23 @@ public class Magaz {
         // обрезаем до первого <=
         int countCut = 0;
         for (int i = 0; i < partRoll.size() - 1; i++) {
-            Elem left = partRoll.get(i);
-            Elem right = partRoll.get(i + 1);
+            int index_Left = i;
+            int index_Right = i + 1;
+            Elem left = partRoll.get(index_Left);
+            Elem right = partRoll.get(index_Right);
 
             // X _SSS_ значит смотрим сквозь _SSS_
             if (right.lexType == _SSS_) {
 //                right = partRoll.get(i + 2);
-                throw new Exception("А тут я еще не думал! 1");
+                System.out.print("");
+                //throw new Exception("А тут я еще не думал! 1");
             }
             if (left.lexType == _SSS_) {
 //                left = partRoll.get(i - 1);
+//                System.out.print("");
+//                partRoll.remove(i);
+//                left = partRoll.get(index_Left);
+//                right = partRoll.get(index_Right);
                 throw new Exception("А тут я еще не думал! 1");
             }
             List<Sign> strings = this.table.get(new Pair<>(left.lexType, right.lexType));
@@ -513,16 +560,13 @@ public class Magaz {
         //  _INT    <=    _ID    =    _ASSIGN    >=    _SSS_    >=    _SEMICOLON
         // или _DOUBLE
         isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
-                new Elem(_DOUBLE), new Elem(_ID), new Elem(_ASSIGN), new Elem(_SSS_), new Elem(_SEMICOLON)
+                new Elem(_ID), new Elem(_ASSIGN), new Elem(_SSS_), new Elem(_SEMICOLON)
         ));
         if (isEqual) {
             i = rel_ADD(Sign.GREAT, isSSS, i);
             return i;
         }
 
-        isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
-                new Elem(_DOUBLE), new Elem(_ID), new Elem(_ASSIGN), new Elem(_SSS_), new Elem(_SEMICOLON)
-        ));
         return i;
     }
 

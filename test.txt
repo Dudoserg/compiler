@@ -1,3 +1,4 @@
-int privet2(int c){
-    int c , d = 3;
+int privet2(int a, int b){
+    double c;
+    double c = 3;
 }

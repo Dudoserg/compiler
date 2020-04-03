@@ -1,5 +1,6 @@
 package main.Lab2;
 
+import com.sun.xml.internal.fastinfoset.algorithm.BooleanEncodingAlgorithm;
 import javafx.util.Pair;
 import main.algoritm_1and2.maga.*;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -12,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static main.Lab2.LexType._SSS_;
+import static main.Lab2.LexType.*;
 import static main.algoritm_1and2.maga.ElemType.NOT_TERMINAL;
 import static main.algoritm_1and2.maga.ElemType.TERMINAL;
 
@@ -76,8 +77,13 @@ public class Lab2 {
 
     Map<Pair<LexType, LexType>, List<Sign>> table;
 
+
+
+
     Boolean flagEnd = false;
     Boolean devMode;
+
+
 
     public Lab2(Boolean devMode) throws Exception {
         this.devMode = devMode;
@@ -111,6 +117,12 @@ public class Lab2 {
             List<Character> lexem = new ArrayList<>();
             LexType next = scanerV2.next(lexem);
             magaz.push(new Elem(next, lexem, TERMINAL));
+            if(next == _PARENTHESIS_OPEN){
+                magaz.flag_PARENTHESIS_OPEN = true;
+            }
+            if(next == _PARENTHESIS_CLOSE){
+                magaz.flag_PARENTHESIS_OPEN = false;
+            }
             boolean rolled = false;
             System.out.println("countRead = " + (countRead));
             if (countRead == 20)
