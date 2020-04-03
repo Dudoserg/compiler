@@ -1,0 +1,3 @@
+int privet2(int c){
+    int c = 2, d = c + 3;
+}

@@ -113,4 +113,16 @@ public class Lab2Test {
         boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_11");
         Assert.assertTrue(isOk);
     }
+    @Test
+    public void test_ok_12() throws Exception {
+        Lab2 lab2 = new Lab2(devMode);
+        boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_12");
+        Assert.assertTrue(isOk);
+    }
+    @Test
+    public void test_ok_13() throws Exception {
+        Lab2 lab2 = new Lab2(devMode);
+        boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_13");
+        Assert.assertTrue(isOk);
+    }
 }

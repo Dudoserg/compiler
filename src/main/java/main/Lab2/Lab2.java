@@ -20,8 +20,12 @@ public class Lab2 {
 
 
     public static void main(String[] args) throws Exception {
+        long start = System.currentTimeMillis();
+
         Lab2 lab2 = new Lab2(true);
         lab2.start(System.getProperty("user.dir") + "/test.txt");
+
+        System.out.println("\n\n\ntime = " + (System.currentTimeMillis() - start) / 1000.0 + " s.");
     }
 
 

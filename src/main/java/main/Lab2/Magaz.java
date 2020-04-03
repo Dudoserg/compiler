@@ -504,12 +504,11 @@ public class Magaz {
 
     private int ASSIGN____SEMICOLON(int i, int index_RIGHT, boolean isSSS) {
         boolean isEqual;
-//        if ((i - 2) >= 0 && magazin.get(i - 1).lexType == _ID && magazin.get(i - 2).lexType == _DOUBLE) {
-//            // тогда отношение >
-//            i = rel_ADD(Sign.GREAT, isSSS, i);
-//            return i;
-//        }
-
+        /*        if ((i - 2) >= 0 && magazin.get(i - 1).lexType == _ID && magazin.get(i - 2).lexType == _DOUBLE) {
+            // тогда отношение >
+            i = rel_ADD(Sign.GREAT, isSSS, i);
+            return i;
+        }*/
         //  int     <=    c      =    =          >=    S        >=    ;
         //  _INT    <=    _ID    =    _ASSIGN    >=    _SSS_    >=    _SEMICOLON
         // или _DOUBLE
@@ -520,6 +519,10 @@ public class Magaz {
             i = rel_ADD(Sign.GREAT, isSSS, i);
             return i;
         }
+
+        isEqual = checkCollision_STRONG(index_RIGHT, Arrays.asList(
+                new Elem(_DOUBLE), new Elem(_ID), new Elem(_ASSIGN), new Elem(_SSS_), new Elem(_SEMICOLON)
+        ));
         return i;
     }
 
