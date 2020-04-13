@@ -261,7 +261,16 @@ public class Magaz {
                 this.magazin.add(index, new Elem(_SSS_, "S", NOT_TERMINAL));
                 return true;
             } else {
-                throw new Exception("Ошибка!!1");
+                Elem elem = partRoll.get(0);
+
+                int lines = elem.savePoint.lines;
+                int startPosition = elem.savePoint.startPosition;
+                String errorMessage = "";
+                errorMessage += "lines : " + (lines + 1) + ";" + "\n";
+                errorMessage += "position: " + startPosition + ";" + "\n";
+                throw new MyException("\nНу вот и ошибочка: " + elem.getStrByType() + "\n" + errorMessage);
+
+                //throw new Exception("Ошибка!!1");
             }
         }
         return false;
@@ -297,7 +306,7 @@ public class Magaz {
         System.out.println("countFindRoll = " + countFindRoll);
 
         if (!(findFirst_PARENTHESIS() == _PARENTHESIS_OPEN)) {
-            //  <    _INT    _IDугу
+            //  <    _INT    _ID
             if (partRoll.size() == 2 && partRoll.get(0).lexType == _INT && partRoll.get(1).lexType == _ID) {
                 partRoll.remove(0);
                 index++;
@@ -354,6 +363,8 @@ public class Magaz {
                 System.out.print("");
                 partRoll.remove(i);
                 countCut++;
+                if( partRoll.size() == 1)
+                    break;
                 left = partRoll.get(index_Left);
                 right = partRoll.get(index_Right);
                 //throw new Exception("А тут я еще не думал! 1");
@@ -448,7 +459,7 @@ public class Magaz {
         List<String> strList = new ArrayList<>();
         List<LexType> typeList = new ArrayList<>();
         for (int i = 0; i < magazin.size() - 1; ++i) {
-            System.out.println("countCheckError = " + ++countCheckError);
+            //System.out.println("countCheckError = " + ++countCheckError);
             if (countCheckError == 26)
                 System.out.print("");
             int index_Left = i;
@@ -474,15 +485,15 @@ public class Magaz {
                 int startPosition = right.savePoint.startPosition;
                 int uk1 = right.savePoint.uk1;
                 String errorMessage = "";
-                errorMessage += "left : " + left.getStrByType() + "\n";
-                errorMessage += "right : " + right.getStrByType() + "\n";
+                //errorMessage += "left : " + left.getStrByType() + "\n";
+                //errorMessage += "right : " + right.getStrByType() + "\n";
                 errorMessage += "lines : " + (lines + 1) + ";" + "\n";
-                errorMessage += "start lexem position: " + startPosition + ";" + "\n";
-                errorMessage += "end lexem position: " + position + ";" + "\n";
+                errorMessage += "position: " + startPosition + ";" + "\n";
+                //errorMessage += "end lexem position: " + position + ";" + "\n";
                 //errorMessage += "position_old: " + position_old + ";" + "\n";
                 //errorMessage += "uk1: " + uk1 + ";" + "\n";
 
-                throw new MyException("Ну вот и ошибочка: " + right.getStrByType() + "\n" + errorMessage);
+                throw new MyException("\nНу вот и ошибочка: " + right.getStrByType() + "\n" + errorMessage);
             }
 
         }
@@ -516,7 +527,7 @@ public class Magaz {
                     (strings.contains(Sign.LESS) && strings.contains(Sign.GREAT))) {
                 // КОЛЛИЗИЯ МАТЬ ЕГО ЗА НОГУ
                 countCollision++;
-                System.out.println("коллизия # " + countCollision);
+                //System.out.println("коллизия # " + countCollision);
                 if (countCollision == 15)
                     System.out.print("");
                 // _ASSIGN <= _SEMICOLON

@@ -70,7 +70,7 @@ public class Lab2 {
 
     List<String> rows;
     List<Rule> rules;
-
+    int magazMaxSize = -1;
     List<List<RightPart>> data = new ArrayList<>();
 
     //Stack<Elem> magazin = new Stack<>();
@@ -119,6 +119,7 @@ public class Lab2 {
             LexType next = scanerV2.next(lexem);
             SavePoint savePoint = scanerV2.getSavePoint();
             magaz.push(new Elem(next, lexem, TERMINAL,savePoint));
+            magazMaxSize = magazMaxSize > magaz.magazin.size() ? magazMaxSize : magaz.magazin.size();
             boolean rolled = false;
             System.out.println("countRead = " + (countRead));
             if (countRead == 20)
@@ -147,9 +148,12 @@ public class Lab2 {
             System.out.print("");
         }
         if (flagEnd) {
-            System.out.println("НУ ТУТ Я НЕ ВИЖУ ОШИБОК (НЕ ФАКТ КОНЕЧНО ЧТО ИХ НЕТ)");
+            System.out.println("\n\n\nВ данном примере ошибок не найдено!");
+            //System.out.println("magazMaxSize " + magazMaxSize );
+
             return true;
         }
+
         return false;
 
     }

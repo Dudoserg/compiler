@@ -1,50 +1,56 @@
 import main.Lab2.Lab2;
+import main.Lab2.MyException;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class Lab2Test {
 
-    Boolean devMode = false;
+    Boolean devMode = true;
 
-    @Test(expected = Exception.class)
+    @Test(expected = MyException.class)
     public void test_error_1() throws Exception {
         Lab2 lab2 = new Lab2(devMode);
         boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_1");
     }
-    @Test(expected = Exception.class)
+    @Test(expected = MyException.class)
     public void test_error_2() throws Exception {
         Lab2 lab2 = new Lab2(devMode);
         boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_2");
     }
-    @Test(expected = Exception.class)
+    @Test(expected = MyException.class)
     public void test_error_3() throws Exception {
         Lab2 lab2 = new Lab2(devMode);
         boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_3");
     }
-    @Test(expected = Exception.class)
+    @Test(expected = MyException.class)
     public void test_error_4() throws Exception {
         Lab2 lab2 = new Lab2(devMode);
         boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_4");
     }
-    @Test(expected = Exception.class)
+    @Test(expected = MyException.class)
     public void test_error_5() throws Exception {
         Lab2 lab2 = new Lab2(devMode);
         boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_5");
     }
-    @Test(expected = Exception.class)
+    @Test(expected = MyException.class)
     public void test_error_6() throws Exception {
         Lab2 lab2 = new Lab2(devMode);
         boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_6");
     }
-    @Test(expected = Exception.class)
+    @Test(expected = MyException.class)
     public void test_error_7() throws Exception {
         Lab2 lab2 = new Lab2(devMode);
         boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_7");
     }
-    @Test(expected = Exception.class)
+    @Test(expected = MyException.class)
     public void test_error_8() throws Exception {
         Lab2 lab2 = new Lab2(devMode);
         boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_8");
+    }
+    @Test(expected = MyException.class)
+    public void test_error_9() throws Exception {
+        Lab2 lab2 = new Lab2(devMode);
+        boolean isOk = lab2.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_9");
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Test

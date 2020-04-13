@@ -32,13 +32,13 @@ public class Main {
         //long start = System.currentTimeMillis();
         LLK llk = new LLK();
 
-        int first = 1200;
-        int second = 1200;
-        List<Integer> list = new ArrayList<Integer>(){{
-            this.add(first);
-            this.add(second);
-        }};
-        System.out.println(list.get(0) == list.get(1));
+//        int first = 1200;
+//        int second = 1200;
+//        List<Integer> list = new ArrayList<Integer>(){{
+//            this.add(first);
+//            this.add(second);
+//        }};
+//        System.out.println(list.get(0) == list.get(1));
 
         //long end = System.currentTimeMillis();
         //System.out.println("time = " + (end - start) / 1000.0);
