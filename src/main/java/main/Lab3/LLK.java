@@ -63,7 +63,8 @@ public class LLK {
             }
             else if( topELem.elementType == ElemType.NOT_TERMINAL ){
                 List<RightPart> rightParts = table.get(new Pair<>(topELem, new Elem(ElemType.TERMINAL, lexemToStr(lexem), next)));
-                if(rightParts.size() == 0){
+
+                if(rightParts == null || rightParts.size() == 0){
                     throw new Exception("нет такого в таблице");
                 }
                 if( rightParts.size() == 1){
@@ -74,6 +75,7 @@ public class LLK {
                 }else {
                     //<одно_описание> _INT
                     if( topELem.lexTypeNot == LexTypeNot._одно_описание && ( next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._DOUBLE)){
+                        // тут либо <функция> либо <объявление_переменных>
                         SavePoint savePoint = scanerV2.getSavePoint();
 
                         ArrayList<Character> lexem_2 = new ArrayList<>();
@@ -83,6 +85,20 @@ public class LLK {
                         ArrayList<Character> lexem_3 = new ArrayList<>();
                         LexTypeTERMINAL next_3 = scanerV2.next(lexem_3);
                         String lexem_str_3 = lexemToStr(lexem_3);
+
+                        scanerV2.setSavePoint(savePoint);
+                        // ЕСЛИ
+                        if(next_3 == LexTypeTERMINAL._PARENTHESIS_OPEN){
+                            //<функция>
+                            stack.push(new Elem(ElemType.NOT_TERMINAL,"_функция", LexTypeNot._функция));
+
+                        }else if( next_3 == LexTypeTERMINAL._COMMA || next_3 == LexTypeTERMINAL._ASSIGN){
+                            //<объявление_переменных>
+                            stack.push(new Elem(ElemType.NOT_TERMINAL,"_объявление_переменных", LexTypeNot._объявление_переменных));
+
+                        }else {
+                            throw  new Exception("Чета не то, тут и ни <функция> и <объявление_переменных> [" + next_3.getString() + "]");
+                        }
 
                         System.out.print("");
                     }
