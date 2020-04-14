@@ -173,7 +173,7 @@ public class LLK {
                     Elem tmp = historyStack.get(1);
                     switch (topELem.str) {
                         case "startDecl": {
-                            semantic.startDecl(next);
+                            semantic.startDecl(next); // тут тип int\double
                             break;
                         }
                         case "setIdent": {
@@ -181,7 +181,15 @@ public class LLK {
                             break;
                         }
                         case "endDecl": {
-                            semantic.endDecl(); // тут тип int\double
+                            semantic.endDecl();
+                            break;
+                        }
+                        case "startLevel": {
+                            semantic.startLevel(); // отводка вправо в дереве
+                            break;
+                        }
+                        case "endLevel": {
+                            semantic.endLevel(); // возвращаем current
                             break;
                         }
                     }
@@ -198,7 +206,7 @@ public class LLK {
             throw e;
         }
 
-        System.out.print("Все чики-пуки");
+        System.out.print("Все чики-пуки\n\n");
         return true;
     }
 

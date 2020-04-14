@@ -56,6 +56,8 @@ public class Semantic {
         do{
             if( checking.nodeType == node.nodeType && checking.lexem.equals(node.lexem))
                 return true;
+            if( checking.nodeType == Node.NodeType.TYPE_BLACK)            // Дошли до черной вершины символизирующей новый уровень
+                return false;
             if( checking.parent == null)            // Дошли до корня
                 return false;
             if(checking.parent.left == null)        // текущий элемент это начало уровня
@@ -66,5 +68,29 @@ public class Semantic {
                 return false;
             checking = checking.parent;
         }while (true);
+    }
+
+    public void startLevel() {
+        Node node = new Node();
+        node.nodeType = Node.NodeType.TYPE_BLACK;
+
+        this.current.right = node;
+        node.parent = this.current;
+        this.current = node;
+    }
+
+    public void endLevel() {
+        Node checking = this.current;
+
+        do{
+            // Нашли черную вершину
+            if(checking.nodeType == Node.NodeType.TYPE_BLACK){
+                // делаем текущей вершиной, родителя черной вершины
+                this.current = checking.parent;
+                break;
+            }
+            checking = checking.parent;
+        }while (true);
+
     }
 }
