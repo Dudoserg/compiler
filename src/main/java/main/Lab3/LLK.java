@@ -21,15 +21,20 @@ import java.util.stream.Collectors;
 
 public class LLK {
     public static void main(String[] args) throws Exception {
-        LLK llk = new LLK();
+        LLK llk = new LLK(true);
+        llk.start(System.getProperty("user.dir") + "/test.txt");
+
     }
 
     Map<Pair<Elem, Elem>, List<RightPart>> table;
     Table tableObj;
     boolean flag_working = true;
-    private Stack<Elem> stack = new Stack<>();
+    boolean devMode;
+    Stack<Elem> stack = new Stack<>();
 
-    public LLK() throws Exception {
+
+    public LLK(boolean devMode) throws Exception {
+        this.devMode = devMode;
         this.tableInit();
     }
 
@@ -38,51 +43,52 @@ public class LLK {
         ReadLLK readLLK = new ReadLLK();
         table = readLLK.getTable();
         tableObj = readLLK.getTableOjb();
+    }
 
+    public boolean start(String path) throws Exception {
         List<Character> lexem = new ArrayList<>();
-        ScanerV2 scanerV2 = new ScanerV2();
+        ScanerV2 scanerV2 = new ScanerV2(path);
 
-        stack.push(new Elem(ElemType.TERMINAL,"#", LexTypeTERMINAL._END));
-        stack.push(new Elem(ElemType.NOT_TERMINAL,"_программа", LexTypeNot._программа));
+        stack.push(new Elem(ElemType.TERMINAL, "#", LexTypeTERMINAL._END));
+        stack.push(new Elem(ElemType.NOT_TERMINAL, "_программа", LexTypeNot._программа));
 
         LexTypeTERMINAL next = scanerV2.next(lexem);
-        while (flag_working){
+        while (flag_working) {
 
             printStack();
             printNext(lexem, next);
-            if( count == 59)
+            if (count == 84)
                 System.out.println();
 
             Elem topELem = this.stack.pop();
             //TODO случай когда епсилон
 
-            if( topELem.elementType == ElemType.TERMINAL ){
-                if( topELem.lexTypeTERMINAL == LexTypeTERMINAL._epsilon)
+            if (topELem.elementType == ElemType.TERMINAL) {
+                if (topELem.lexTypeTERMINAL == LexTypeTERMINAL._epsilon)
                     continue;
-                if (topELem.lexTypeTERMINAL == next){
+                if (topELem.lexTypeTERMINAL == next) {
                     if (topELem.lexTypeTERMINAL == LexTypeTERMINAL._END)
                         flag_working = false;
                     else
                         next = scanerV2.next(lexem);
-                }else {
+                } else {
                     throw new Exception("терминалы не совпали");
                 }
 
-            }
-            else if( topELem.elementType == ElemType.NOT_TERMINAL ){
+            } else if (topELem.elementType == ElemType.NOT_TERMINAL) {
                 List<RightPart> rightParts = table.get(new Pair<>(topELem, new Elem(ElemType.TERMINAL, lexemToStr(lexem), next)));
 
-                if(rightParts == null || rightParts.size() == 0){
+                if (rightParts == null || rightParts.size() == 0) {
                     throw new Exception("нет такого в таблице : " + topELem.getStrByType_LIGHT() + "  " + lexemToStr(lexem));
                 }
-                if( rightParts.size() == 1){
+                if (rightParts.size() == 1) {
                     pushRightPartToStack(rightParts.get(0));
                     //printStack();
                     //printNext(lexem, next);
                     //System.out.print("");
-                }else {
+                } else {
                     //<одно_описание> _INT
-                    if( topELem.lexTypeNot == LexTypeNot._одно_описание && ( next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._DOUBLE)){
+                    if (topELem.lexTypeNot == LexTypeNot._одно_описание && (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._DOUBLE)) {
                         // тут либо <функция> либо <объявление_переменных>
                         SavePoint savePoint = scanerV2.getSavePoint();
 
@@ -96,21 +102,22 @@ public class LLK {
 
                         scanerV2.setSavePoint(savePoint);
                         // ЕСЛИ
-                        if(next_3 == LexTypeTERMINAL._PARENTHESIS_OPEN){
+                        if (next_3 == LexTypeTERMINAL._PARENTHESIS_OPEN) {
                             //<функция>
-                            stack.push(new Elem(ElemType.NOT_TERMINAL,"_функция", LexTypeNot._функция));
+                            stack.push(new Elem(ElemType.NOT_TERMINAL, "_функция", LexTypeNot._функция));
 
-                        }else if( next_3 == LexTypeTERMINAL._COMMA || next_3 == LexTypeTERMINAL._ASSIGN){
+                        } else if (next_3 == LexTypeTERMINAL._COMMA || next_3 == LexTypeTERMINAL._ASSIGN) {
                             //<объявление_переменных>
-                            stack.push(new Elem(ElemType.NOT_TERMINAL,"_объявление_переменных", LexTypeNot._объявление_переменных));
+                            stack.push(new Elem(ElemType.NOT_TERMINAL, "_объявление_переменных", LexTypeNot._объявление_переменных));
 
-                        }else {
-                            throw  new Exception("Чета не то, тут и ни <функция> и <объявление_переменных> [" + next_3.getString() + "]");
+                        } else {
+                            throw new Exception("Чета не то, тут и ни <функция> и <объявление_переменных> [" + next_3.getString() + "]");
                         }
 
                         System.out.print("");
                     }
-                    if( topELem.lexTypeNot == LexTypeNot._A6 && ( next == LexTypeTERMINAL._ID)){
+                    // <A6> _ID
+                    if (topELem.lexTypeNot == LexTypeNot._A6 && (next == LexTypeTERMINAL._ID)) {
                         // тут либо <функция> либо <объявление_переменных>
                         SavePoint savePoint = scanerV2.getSavePoint();
 
@@ -120,19 +127,40 @@ public class LLK {
 
                         scanerV2.setSavePoint(savePoint);
                         // ЕСЛИ
-                        if(next_2 == LexTypeTERMINAL._PARENTHESIS_OPEN){
-                            //<функция>
-                            stack.push(new Elem(ElemType.NOT_TERMINAL,"_функция", LexTypeNot._функция));
-                        }else {
+                        if (next_2 == LexTypeTERMINAL._PARENTHESIS_OPEN) {
+                            //<вызов_функции>
+                            stack.push(new Elem(ElemType.NOT_TERMINAL, "_вызов_функции", LexTypeNot._вызов_функции));
+                        } else {
                             //идентификатор
-                            stack.push(new Elem(ElemType.TERMINAL,"идентификатор", LexTypeTERMINAL._ID));
+                            stack.push(new Elem(ElemType.TERMINAL, "идентификатор", LexTypeTERMINAL._ID));
+                        }
+
+                        System.out.print("");
+                    }
+
+                    // <оператор> ID
+                    if (topELem.lexTypeNot == LexTypeNot._оператор && (next == LexTypeTERMINAL._ID)) {
+                        // тут либо <присваивание> либо <вызов_функции>
+                        SavePoint savePoint = scanerV2.getSavePoint();
+
+                        ArrayList<Character> lexem_2 = new ArrayList<>();
+                        LexTypeTERMINAL next_2 = scanerV2.next(lexem_2);
+                        String lexem_str_2 = lexemToStr(lexem_2);
+
+                        scanerV2.setSavePoint(savePoint);
+                        // ЕСЛИ
+                        if (next_2 == LexTypeTERMINAL._ASSIGN) {
+                            //<присваивание>
+                            stack.push(new Elem(ElemType.NOT_TERMINAL, "_присваивание", LexTypeNot._присваивание));
+                        } else if (next_2 == LexTypeTERMINAL._PARENTHESIS_OPEN) {
+                            // <вызов_функции>
+                            stack.push(new Elem(ElemType.NOT_TERMINAL, "_вызов_функции", LexTypeNot._вызов_функции));
                         }
 
                         System.out.print("");
                     }
                 }
-            }
-            else if( topELem.elementType == ElemType.PROGRAMM ){
+            } else if (topELem.elementType == ElemType.PROGRAMM) {
 
             } else {
                 throw new Exception("errorina");
@@ -140,23 +168,20 @@ public class LLK {
 
 
             System.out.println();
-
         }
 
 
-
-
-
         System.out.print("Все чики-пуки");
+        return true;
     }
 
     private void pushRightPartToStack(RightPart rightPart) {
-        for(int i = rightPart.elemList.size() - 1; i>= 0 ; i--){
+        for (int i = rightPart.elemList.size() - 1; i >= 0; i--) {
             this.stack.push(rightPart.elemList.get(i));
         }
     }
 
-    private String lexemToStr(List<Character> lexem){
+    private String lexemToStr(List<Character> lexem) {
         String lexem_str = lexem.stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining());
@@ -164,18 +189,28 @@ public class LLK {
     }
 
     int count = 0;
-    private void printStack(){
-        System.out.println("==========================" + ++count +"=================================\n");
+
+    private void printStack() throws Exception {
+        ++count;
+
+        if (count > 1000)
+            throw new Exception("count > 10000");
+
+        if(devMode == false)
+            return;
+
+        System.out.println("==========================" + count + "=================================\n");
+
         List<Elem> stackNaoborot = new ArrayList<>();
         for (Elem elem : stack) {
             stackNaoborot.add(elem);
         }
-        for(int i = stackNaoborot.size() - 1 ; i >=0 ; --i){
+        for (int i = stackNaoborot.size() - 1; i >= 0; --i) {
             System.out.println(stackNaoborot.get(i).getStrByType_LIGHT());
         }
     }
 
-    private void printNext( List<Character> lexem, LexTypeTERMINAL next){
+    private void printNext(List<Character> lexem, LexTypeTERMINAL next) {
         System.out.println();
         String lexem_str = this.lexemToStr(lexem);
         System.out.println("next: " + lexem_str + "     type: " + next.getString());

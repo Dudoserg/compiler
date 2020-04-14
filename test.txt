@@ -1,8 +1,42 @@
-double a = 136;
-
-int privet2(int b){
-    if(c == 3){
-       heh();
-    }else
-       kek();
+int privet2(int a, int b){
+    int c, d;
 }
+
+int privet2(int a, int b){
+    int c = 3, d;
+}
+
+int privet2(int a, int b){
+    int c, d = 3;
+}
+
+int privet2(int a, int b){
+    int c = 3, d = 3;
+}
+
+//
+int privet2(int a, int b){
+    int c, d;
+    int c = 3, d;
+    int c, d = 3;
+    int c = 3, d = 3;
+}
+
+int privet2(int a, int b){
+    int c = 3, d;
+    int c, d;
+    int c, d = 3;
+    int c = 3, d = 3;
+}
+int privet2(int a, int b){
+     int c, d = 3;
+     int c, d;
+     int c = 3, d;
+     int c = 3, d = 3;
+}
+int privet2(int a, int b){
+     int c = 3, d = 3;
+     int c, d = 3;
+     int c, d;
+     int c = 3, d;
+ }

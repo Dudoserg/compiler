@@ -1,5 +1,6 @@
 package main.algoritm_1and2.maga;
 
+import com.sun.applet2.AppletParameters;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,7 +8,9 @@ import main.Lab2.LexTypeTERMINAL;
 import main.Lab3.LexTypeNot;
 import main.SavePoint;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
@@ -21,12 +24,24 @@ public class Elem {
 
     public SavePoint savePoint;    /// это инфа о лексеме из сканера
 
+    //lab 3
+    public static Elem createEpsilon(LexTypeNot lexTypeNot){
+
+        Elem tmp = new Elem(ElemType.NOT_TERMINAL, lexTypeNot.getStr(), lexTypeNot);
+        return tmp;
+    }
+    public static Elem createEpsilon(LexTypeTERMINAL lexTypeTERMINAL){
+        // TODO вместо lexTypeTERMINAL.getString(), надо нормальную строку писать
+        Elem tmp = new Elem(ElemType.TERMINAL, lexTypeTERMINAL.getString(), lexTypeTERMINAL);
+        return tmp;
+    }
     //lab3
     public Elem(ElemType elementType, String str, LexTypeNot lexTypeNot) {
         this.elementType = elementType;
         this.str = str;
         this.lexTypeNot = lexTypeNot;
     }
+
 
     //lab3
     public Elem(ElemType elementType, String str, LexTypeTERMINAL lexTypeTERMINAL) {
