@@ -50,14 +50,11 @@ public class LLK {
 
             printStack();
             printNext(lexem, next);
+            if( count == 59)
+                System.out.println();
 
             Elem topELem = this.stack.pop();
             //TODO случай когда епсилон
-
-            if( topELem.lexTypeNot == LexTypeNot._W4)
-                System.out.println();
-
-
 
             if( topELem.elementType == ElemType.TERMINAL ){
                 if( topELem.lexTypeTERMINAL == LexTypeTERMINAL._epsilon)
@@ -113,6 +110,26 @@ public class LLK {
 
                         System.out.print("");
                     }
+                    if( topELem.lexTypeNot == LexTypeNot._A6 && ( next == LexTypeTERMINAL._ID)){
+                        // тут либо <функция> либо <объявление_переменных>
+                        SavePoint savePoint = scanerV2.getSavePoint();
+
+                        ArrayList<Character> lexem_2 = new ArrayList<>();
+                        LexTypeTERMINAL next_2 = scanerV2.next(lexem_2);
+                        String lexem_str_2 = lexemToStr(lexem_2);
+
+                        scanerV2.setSavePoint(savePoint);
+                        // ЕСЛИ
+                        if(next_2 == LexTypeTERMINAL._PARENTHESIS_OPEN){
+                            //<функция>
+                            stack.push(new Elem(ElemType.NOT_TERMINAL,"_функция", LexTypeNot._функция));
+                        }else {
+                            //идентификатор
+                            stack.push(new Elem(ElemType.TERMINAL,"идентификатор", LexTypeTERMINAL._ID));
+                        }
+
+                        System.out.print("");
+                    }
                 }
             }
             else if( topELem.elementType == ElemType.PROGRAMM ){
@@ -145,9 +162,10 @@ public class LLK {
                 .collect(Collectors.joining());
         return lexem_str;
     }
-    
+
+    int count = 0;
     private void printStack(){
-        System.out.println("===========================================================\n");
+        System.out.println("==========================" + ++count +"=================================\n");
         List<Elem> stackNaoborot = new ArrayList<>();
         for (Elem elem : stack) {
             stackNaoborot.add(elem);

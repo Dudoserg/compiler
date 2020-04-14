@@ -1,6 +1,6 @@
-double c = 136;
+double a = 136;
 
-int privet2(int c){
+int privet2(int b){
     if(c == 3){
        heh();
     }else

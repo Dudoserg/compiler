@@ -99,24 +99,7 @@ public class CreateLLK {
         System.out.println();
     }
 
-    private void AddEpsilons() {
-        {
-            Elem left = new Elem(NOT_TERMINAL, "_W4", LexTypeNot._W4);
-            Elem right = new Elem(TERMINAL, "_PARENTHESIS_CLOSE", LexTypeTERMINAL._PARENTHESIS_CLOSE);
-            this.addOneMoreEpsilon(left, right);
-        }
-        {
-            Elem left = new Elem(NOT_TERMINAL, "_операторы_и_описания", LexTypeNot._операторы_и_описания);
-            Elem right = new Elem(TERMINAL, "_BRACE_CLOSE", LexTypeTERMINAL._BRACE_CLOSE);
-            this.addOneMoreEpsilon(left, right);
-        }
-        //<программа>  #
-        {
-            Elem left = new Elem(NOT_TERMINAL, "_программа", LexTypeNot._программа);
-            Elem right = new Elem(TERMINAL, "_END", LexTypeTERMINAL._END);
-            this.addOneMoreEpsilon(left, right);
-        }
-    }
+
 
     private void addOneMoreEpsilon(Elem left, Elem right) {
         RightPart epsilon = new RightPart();
@@ -202,6 +185,7 @@ public class CreateLLK {
             map_TERMINAL.put("константа_10сс", LexTypeTERMINAL._TYPE_INT_10);
             map_TERMINAL.put("константа_16сс", LexTypeTERMINAL._TYPE_INT_16);
             map_TERMINAL.put("конст.символьн.", LexTypeTERMINAL._TYPE_CHAR);
+            map_TERMINAL.put("E", LexTypeTERMINAL._epsilon);
         }
         elem.lexTypeTERMINAL = map_TERMINAL.get(elem.str);
 
@@ -407,6 +391,10 @@ public class CreateLLK {
                 for (Elem elem : part.elemList) {
                     // Находим первый терминал, добавляем его и выходим из правила
                     if (elem.elementType == TERMINAL || elem.elementType == NOT_TERMINAL) {
+                        if( elem.elementType == TERMINAL)
+                            setLexemType_TERMINAL(elem);
+                        if( elem.elementType == NOT_TERMINAL)
+                            setLexemType_NOT(elem);
                         elemsSet.add(elem);
                         break;
                     }
@@ -540,8 +528,10 @@ public class CreateLLK {
                 // Перебираем кажыдй элемент из множества, и смотрим его левую часть
                 for (Elem elem : copy_elemsSet) {
                     Set<Elem> tmp = map.get(elem);
-                    if (tmp != null)
+                    if (tmp != null){
                         elemsSet.addAll(tmp);
+                    }
+
                 }
                 isChanged = isChanged | (!copy_elemsSet.equals(elemsSet));
             }
@@ -555,6 +545,62 @@ public class CreateLLK {
 
                     .collect(Collectors.toSet());
             map.put(elem, collect);
+        }
+    }
+
+
+    private void AddEpsilons() {
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_W4", LexTypeNot._W4);
+            Elem right = new Elem(TERMINAL, "_PARENTHESIS_CLOSE", LexTypeTERMINAL._PARENTHESIS_CLOSE);
+            this.addOneMoreEpsilon(left, right);
+        }
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_операторы_и_описания", LexTypeNot._операторы_и_описания);
+            Elem right = new Elem(TERMINAL, "_BRACE_CLOSE", LexTypeTERMINAL._BRACE_CLOSE);
+            this.addOneMoreEpsilon(left, right);
+        }
+        //<программа>  #
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_программа", LexTypeNot._программа);
+            Elem right = new Elem(TERMINAL, "_END", LexTypeTERMINAL._END);
+            this.addOneMoreEpsilon(left, right);
+        }
+        // <R5>  ;
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_R5", LexTypeNot._R5);
+            Elem right = new Elem(TERMINAL, "_SEMICOLON", LexTypeTERMINAL._SEMICOLON);
+            this.addOneMoreEpsilon(left, right);
+        }
+        // <R4>  ;
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_R4", LexTypeNot._R4);
+            Elem right = new Elem(TERMINAL, "_SEMICOLON", LexTypeTERMINAL._SEMICOLON);
+            this.addOneMoreEpsilon(left, right);
+        }
+        // <R3>  ;
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_R3", LexTypeNot._R3);
+            Elem right = new Elem(TERMINAL, "_SEMICOLON", LexTypeTERMINAL._SEMICOLON);
+            this.addOneMoreEpsilon(left, right);
+        }
+        // <R2>  ;
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_R2", LexTypeNot._R2);
+            Elem right = new Elem(TERMINAL, "_SEMICOLON", LexTypeTERMINAL._SEMICOLON);
+            this.addOneMoreEpsilon(left, right);
+        }
+        // <R1>  ;
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_R1", LexTypeNot._R1);
+            Elem right = new Elem(TERMINAL, "_SEMICOLON", LexTypeTERMINAL._SEMICOLON);
+            this.addOneMoreEpsilon(left, right);
+        }
+        // <W2>  ;
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_W2", LexTypeNot._W2);
+            Elem right = new Elem(TERMINAL, "_SEMICOLON", LexTypeTERMINAL._SEMICOLON);
+            this.addOneMoreEpsilon(left, right);
         }
     }
 }
