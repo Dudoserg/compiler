@@ -78,9 +78,11 @@ public class LLK {
 
                         ArrayList<Character> lexem_2 = new ArrayList<>();
                         LexTypeTERMINAL next_2 = scanerV2.next(lexem_2);
+                        String lexem_str_2 = lexemToStr(lexem_2);
 
                         ArrayList<Character> lexem_3 = new ArrayList<>();
-                        LexTypeTERMINAL next_3 = scanerV2.next(lexem_2);
+                        LexTypeTERMINAL next_3 = scanerV2.next(lexem_3);
+                        String lexem_str_3 = lexemToStr(lexem_3);
 
                         System.out.print("");
                     }

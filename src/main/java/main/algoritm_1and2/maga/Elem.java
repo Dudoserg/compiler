@@ -104,29 +104,45 @@ public class Elem {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Elem elem = (Elem) o;
-//        return (this.elementType == elem.elementType || (this.elementType != null && this.elementType.equals(elem.elementType)))
-//                && (this.str == elem.str || (this.str != null && this.str.equals(elem.str)
-//        ));
-        boolean result = (this.elementType == elem.elementType || (this.elementType != null && this.elementType.equals(elem.elementType))) &&
-                (this.lexTypeTERMINAL == elem.lexTypeTERMINAL || (this.lexTypeTERMINAL != null && this.lexTypeTERMINAL.equals(elem.lexTypeTERMINAL))) &&
-                (this.lexTypeNot == elem.lexTypeNot || (this.lexTypeNot != null && this.lexTypeNot.equals(elem.lexTypeNot)));
-        return result;
+        if( false ){
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+            Elem elem = (Elem) o;
+            return (this.elementType == elem.elementType || (this.elementType != null && this.elementType.equals(elem.elementType)))
+                    && (this.str == elem.str || (this.str != null && this.str.equals(elem.str)
+            ));
+        }else{
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+            Elem elem = (Elem) o;
+            boolean result = (this.elementType == elem.elementType || (this.elementType != null && this.elementType.equals(elem.elementType))) &&
+                    (this.lexTypeTERMINAL == elem.lexTypeTERMINAL || (this.lexTypeTERMINAL != null && this.lexTypeTERMINAL.equals(elem.lexTypeTERMINAL))) &&
+                    (this.lexTypeNot == elem.lexTypeNot || (this.lexTypeNot != null && this.lexTypeNot.equals(elem.lexTypeNot)));
+            return result;
+        }
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((elementType == null) ? 0 : elementType.hashCode());
-        result = prime * result + ((lexTypeTERMINAL == null) ? 0 : lexTypeTERMINAL.hashCode());
-        result = prime * result + ((lexTypeNot == null) ? 0 : lexTypeNot.hashCode());
-        //result = prime * result + ((str == null) ? 0 : str.hashCode());
-        return result;
+        if( false){
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((elementType == null) ? 0 : elementType.hashCode());
+            result = prime * result + ((str == null) ? 0 : str.hashCode());
+            return result;
+        }else {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((elementType == null) ? 0 : elementType.hashCode());
+            result = prime * result + ((lexTypeTERMINAL == null) ? 0 : lexTypeTERMINAL.hashCode());
+            result = prime * result + ((lexTypeNot == null) ? 0 : lexTypeNot.hashCode());
+            //result = prime * result + ((str == null) ? 0 : str.hashCode());
+            return result;
+        }
     }
 
 

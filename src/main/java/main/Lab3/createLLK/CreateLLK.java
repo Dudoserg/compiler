@@ -54,6 +54,7 @@ public class CreateLLK {
         this.rows = this.readFromFile(System.getProperty("user.dir") + "/файлики/LLK_грамматика.txt");
 
         this.initRules();
+        setLexemTypeToTable();
 
         // L()  - first Elem
         createFirstList();
@@ -75,7 +76,6 @@ public class CreateLLK {
 
             tableObj.tableElemList.add(tableElem);
         }
-        setLexemTypeToTable();
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
@@ -95,6 +95,39 @@ public class CreateLLK {
     }
 
     private void setLexemTypeToTable() {
+        for (Rule rule : this.rules) {
+            setLexemType_NOT(rule.left);
+            for (RightPart part : rule.parts) {
+                for (Elem elem : part.elemList) {
+                    if (elem.elementType == TERMINAL) {
+                        setLexemType_TERMINAL(elem);
+                    } else if (elem.elementType == NOT_TERMINAL) {
+                        setLexemType_NOT(elem);
+                    }
+                }
+            }
+        }
+       /* for (Pair<Elem, Elem> elemElemPair : table.keySet()) {
+            Elem left = elemElemPair.getKey();
+            Elem right = elemElemPair.getValue();
+            setLexemType_NOT(left);
+            setLexemType_TERMINAL(right);
+
+            List<RightPart> rightParts = table.get(elemElemPair);
+            for (RightPart rightPart : rightParts) {
+                for (Elem elem : rightPart.elemList) {
+                    if (elem.elementType == TERMINAL) {
+                        setLexemType_TERMINAL(elem);
+                    } else if (elem.elementType == NOT_TERMINAL) {
+                        setLexemType_NOT(elem);
+                    }
+                }
+            }
+        }*/
+        System.out.println();
+    }
+
+    private void setLexemType_TERMINAL(Elem elem) {
         Map<String, LexTypeTERMINAL> map_TERMINAL = new HashMap<>();
         {
             map_TERMINAL.put("идентификатор", LexTypeTERMINAL._ID);
@@ -125,26 +158,15 @@ public class CreateLLK {
             map_TERMINAL.put("if", LexTypeTERMINAL._IF);
             map_TERMINAL.put("else", LexTypeTERMINAL._ELSE);
             map_TERMINAL.put("main", LexTypeTERMINAL._MAIN);
-           //map_TERMINAL.put("_INT", LexTypeTERMINAL._ERROR);
+            //map_TERMINAL.put("_INT", LexTypeTERMINAL._ERROR);
             map_TERMINAL.put("#", LexTypeTERMINAL._END);
         }
-        for (Pair<Elem, Elem> elemElemPair : table.keySet()) {
-            Elem left = elemElemPair.getKey();
-            Elem right = elemElemPair.getValue();
-            left.lexTypeNot = LexTypeNot.valueOf("_" + left.str);
-            right.lexTypeTERMINAL = map_TERMINAL.get(right.str);
-            List<RightPart> rightParts = table.get(elemElemPair);
-            for (RightPart rightPart : rightParts) {
-                for (Elem elem : rightPart.elemList) {
-                    if(elem.elementType == TERMINAL){
-                        elem.lexTypeTERMINAL = map_TERMINAL.get(elem.str);
-                    }else if(elem.elementType == NOT_TERMINAL){
-                        elem.lexTypeNot = LexTypeNot.valueOf("_" + elem.str);
-                    }
-                }
-            }
-        }
-        System.out.println();
+        elem.lexTypeTERMINAL = map_TERMINAL.get(elem.str);
+
+    }
+
+    private void setLexemType_NOT(Elem elem) {
+        elem.lexTypeNot = LexTypeNot.valueOf("_" + elem.str);
     }
 
     private void saveTable(Map<Pair<Elem, Elem>, List<RightPart>> table) throws Exception {
