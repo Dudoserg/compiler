@@ -52,10 +52,19 @@ public class Elem {
 		return result;
 	}
 
-	public String getStrByType(){
+	public String getStrByType_SHARP(){
 		String result = "";
 		if( this.elementType.equals(ElemType.NOT_TERMINAL)){
 			result += "<#" + this.str + "#>";
+		}else if( this.elementType.equals(ElemType.TERMINAL)){
+			result += this.str;
+		}
+		return result;
+	}
+	public String getStrByType_LIGHT(){
+		String result = "";
+		if( this.elementType.equals(ElemType.NOT_TERMINAL)){
+			result += "<" + this.str + ">";
 		}else if( this.elementType.equals(ElemType.TERMINAL)){
 			result += this.str;
 		}

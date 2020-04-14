@@ -441,15 +441,15 @@ public class CreateGrammar {
 					Relations relations = new Relations(elem, second, Sign.GREAT);
 					this.relations.add(relations);
 					if (i != lastElem.size() - 1)
-						System.out.print(elem.getStrByType() + ", ");
+						System.out.print(elem.getStrByType_SHARP() + ", ");
 					else
-						System.out.print(elem.getStrByType());
+						System.out.print(elem.getStrByType_SHARP());
 					//System.out.println(relations.leftElem.getStrByType() + " " + relations.sign.getStr() + " " + relations.rightElem.getStrByType());
 				}
 				System.out.print("}\tили\t");
 				for (int i = 0; i < lastElem.size(); i++) {
 					Elem elem = lastElem.get(i);
-					System.out.print(elem.getStrByType() + " > " + second.str);
+					System.out.print(elem.getStrByType_SHARP() + " > " + second.str);
 					if (i != lastElem.size() - 1)
 						System.out.print(", ");
 				}
@@ -491,15 +491,15 @@ public class CreateGrammar {
 					Relations relations = new Relations(first, elem, Sign.LESS);
 					this.relations.add(relations);
 					if (i != firstElems.size() - 1)
-						System.out.print(elem.getStrByType() + ", ");
+						System.out.print(elem.getStrByType_SHARP() + ", ");
 					else
-						System.out.print(elem.getStrByType());
+						System.out.print(elem.getStrByType_SHARP());
 					//System.out.println(relations.leftElem.getStrByType() + " " + relations.sign.getStr() + " " + relations.rightElem.getStrByType());
 				}
 				System.out.print("}\tили\t");
 				for (int i = 0; i < firstElems.size(); i++) {
 					Elem elem = firstElems.get(i);
-					System.out.print(first.str + " < " + elem.getStrByType());
+					System.out.print(first.str + " < " + elem.getStrByType_SHARP());
 					if (i != firstElems.size() - 1)
 						System.out.print(", ");
 				}
@@ -593,7 +593,7 @@ public class CreateGrammar {
 
 		String collect =
 				pairs.stream()
-						.map(elemElemPair -> elemElemPair.getKey().getStrByType() + "_" + elemElemPair.getValue().getStrByType())
+						.map(elemElemPair -> elemElemPair.getKey().getStrByType_SHARP() + "_" + elemElemPair.getValue().getStrByType_SHARP())
 						.collect(Collectors.joining("\t"));
 		String newCollect = "";
 
@@ -609,7 +609,7 @@ public class CreateGrammar {
 					pairs.stream()
 							.sorted((o1, o2) ->
 									(o1.getKey().str + o1.getValue().str).compareTo(o2.getKey().str + o2.getValue().str))
-							.map(elemElemPair -> elemElemPair.getKey().getStrByType() + "_" + elemElemPair.getValue().getStrByType())
+							.map(elemElemPair -> elemElemPair.getKey().getStrByType_SHARP() + "_" + elemElemPair.getValue().getStrByType_SHARP())
 							.collect(Collectors.joining("\t"));
 			if (collect.compareTo(newCollect) == 0)
 				break;
@@ -669,7 +669,7 @@ public class CreateGrammar {
 				System.out.print("");
 			}
 			rightPartList.addAll(tmp);
-			System.out.print(first.getStrByType() + " " + second.getStrByType() + "    ->    ");
+			System.out.print(first.getStrByType_SHARP() + " " + second.getStrByType_SHARP() + "    ->    ");
 			tmp.forEach(rightPart -> System.out.print(rightPart.print() + "| "));
 			System.out.println();
 
@@ -693,7 +693,7 @@ public class CreateGrammar {
 
 		System.out.print("На этом шаге получили следующие пары:\n");
 		newPairs.forEach(
-				elemElemPair -> System.out.print(elemElemPair.getKey().getStrByType() + " " + elemElemPair.getValue().getStrByType() + "     ")
+				elemElemPair -> System.out.print(elemElemPair.getKey().getStrByType_SHARP() + " " + elemElemPair.getValue().getStrByType_SHARP() + "     ")
 		);
 		System.out.println("\n\n");
 
@@ -750,15 +750,15 @@ public class CreateGrammar {
 		}
 		//System.out.println("countIteration = " + countIteration);
 		System.out.print("oldPairs = { ");
-		oldPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().getStrByType() + " " + elemElemPair.getValue().getStrByType() + "     "));
+		oldPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().getStrByType_SHARP() + " " + elemElemPair.getValue().getStrByType_SHARP() + "     "));
 		System.out.print(" }\n");
 
 		System.out.print("newPairs = { ");
-		newPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().getStrByType() + " " + elemElemPair.getValue().getStrByType() + "     "));
+		newPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().getStrByType_SHARP() + " " + elemElemPair.getValue().getStrByType_SHARP() + "     "));
 		System.out.print(" }\n");
 
 		System.out.print("allPairs = { ");
-		allPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().getStrByType() + " " + elemElemPair.getValue().getStrByType() + "     "));
+		allPairs.forEach(elemElemPair -> System.out.print(elemElemPair.getKey().getStrByType_SHARP() + " " + elemElemPair.getValue().getStrByType_SHARP() + "     "));
 		System.out.print(" }");
 		System.out.println("\n\n");
 
@@ -772,7 +772,7 @@ public class CreateGrammar {
 				return this.rules.get(i);
 		}
 		try {
-			throw new Exception("Чета не то дядя {\t" + left.getStrByType() + "\t}");
+			throw new Exception("Чета не то дядя {\t" + left.getStrByType_SHARP() + "\t}");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -781,7 +781,7 @@ public class CreateGrammar {
 
 
 	public String printPair(Pair<Elem, Elem> pair) {
-		return pair.getKey().getStrByType() + " " + pair.getValue().getStrByType();
+		return pair.getKey().getStrByType_SHARP() + " " + pair.getValue().getStrByType_SHARP();
 	}
 
 	private String pairsToString(List<Relations> pairs) {
@@ -794,7 +794,7 @@ public class CreateGrammar {
 			final Pair<Elem, Elem> fromPair = pair.fromPair;
 			tmp += leftElem.str + "    " + sign.getStr() + "    " + rightElem.str ;
 			if(fromPair != null)
-				tmp += "    from    " + fromPair.getKey().getStrByType() + " " + fromPair.getValue().getStrByType();
+				tmp += "    from    " + fromPair.getKey().getStrByType_SHARP() + " " + fromPair.getValue().getStrByType_SHARP();
 			tmp += "\n";
 			result += tmp;
 		}

@@ -87,7 +87,7 @@ public class EXCEL {
 			);
 
 			CellStyle cellStyle = book.createCellStyle();
-			cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+			cellStyle.setAlignment(HorizontalAlignment.CENTER);
 			cell.setCellStyle(cellStyle);
 		}
 
@@ -103,8 +103,8 @@ public class EXCEL {
 			);
 
 			CellStyle cellStyle = book.createCellStyle();
-			cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-			cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+			cellStyle.setAlignment(HorizontalAlignment.CENTER);
+			cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 			cell.setCellStyle(cellStyle);
 
 		}

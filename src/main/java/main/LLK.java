@@ -17,36 +17,36 @@ public class LLK {
 
 	private static final int PRINTLOGS = 1;
 
-	public static final Integer _A = 100;
+	public static final Integer _ПРОГРАММА = 100;
 	public static final Integer _A1 = 101;
 	public static final Integer _A2 = 102;
 	public static final Integer _A3 = 103;
 	public static final Integer _A4 = 104;
 	public static final Integer _A5 = 105;
 	public static final Integer _A6 = 106;
-	public static final Integer _B = 1007;
-	public static final Integer _C = 108;
-	public static final Integer _D = 109;
-	public static final Integer _E = 110;
-	public static final Integer _F = 111;
-	public static final Integer _G = 112;
-	public static final Integer _H = 113;
+	public static final Integer _ОДНО_ОПИСАНИЕ = 1007;
+	public static final Integer _ОБЪЯВЛЕНИЕ_ПЕРЕМННЫХ = 108;
+	public static final Integer _ОБЪЯВЛЕНИЕ_КОНСТАНТ = 109;
+	public static final Integer _ФУНКЦИЯ = 110;
+	public static final Integer _ТИП = 111;
+	public static final Integer _СПИСОК_ПЕРЕМННЫХ = 112;
+	public static final Integer _ПЕРЕМЕННАЯ = 113;
 	public static final Integer _if = 114;
-	public static final Integer _K = 115;
-	public static final Integer _L = 116;
-	public static final Integer _M = 117;
-	public static final Integer _N = 118;
-	public static final Integer _O = 119;
-	public static final Integer _P = 120;
-	public static final Integer _Q = 121;
-	public static final Integer _R = 122;
+	public static final Integer _СПИСОК_ПАРАМЕТРОВ = 115;
+	public static final Integer _СОСТАВНОЙ_ОПЕРАТОР = 116;
+	public static final Integer _ОПЕРАТОРЫ_И_ОПИСАНИЯ = 117;
+	public static final Integer _1_ОПЕРАТОР = 118;
+	public static final Integer _ОПЕРАТОР = 119;
+	public static final Integer _ПРИСВАИВАНИЕ = 120;
+	public static final Integer _ВЫЗОВ_ФУНКЦИИ = 121;
+	public static final Integer _СПИСОК_КОНСТАНТ = 122;
 	public static final Integer _R1 = 123;
 	public static final Integer _R2 = 124;
 	public static final Integer _R3 = 125;
 	public static final Integer _R4 = 126;
 	public static final Integer _R5 = 127;
-	public static final Integer _S = 128;
-	public static final Integer _T = 129;
+	public static final Integer _КОНСТАНТА = 128;
+	public static final Integer _ПАРАМЕТРЫ = 129;
 	public static final Integer _W2 = 130;
 	public static final Integer _W3 = 131;
 	public static final Integer _W4 = 132;
@@ -132,7 +132,7 @@ public class LLK {
 
 		// Записываем аксиому
 		magazin.push(new OneSymbol(true, Scaner._END, "#"));
-		magazin.push(new OneSymbol(false, LLK._A, "A"));
+		magazin.push(new OneSymbol(false, LLK._ПРОГРАММА, "ПРОГРАММА"));
 
 
 		this.start();
@@ -201,7 +201,7 @@ public class LLK {
 
 						// <B> int
 						// <B> double
-						if (up.typ.equals(LLK._B) && (type.equals(Scaner._INT) || type.equals(Scaner._DOUBLE))) {
+						if (up.typ.equals(LLK._ОДНО_ОПИСАНИЕ) && (type.equals(Scaner._INT) || type.equals(Scaner._DOUBLE))) {
 							//int a,
 							//int a;
 							//int a=
@@ -215,14 +215,15 @@ public class LLK {
 
 							// Ситуация когда объявляем функцию
 							if (tmpType == Scaner._PARENTHESIS_OPEN) {
-								this.magazin.push(new OneSymbol(false, LLK._E, "E"));
+								this.magazin.push(new OneSymbol(false, LLK._ФУНКЦИЯ, "ФУНКЦИЯ"));
 							}
 							// Ситуация когда объявляем переменную без инициализации
 							// Ситуация когда объявляем переменную с инициализацией
 							else {
-								this.magazin.push(new OneSymbol(false, LLK._C, "C"));
+								this.magazin.push(new OneSymbol(false, LLK._ОБЪЯВЛЕНИЕ_ПЕРЕМННЫХ, "ОБЪЯВЛЕНИЕ_ПЕРЕМННЫХ"));
 							}
 						}
+
 						// <A6> id
 						if (up.typ.equals(LLK._A6) && type.equals(Scaner._ID)) {
 							//a(        function
@@ -235,13 +236,14 @@ public class LLK {
 
 							// Ситуация когда вызов функции
 							if (tmpType == Scaner._PARENTHESIS_OPEN) {
-								this.magazin.push(new OneSymbol(false, LLK._Q, "Q"));
+								this.magazin.push(new OneSymbol(false, LLK._ВЫЗОВ_ФУНКЦИИ, "ВЫЗОВ_ФУНКЦИИ"));
 							}
 							// Ситуация когда идентификатор
 							else {
 								this.magazin.push(new OneSymbol(true, Scaner._ID, "idd"));
 							}
 						}
+
 						// <W7> else
 						if (up.typ.equals(LLK._W7) && type.equals(Scaner._ELSE)) {
 
@@ -254,7 +256,7 @@ public class LLK {
 							// Ситуация когда идет блок с ELSE
 							tmpType = type;
 							if (tmpType == Scaner._ELSE) {
-								this.magazin.push(new OneSymbol(false, LLK._O, "O"));
+								this.magazin.push(new OneSymbol(false, LLK._ОПЕРАТОР, "ОПЕРАТОР"));
 								this.magazin.push(new OneSymbol(true, Scaner._ELSE, "else"));
 							}
 							// Ситуация когда ИФ кончился
@@ -262,8 +264,9 @@ public class LLK {
 								this.magazin.push(new OneSymbol(false, LLK._epsilon, "_epsilon"));
 							}
 						}
+
 						// <O> id
-						if (up.typ == LLK._O && type == Scaner._ID) {
+						if (up.typ == LLK._ОПЕРАТОР && type == Scaner._ID) {
 
 							// =                  // это значит <P>
 							// (   // это значит ";<Q>"
@@ -273,12 +276,12 @@ public class LLK {
 							//this.magazin.pop();
 							// Ситуация когда идет = т.е. присваивание
 							if (tmpType == Scaner._ASSIGN) {
-								this.magazin.push(new OneSymbol(false, LLK._P, "P"));
+								this.magazin.push(new OneSymbol(false, LLK._ПРИСВАИВАНИЕ, "_ПРИСВАИВАНИЕ"));
 							}
 							// Ситуация когда ( т.е. вызов функции
 							else {
 								this.magazin.push(new OneSymbol(true, Scaner._SEMICOLON, ";"));
-								this.magazin.push(new OneSymbol(false, LLK._Q, "Q"));
+								this.magazin.push(new OneSymbol(false, LLK._ВЫЗОВ_ФУНКЦИИ, "_ВЫЗОВ_ФУНКЦИИ"));
 							}
 						}
 

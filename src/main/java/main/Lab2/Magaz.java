@@ -210,7 +210,7 @@ public class Magaz {
 
             // Напечатаем ее
             System.out.println("Ща сворачиваем\t\t" + partRoll.stream()
-                    .map(elem -> elem.getStrByType()).collect(Collectors.joining("  ")));
+                    .map(elem -> elem.getStrByType_SHARP()).collect(Collectors.joining("  ")));
 
             RightPart rightPartEqual = null;
 
@@ -242,7 +242,7 @@ public class Magaz {
                     if (rightPartEqual == null) {
                         index += cutPartRoll(partRoll);
                         System.out.println("Ща сворачиваем\t\t" + partRoll.stream()
-                                .map(elem -> elem.getStrByType()).collect(Collectors.joining("  ")));
+                                .map(elem -> elem.getStrByType_SHARP()).collect(Collectors.joining("  ")));
                         // i = data.size() - 1;    // заново начинаем обход всех правых частей
                     }
 
@@ -268,7 +268,7 @@ public class Magaz {
                 String errorMessage = "";
                 errorMessage += "lines : " + (lines + 1) + ";" + "\n";
                 errorMessage += "position: " + startPosition + ";" + "\n";
-                throw new MyException("\nНу вот и ошибочка: " + elem.getStrByType() + "\n" + errorMessage);
+                throw new MyException("\nНу вот и ошибочка: " + elem.getStrByType_SHARP() + "\n" + errorMessage);
 
                 //throw new Exception("Ошибка!!1");
             }
@@ -493,7 +493,7 @@ public class Magaz {
                 //errorMessage += "position_old: " + position_old + ";" + "\n";
                 //errorMessage += "uk1: " + uk1 + ";" + "\n";
 
-                throw new MyException("\nНу вот и ошибочка: " + right.getStrByType() + "\n" + errorMessage);
+                throw new MyException("\nНу вот и ошибочка: " + right.getStrByType_SHARP() + "\n" + errorMessage);
             }
 
         }

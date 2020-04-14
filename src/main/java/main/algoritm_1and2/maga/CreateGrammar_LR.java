@@ -1,7 +1,6 @@
 package main.algoritm_1and2.maga;
 
 import javafx.util.Pair;
-import main.algoritm_1and2.csv.EXCEL;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 
@@ -87,11 +86,11 @@ public class CreateGrammar_LR {
 
 
             for (Elem elem : mapL.keySet()) {
-                String str = "L( " + elem.getStrByType() + " )";
+                String str = "L( " + elem.getStrByType_SHARP() + " )";
                 str += "  =>  ";
                 Set<Elem> elems = mapL.get(elem);
                 for (Elem elem1 : elems) {
-                    str += elem1.getStrByType() + ", ";
+                    str += elem1.getStrByType_SHARP() + ", ";
                 }
                 System.out.println(str);
             }
@@ -124,11 +123,11 @@ public class CreateGrammar_LR {
             createLR(mapR);
 
             for (Elem elem : mapR.keySet()) {
-                String str = "R( " + elem.getStrByType() + " )";
+                String str = "R( " + elem.getStrByType_SHARP() + " )";
                 str += "  =>  ";
                 Set<Elem> elems = mapR.get(elem);
                 for (Elem elem1 : elems) {
-                    str += elem1.getStrByType() + ", ";
+                    str += elem1.getStrByType_SHARP() + ", ";
                 }
                 System.out.println(str);
             }
@@ -141,7 +140,7 @@ public class CreateGrammar_LR {
         Set<Pair<Elem, Elem>> pairs = createPairs();
         System.out.print("\n\n");
         for (Pair<Elem, Elem> pair : pairs) {
-            System.out.println(pair.getKey().getStrByType() + "    " + pair.getValue().getStrByType());
+            System.out.println(pair.getKey().getStrByType_SHARP() + "    " + pair.getValue().getStrByType_SHARP());
         }
         // create Relations > <
         relations_Hashmap = createRelations(pairs, mapL, mapR);
@@ -370,7 +369,8 @@ public class CreateGrammar_LR {
             );
 
             CellStyle cellStyle = book.createCellStyle();
-            cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle.setAlignment(HorizontalAlignment.CENTER);
+            cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
             cell.setCellStyle(cellStyle);
         }
 
@@ -386,8 +386,8 @@ public class CreateGrammar_LR {
             );
 
             CellStyle cellStyle = book.createCellStyle();
-            cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-            cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+            cellStyle.setAlignment(HorizontalAlignment.CENTER);
+            cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
             cell.setCellStyle(cellStyle);
 
         }
