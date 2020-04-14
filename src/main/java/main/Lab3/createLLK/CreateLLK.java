@@ -66,22 +66,8 @@ public class CreateLLK {
 
         table = createTable();
 
-        {
-            Elem left = new Elem(NOT_TERMINAL, "_W4", LexTypeNot._W4);
-            Elem right = new Elem(TERMINAL, "_PARENTHESIS_CLOSE", LexTypeTERMINAL._PARENTHESIS_CLOSE);
-            this.addOneMoreEpsilon(left, right);
-        }
-        {
-            Elem left = new Elem(NOT_TERMINAL, "_операторы_и_описания", LexTypeNot._операторы_и_описания);
-            Elem right = new Elem(TERMINAL, "_BRACE_CLOSE", LexTypeTERMINAL._BRACE_CLOSE);
-            this.addOneMoreEpsilon(left, right);
-        }
-        //<программа>  #
-        {
-            Elem left = new Elem(NOT_TERMINAL, "_программа", LexTypeNot._программа);
-            Elem right = new Elem(TERMINAL, "_END", LexTypeTERMINAL._END);
-            this.addOneMoreEpsilon(left, right);
-        }
+        AddEpsilons();
+
         saveTable(table);
 
 
@@ -111,6 +97,25 @@ public class CreateLLK {
         }
 
         System.out.println();
+    }
+
+    private void AddEpsilons() {
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_W4", LexTypeNot._W4);
+            Elem right = new Elem(TERMINAL, "_PARENTHESIS_CLOSE", LexTypeTERMINAL._PARENTHESIS_CLOSE);
+            this.addOneMoreEpsilon(left, right);
+        }
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_операторы_и_описания", LexTypeNot._операторы_и_описания);
+            Elem right = new Elem(TERMINAL, "_BRACE_CLOSE", LexTypeTERMINAL._BRACE_CLOSE);
+            this.addOneMoreEpsilon(left, right);
+        }
+        //<программа>  #
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_программа", LexTypeNot._программа);
+            Elem right = new Elem(TERMINAL, "_END", LexTypeTERMINAL._END);
+            this.addOneMoreEpsilon(left, right);
+        }
     }
 
     private void addOneMoreEpsilon(Elem left, Elem right) {
@@ -186,13 +191,17 @@ public class CreateLLK {
             map_TERMINAL.put(",", LexTypeTERMINAL._COMMA);
             map_TERMINAL.put(";", LexTypeTERMINAL._SEMICOLON);
             map_TERMINAL.put("int", LexTypeTERMINAL._INT);
-            map_TERMINAL.put("dobule", LexTypeTERMINAL._DOUBLE);
+            map_TERMINAL.put("double", LexTypeTERMINAL._DOUBLE);
             map_TERMINAL.put("const", LexTypeTERMINAL._CONST);
             map_TERMINAL.put("if", LexTypeTERMINAL._IF);
             map_TERMINAL.put("else", LexTypeTERMINAL._ELSE);
             map_TERMINAL.put("main", LexTypeTERMINAL._MAIN);
             //map_TERMINAL.put("_INT", LexTypeTERMINAL._ERROR);
             map_TERMINAL.put("#", LexTypeTERMINAL._END);
+            map_TERMINAL.put("константа_8сс", LexTypeTERMINAL._TYPE_INT_8);
+            map_TERMINAL.put("константа_10сс", LexTypeTERMINAL._TYPE_INT_10);
+            map_TERMINAL.put("константа_16сс", LexTypeTERMINAL._TYPE_INT_16);
+            map_TERMINAL.put("конст.символьн.", LexTypeTERMINAL._TYPE_CHAR);
         }
         elem.lexTypeTERMINAL = map_TERMINAL.get(elem.str);
 
@@ -378,11 +387,20 @@ public class CreateLLK {
     private void createFirstList() {
         // инициализируем начальный список
         for (Rule rule : rules) {
+            if(rule.left.str.equals("константа"))
+                System.out.println();
             LinkedHashSet<Elem> elemsSet = new LinkedHashSet<>();
             // Добавляем первый элемент ( не важно терминал или нет)
             for (RightPart part : rule.parts) {
-                if (part.elemList.size() > 0)
-                    elemsSet.add(part.elemList.get(0));
+                if (part.elemList.size() > 0){
+                    Elem tmp = part.elemList.get(0);
+                    if( tmp.elementType == TERMINAL)
+                        setLexemType_TERMINAL(tmp);
+                    if( tmp.elementType == NOT_TERMINAL)
+                        setLexemType_NOT(tmp);
+                    elemsSet.add(tmp);
+
+                }
             }
             // Добавляем первый нетерминал (если он есть)
             for (RightPart part : rule.parts) {
