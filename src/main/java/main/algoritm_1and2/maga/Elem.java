@@ -1,5 +1,8 @@
 package main.algoritm_1and2.maga;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import main.Lab2.LexType;
 import main.SavePoint;
 
@@ -7,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class Elem {
 	public ElemType elementType;	// терминал или нет
 	public String str;			//

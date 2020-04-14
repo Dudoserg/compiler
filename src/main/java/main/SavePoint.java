@@ -1,5 +1,13 @@
 package main;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+
 public class SavePoint {
     public int uk1;
     public int lines;

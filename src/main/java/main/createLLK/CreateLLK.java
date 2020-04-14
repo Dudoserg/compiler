@@ -1,5 +1,7 @@
 package main.createLLK;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 import main.algoritm_1and2.maga.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -38,7 +40,9 @@ public class CreateLLK {
     Map<Pair<Elem, Elem>, List<RightPart>> table;
 
     public static void main(String[] args) throws Exception {
+        long startTime = System.currentTimeMillis();
         CreateLLK createLLK = new CreateLLK();
+        System.out.println("CreateLLK time = " + (System.currentTimeMillis() - startTime) / 1000.0 + " s.");
     }
 
     public CreateLLK() throws Exception {
@@ -53,7 +57,37 @@ public class CreateLLK {
 
         table = createTable();
 
-        saveTable(table);
+        try {
+            saveTable(table);
+        }catch (FileNotFoundException e){
+
+        }
+
+        Table tableObj = new Table();
+        for (Pair<Elem, Elem> elemElemPair : table.keySet()) {
+            Elem left = elemElemPair.getKey();
+            Elem right = elemElemPair.getValue();
+            List<RightPart> rightParts = table.get(elemElemPair);
+
+            TableElem tableElem = new TableElem(left, right, rightParts);
+
+            tableObj.tableElemList.add(tableElem);
+        }
+
+
+        ObjectMapper mapper  = new ObjectMapper();
+        mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
+                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
+
+        String json =mapper.writeValueAsString(tableObj);
+
+
+        try (PrintWriter out = new PrintWriter("файлики/LLK_table.json")) {
+            out.println(json);
+        }
 
         System.out.println();
     }
