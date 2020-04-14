@@ -1,5 +1,6 @@
 package main;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import javafx.util.Pair;
 
 import java.io.IOException;
@@ -107,9 +108,9 @@ public class LLK {
 		}
 	}
 
-	public LLK() {
+	public LLK() throws JsonProcessingException {
 		// Инициализируем таблицу
-		this.table = TableRule.initTable();
+		this.table = TableRule.initTable_fromFile();
 
 		try {
 			this.scaner = new Scaner();

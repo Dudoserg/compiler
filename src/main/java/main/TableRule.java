@@ -1,6 +1,8 @@
 package main;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import javafx.util.Pair;
+import main.createLLK.ReadLLK;
 
 import java.util.HashMap;
 
@@ -1652,6 +1654,20 @@ public class TableRule {
 
         table.put(new Pair<>(LLK._R3, Scaner._EQUALLY), tmpCell);
         table.put(new Pair<>(LLK._R3, Scaner._NOT_EQUALLY), tmpCell);
+
+
+        return table;
+    }
+    public static HashMap<Pair<Integer, Integer>, TableCell> initTable_fromFile() throws JsonProcessingException {
+        ReadLLK readLLK = new ReadLLK();
+
+        HashMap<Pair<Integer, Integer>, TableCell> table = new HashMap<>();
+        table = new HashMap<>();
+        TableCell tmpCell;
+        Rule tmpRule;
+////////////////////////////////////////////////////////////////////////////
+        ////////////// <программа> int
+        tmpCell = new TableCell();
 
 
         return table;

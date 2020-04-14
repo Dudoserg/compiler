@@ -73,6 +73,8 @@ public class Elem {
 			result += "<" + this.str + ">";
 		}else if( this.elementType.equals(ElemType.TERMINAL)){
 			result += this.str;
+		}else if( this.elementType.equals(ElemType.PROGRAMM)){
+			result += "<@" + this.str + "@>";
 		}
 		return result;
 	}

@@ -4,7 +4,11 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 import main.algoritm_1and2.maga.*;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.*;
@@ -57,11 +61,8 @@ public class CreateLLK {
 
         table = createTable();
 
-        try {
-            saveTable(table);
-        }catch (FileNotFoundException e){
+        saveTable(table);
 
-        }
 
         Table tableObj = new Table();
         for (Pair<Elem, Elem> elemElemPair : table.keySet()) {
@@ -75,14 +76,14 @@ public class CreateLLK {
         }
 
 
-        ObjectMapper mapper  = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
                 .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
                 .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
                 .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
                 .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
 
-        String json =mapper.writeValueAsString(tableObj);
+        String json = mapper.writeValueAsString(tableObj);
 
 
         try (PrintWriter out = new PrintWriter("файлики/LLK_table.json")) {
@@ -131,13 +132,25 @@ public class CreateLLK {
         // Начинаем создавать документ
         Workbook book = new HSSFWorkbook();
         Sheet sheet = book.createSheet("list_1");
+        Font redFont = book.createFont();
+        redFont.setColor(HSSFColor.HSSFColorPredefined.RED.getIndex());
+
+        Font blackFont = book.createFont();
+        blackFont.setColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
 
         // Создаем строки
         for (int i = 0; i < list_NOT_TERMINAL.size() + 1; i++) {
             // Нумерация начинается с нуля
             Row row = sheet.createRow(i);
         }
-        sheet.getRow(0).createCell(0).setCellValue("⬛");
+        Row row_1 = sheet.getRow(0);
+        Cell cel_1 = row_1.createCell(0);
+        cel_1.setCellValue("⬛");
+        CellStyle style_1 = book.createCellStyle();
+        style_1.setFont(blackFont);
+        style_1.setAlignment(HorizontalAlignment.CENTER);
+        style_1.setVerticalAlignment(VerticalAlignment.CENTER);
+        cel_1.setCellStyle(style_1);
         //sheet.autoSizeColumn(0);
 
 
@@ -177,14 +190,6 @@ public class CreateLLK {
         }
 
 
-//        Row row = sheet.getRow(5);
-//        Cell cell = row.createCell(5);
-//        CellStyle backgroundStyle = book.createCellStyle();
-//        backgroundStyle.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
-//        backgroundStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-//        cell.setCellStyle(backgroundStyle);
-//        cell.setCellValue("hello");
-
         for (Pair<Elem, Elem> elemElemPair : table.keySet()) {
             Elem left = elemElemPair.getKey();
             Elem right = elemElemPair.getValue();
@@ -203,14 +208,35 @@ public class CreateLLK {
 
             Row row = sheet.getRow(row_index);
             Cell cell = row.createCell(col_index);
-            cell.setCellValue(str);
             if (rightParts.size() > 1) {
-                CellStyle backgroundStyle = book.createCellStyle();
-                backgroundStyle.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
-                backgroundStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-                backgroundStyle.setWrapText(true);
-                cell.setCellStyle(backgroundStyle);
+                CellStyle style = book.createCellStyle();
+                style.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
+                style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+                style.setAlignment(HorizontalAlignment.CENTER);
+                style.setVerticalAlignment(VerticalAlignment.CENTER);
+
+                style.setWrapText(true);
+
+                style.setFont(blackFont);
+
+                paintInRed(redFont, str, cell);
+
+                cell.setCellStyle(style);
+            } else {
+                CellStyle style = book.createCellStyle();
+
+                style.setFont(blackFont);
+
+                style.setAlignment(HorizontalAlignment.CENTER);
+                style.setVerticalAlignment(VerticalAlignment.CENTER);
+
+                paintInRed(redFont, str, cell);
+
+                cell.setCellStyle(style);
             }
+
+
         }
         // Задаем ширину
         for (int i = 0; i < list_TERMINAL.size() + 1; ++i) {
@@ -218,82 +244,28 @@ public class CreateLLK {
             sheet.setColumnWidth(i, sheet.getColumnWidth(i) + 4 * 256);
         }
 
-       /* for (MyPair<Elem, Elem> elemElemMyPair : relations_Hashmap.keySet()) {
-            List<Relations> relations = relations_Hashmap.get(elemElemMyPair);
-            Elem left = elemElemMyPair.getKey();
-            Elem right = elemElemMyPair.getValue();
-            int left_index = -1;
-            int right_index = -1;
-            for(int i = 0 ; i < set_list.size(); ++i){
-                if(left.str.equals(set_list.get(i).str) && left.elementType.equals(set_list.get(i).elementType))
-                    left_index = i;
-                if(right.str.equals(set_list.get(i).str) && right.elementType.equals(set_list.get(i).elementType))
-                    right_index = i;
-            }
-            final String cellValue = relations
-                    .stream()
-                    .distinct()
-                    .map(r -> r.sign.getStr()).collect(Collectors.joining("\n"));
-
-            Row row = sheet.getRow(left_index + 1);
-
-            Cell cell = row.createCell(right_index + 1);
-
-            cell.setCellValue(cellValue);
-
-            if (relations.size() >= 2)
-                colision_count++;
-        }*/
-
-        // Теперь пройдемся по контенту
-//        for (int i = 0; i < set_list.size(); ++i) {
-//            for (int j = 0; j < set_list.size(); ++j) {
-//                Elem elem_first = set_list.get(i);
-//                Elem elem_second = set_list.get(j);
-//
-//                Row row = sheet.getRow(i + 1);
-//
-//                Cell cell = row.createCell(j + 1);
-//                List<Relations> relations = relations_Hashmap.get(new MyPair<Elem, Elem>(elem_first, elem_second));
-//                if( relations == null)
-//                    break;
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////УДАЛЕНИЕ ДУБЛИКАТОВ знаков//////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                if (relations.size() > 1) {
-//                    System.out.print("");
-//                    HashSet<String> seen = new HashSet<>();
-//                    relations.removeIf(e -> !seen.add(e.sign.getStr()));
-//                }
-//
-//
-//                final String cellValue = relations
-//                        .stream()
-//                        .distinct()
-//                        .map(r -> r.sign.getStr()).collect(Collectors.joining("\n"));
-//
-//                cell.setCellValue(cellValue);
-////
-//                if (relations.size() >= 2) {
-//                    colision_count++;
-//
-//                }
-////				CellStyle cellStyle = book.createCellStyle();
-////				cellStyle.setWrapText(true);
-////				cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-////				cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-////				cell.setCellStyle(cellStyle);
-//            }
-//        }
-
-
-        // Записываем всё в файл
 
 
         book.write(new FileOutputStream("файлики/LLK" + ".xls"));
         book.close();
         System.out.println("colision_count  =  " + colision_count);
+    }
+
+
+    private void paintInRed(Font redFont, String str, Cell cell) {
+        // Ищем индексы где встречается @
+        List<Integer> indexList = new ArrayList<>();
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == '@')
+                indexList.add(i);
+        }
+        HSSFRichTextString richString = new HSSFRichTextString(str);
+        for (int i = 0; i < indexList.size(); i += 2) {
+            int indexFirst = indexList.get(i) - 1;
+            int indexSecond = indexList.get(i + 1) + 2;
+            richString.applyFont(indexFirst, indexSecond, redFont);
+        }
+        cell.setCellValue(richString);
     }
 
     private void createFirstList() {
@@ -359,8 +331,12 @@ public class CreateLLK {
         return table;
     }
 
-    private Set<Elem> firstTerminal(RightPart part) {
-        Elem elem = part.elemList.get(0);
+    private Set<Elem> firstTerminal(RightPart partT) {
+        List<Elem> collect = partT.elemList.stream()
+                .filter(elem -> elem.elementType == TERMINAL || elem.elementType == NOT_TERMINAL)
+                .collect(Collectors.toList());
+
+        Elem elem = collect.get(0);
         if (elem.elementType == TERMINAL) {
             Set<Elem> set = new LinkedHashSet<>();
             set.add(elem);
@@ -380,6 +356,9 @@ public class CreateLLK {
             BufferedReader reader = new BufferedReader(fr);
             // считаем сначала первую строку
             String line = reader.readLine();
+            for(int i = 0 ; i < 10; ++i)
+                line = line.replace("  ", " ");
+
             while (line != null) {
                 System.out.println(line);
                 row.add(line);

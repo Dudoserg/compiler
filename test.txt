@@ -1,4 +1,2 @@
 int privet2(int c){
-   int a = 2;
-   int b = 3, c = 4;
 }
