@@ -61,8 +61,27 @@ public class CreateLLK {
 
         Set<Elem> тип = first.get(new Elem("одно_описание", NOT_TERMINAL));
 
+
+
+
         table = createTable();
 
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_W4", LexTypeNot._W4);
+            Elem right = new Elem(TERMINAL, "_PARENTHESIS_CLOSE", LexTypeTERMINAL._PARENTHESIS_CLOSE);
+            this.addOneMoreEpsilon(left, right);
+        }
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_операторы_и_описания", LexTypeNot._операторы_и_описания);
+            Elem right = new Elem(TERMINAL, "_BRACE_CLOSE", LexTypeTERMINAL._BRACE_CLOSE);
+            this.addOneMoreEpsilon(left, right);
+        }
+        //<программа>  #
+        {
+            Elem left = new Elem(NOT_TERMINAL, "_программа", LexTypeNot._программа);
+            Elem right = new Elem(TERMINAL, "_END", LexTypeTERMINAL._END);
+            this.addOneMoreEpsilon(left, right);
+        }
         saveTable(table);
 
 
@@ -92,6 +111,20 @@ public class CreateLLK {
         }
 
         System.out.println();
+    }
+
+    private void addOneMoreEpsilon(Elem left, Elem right) {
+        RightPart epsilon = new RightPart();
+        epsilon.elemList.add(new Elem(TERMINAL, "e", LexTypeTERMINAL._epsilon));
+
+        Pair<Elem, Elem> pair = new Pair<>(left, right);
+        List<RightPart> rightParts = this.table.get(pair);
+        if (rightParts == null) {
+            rightParts = new ArrayList<>();
+            this.table.put(pair, rightParts);
+        }
+        rightParts.add(epsilon);
+
     }
 
     private void setLexemTypeToTable() {

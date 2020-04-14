@@ -1,6 +1,7 @@
 package main.Lab2;
 
 public enum LexTypeTERMINAL {
+    _epsilon ("_epsilon") ,
     _SSS_ ("_SSS_") ,
     _TYPE_INT_10 ("_TYPE_INT_10") ,
     _TYPE_INT_16 ("_TYPE_INT_16") ,

@@ -54,24 +54,35 @@ public class LLK {
             Elem topELem = this.stack.pop();
             //TODO случай когда епсилон
 
+            if( topELem.lexTypeNot == LexTypeNot._W4)
+                System.out.println();
+
+
+
             if( topELem.elementType == ElemType.TERMINAL ){
-                System.out.print("");
-                if (topELem.lexTypeTERMINAL == LexTypeTERMINAL._END)
-                    flag_working = false;
-                else
-                     next = scanerV2.next(lexem);
+                if( topELem.lexTypeTERMINAL == LexTypeTERMINAL._epsilon)
+                    continue;
+                if (topELem.lexTypeTERMINAL == next){
+                    if (topELem.lexTypeTERMINAL == LexTypeTERMINAL._END)
+                        flag_working = false;
+                    else
+                        next = scanerV2.next(lexem);
+                }else {
+                    throw new Exception("терминалы не совпали");
+                }
+
             }
             else if( topELem.elementType == ElemType.NOT_TERMINAL ){
                 List<RightPart> rightParts = table.get(new Pair<>(topELem, new Elem(ElemType.TERMINAL, lexemToStr(lexem), next)));
 
                 if(rightParts == null || rightParts.size() == 0){
-                    throw new Exception("нет такого в таблице");
+                    throw new Exception("нет такого в таблице : " + topELem.getStrByType_LIGHT() + "  " + lexemToStr(lexem));
                 }
                 if( rightParts.size() == 1){
                     pushRightPartToStack(rightParts.get(0));
-                    printStack();
-                    printNext(lexem, next);
-                    System.out.print("");
+                    //printStack();
+                    //printNext(lexem, next);
+                    //System.out.print("");
                 }else {
                     //<одно_описание> _INT
                     if( topELem.lexTypeNot == LexTypeNot._одно_описание && ( next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._DOUBLE)){
@@ -106,6 +117,8 @@ public class LLK {
             }
             else if( topELem.elementType == ElemType.PROGRAMM ){
 
+            } else {
+                throw new Exception("errorina");
             }
 
 
@@ -117,7 +130,7 @@ public class LLK {
 
 
 
-        System.out.print("");
+        System.out.print("Все чики-пуки");
     }
 
     private void pushRightPartToStack(RightPart rightPart) {
