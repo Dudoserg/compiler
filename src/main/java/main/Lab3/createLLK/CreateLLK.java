@@ -1,11 +1,11 @@
-package main.createLLK;
+package main.Lab3.createLLK;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
+import main.Lab2.LexTypeTERMINAL;
+import main.Lab3.LexTypeNot;
 import main.algoritm_1and2.maga.*;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import static main.algoritm_1and2.maga.ElemType.NOT_TERMINAL;
 import static main.algoritm_1and2.maga.ElemType.TERMINAL;
+
 
 public class CreateLLK {
 
@@ -74,7 +75,7 @@ public class CreateLLK {
 
             tableObj.tableElemList.add(tableElem);
         }
-
+        setLexemTypeToTable();
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
@@ -90,6 +91,59 @@ public class CreateLLK {
             out.println(json);
         }
 
+        System.out.println();
+    }
+
+    private void setLexemTypeToTable() {
+        Map<String, LexTypeTERMINAL> map_TERMINAL = new HashMap<>();
+        {
+            map_TERMINAL.put("идентификатор", LexTypeTERMINAL._ID);
+            map_TERMINAL.put("*", LexTypeTERMINAL._STAR);
+            map_TERMINAL.put("/", LexTypeTERMINAL._SLASH);
+            map_TERMINAL.put("%", LexTypeTERMINAL._PERCENT);
+            map_TERMINAL.put("+", LexTypeTERMINAL._PLUS);
+            map_TERMINAL.put("-", LexTypeTERMINAL._MINUS);
+            map_TERMINAL.put("<<", LexTypeTERMINAL._SHIFT_LEFT);
+            map_TERMINAL.put(">>", LexTypeTERMINAL._SHIFT_RIGHT);
+            map_TERMINAL.put(">", LexTypeTERMINAL._GREAT);
+            map_TERMINAL.put("<", LexTypeTERMINAL._LESS);
+            map_TERMINAL.put(">=", LexTypeTERMINAL._GREAT_EQUALLY);
+            map_TERMINAL.put("<=", LexTypeTERMINAL._LESS_EQUALLY);
+            map_TERMINAL.put("==", LexTypeTERMINAL._EQUALLY);
+            map_TERMINAL.put("!=", LexTypeTERMINAL._NOT_EQUALLY);
+            map_TERMINAL.put("=", LexTypeTERMINAL._ASSIGN);
+            map_TERMINAL.put("(", LexTypeTERMINAL._PARENTHESIS_OPEN);
+            map_TERMINAL.put(")", LexTypeTERMINAL._PARENTHESIS_CLOSE);
+            map_TERMINAL.put("{", LexTypeTERMINAL._BRACE_OPEN);
+            map_TERMINAL.put("}", LexTypeTERMINAL._BRACE_CLOSE);
+            map_TERMINAL.put(".", LexTypeTERMINAL._POINT);
+            map_TERMINAL.put(",", LexTypeTERMINAL._COMMA);
+            map_TERMINAL.put(";", LexTypeTERMINAL._SEMICOLON);
+            map_TERMINAL.put("int", LexTypeTERMINAL._INT);
+            map_TERMINAL.put("dobule", LexTypeTERMINAL._DOUBLE);
+            map_TERMINAL.put("const", LexTypeTERMINAL._CONST);
+            map_TERMINAL.put("if", LexTypeTERMINAL._IF);
+            map_TERMINAL.put("else", LexTypeTERMINAL._ELSE);
+            map_TERMINAL.put("main", LexTypeTERMINAL._MAIN);
+           //map_TERMINAL.put("_INT", LexTypeTERMINAL._ERROR);
+            map_TERMINAL.put("#", LexTypeTERMINAL._END);
+        }
+        for (Pair<Elem, Elem> elemElemPair : table.keySet()) {
+            Elem left = elemElemPair.getKey();
+            Elem right = elemElemPair.getValue();
+            left.lexTypeNot = LexTypeNot.valueOf("_" + left.str);
+            right.lexTypeTERMINAL = map_TERMINAL.get(right.str);
+            List<RightPart> rightParts = table.get(elemElemPair);
+            for (RightPart rightPart : rightParts) {
+                for (Elem elem : rightPart.elemList) {
+                    if(elem.elementType == TERMINAL){
+                        elem.lexTypeTERMINAL = map_TERMINAL.get(elem.str);
+                    }else if(elem.elementType == NOT_TERMINAL){
+                        elem.lexTypeNot = LexTypeNot.valueOf("_" + elem.str);
+                    }
+                }
+            }
+        }
         System.out.println();
     }
 
@@ -245,12 +299,10 @@ public class CreateLLK {
         }
 
 
-
         book.write(new FileOutputStream("файлики/LLK" + ".xls"));
         book.close();
         System.out.println("colision_count  =  " + colision_count);
     }
-
 
     private void paintInRed(Font redFont, String str, Cell cell) {
         // Ищем индексы где встречается @
@@ -356,7 +408,7 @@ public class CreateLLK {
             BufferedReader reader = new BufferedReader(fr);
             // считаем сначала первую строку
             String line = reader.readLine();
-            for(int i = 0 ; i < 10; ++i)
+            for (int i = 0; i < 10; ++i)
                 line = line.replace("  ", " ");
 
             while (line != null) {

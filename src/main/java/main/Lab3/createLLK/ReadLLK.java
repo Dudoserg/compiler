@@ -1,11 +1,9 @@
-package main.createLLK;
+package main.Lab3.createLLK;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import main.algoritm_1and2.maga.Elem;
 import main.algoritm_1and2.maga.RightPart;

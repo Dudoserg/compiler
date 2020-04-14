@@ -1,4 +1,4 @@
-package main.Lab3;
+package main;
 
 import java.io.IOException;
 

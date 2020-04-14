@@ -1,10 +1,15 @@
-package main.Lab3;
+package main;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import javafx.util.Pair;
-import main.createLLK.ReadLLK;
+import main.algoritm_1and2.maga.Elem;
+import main.algoritm_1and2.maga.RightPart;
+import main.Lab3.createLLK.ReadLLK;
+import main.Lab3.createLLK.Table;
+import main.Lab3.createLLK.TableElem;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class TableRule {
     public TableRule() {
@@ -1668,6 +1673,17 @@ public class TableRule {
 ////////////////////////////////////////////////////////////////////////////
         ////////////// <программа> int
         tmpCell = new TableCell();
+
+        Table tableOjb = readLLK.getTableOjb();
+        for (TableElem tableElem : tableOjb.getTableElemList()) {
+            final Elem left = tableElem.getLeft();
+            final Elem right = tableElem.getRight();
+            List<RightPart> rightPartList = tableElem.getRightPartList();
+
+
+
+        }
+
 
 
         return table;

@@ -1,6 +1,6 @@
-package main.Lab2 ;
+package main.Lab2;
 
-public enum LexType {
+public enum LexTypeTERMINAL {
     _SSS_ ("_SSS_") ,
     _TYPE_INT_10 ("_TYPE_INT_10") ,
     _TYPE_INT_16 ("_TYPE_INT_16") ,
@@ -37,7 +37,7 @@ public enum LexType {
     _ERROR ("_ERROR") ,
     _END ("_END") ;
 
-    LexType(String string) {
+    LexTypeTERMINAL(String string) {
         this.string = string;
     }
 

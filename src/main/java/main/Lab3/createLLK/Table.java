@@ -1,7 +1,6 @@
-package main.createLLK;
+package main.Lab3.createLLK;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;

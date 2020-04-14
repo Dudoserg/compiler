@@ -1,7 +1,7 @@
 package main.Lab2;
 
 
-import main.Lab3.SavePoint;
+import main.SavePoint;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -63,7 +63,7 @@ public class ScanerV2 {
     ArrayList<Character> t;                 // Исходный текст
     ArrayList<Integer> t2;                 // Исходный текст
 
-    ArrayList<ScanerV2.Tuple<String, LexType>> KEYWORD;
+    ArrayList<ScanerV2.Tuple<String, LexTypeTERMINAL>> KEYWORD;
     int uk;                                 // указатель текущей позиции в исходном тексте
     int lines;                             // счетчик строк, для вывода ошибки
     int position_in_lines;                  // Счетчик позиции в строке, для вывода ошибки
@@ -79,12 +79,12 @@ public class ScanerV2 {
 
         this.KEYWORD = new ArrayList<>();
 
-        this.KEYWORD.add(new ScanerV2.Tuple<>("int", LexType._INT));
-        this.KEYWORD.add(new ScanerV2.Tuple<>("double", LexType._DOUBLE));
-        this.KEYWORD.add(new ScanerV2.Tuple<>("if", LexType._IF));
-        this.KEYWORD.add(new ScanerV2.Tuple<>("else", LexType._ELSE));
+        this.KEYWORD.add(new ScanerV2.Tuple<>("int", LexTypeTERMINAL._INT));
+        this.KEYWORD.add(new ScanerV2.Tuple<>("double", LexTypeTERMINAL._DOUBLE));
+        this.KEYWORD.add(new ScanerV2.Tuple<>("if", LexTypeTERMINAL._IF));
+        this.KEYWORD.add(new ScanerV2.Tuple<>("else", LexTypeTERMINAL._ELSE));
         //this.KEYWORD.add(new Tuple<>("main",_MAIN));
-        this.KEYWORD.add(new ScanerV2.Tuple<>("const", LexType._CONST));
+        this.KEYWORD.add(new ScanerV2.Tuple<>("const", LexTypeTERMINAL._CONST));
 
 
         try {
@@ -121,12 +121,12 @@ public class ScanerV2 {
 
         this.KEYWORD = new ArrayList<>();
 
-        this.KEYWORD.add(new ScanerV2.Tuple<>("int", LexType._INT));
-        this.KEYWORD.add(new ScanerV2.Tuple<>("double", LexType._DOUBLE));
-        this.KEYWORD.add(new ScanerV2.Tuple<>("if", LexType._IF));
-        this.KEYWORD.add(new ScanerV2.Tuple<>("else", LexType._ELSE));
+        this.KEYWORD.add(new ScanerV2.Tuple<>("int", LexTypeTERMINAL._INT));
+        this.KEYWORD.add(new ScanerV2.Tuple<>("double", LexTypeTERMINAL._DOUBLE));
+        this.KEYWORD.add(new ScanerV2.Tuple<>("if", LexTypeTERMINAL._IF));
+        this.KEYWORD.add(new ScanerV2.Tuple<>("else", LexTypeTERMINAL._ELSE));
         //this.KEYWORD.add(new Tuple<>("main",_MAIN));
-        this.KEYWORD.add(new ScanerV2.Tuple<>("const",LexType._CONST));
+        this.KEYWORD.add(new ScanerV2.Tuple<>("const", LexTypeTERMINAL._CONST));
 
         String path = System.getProperty("user.dir") + "\\test.txt";
         try {
@@ -190,9 +190,9 @@ public class ScanerV2 {
     }
 
 
-    public LexType scaning(ArrayList<Character> l) {
+    public LexTypeTERMINAL scaning(ArrayList<Character> l) {
 
-        LexType resultScanerV2 = null;
+        LexTypeTERMINAL resultScanerV2 = null;
         System.out.print("\n\n==========================================================================================\n\n");
         do {
             resultScanerV2 = next(l);
@@ -201,11 +201,11 @@ public class ScanerV2 {
                 System.out.print(c);
             }
             System.out.print("\n");
-        } while (resultScanerV2 != LexType._END);
+        } while (resultScanerV2 != LexTypeTERMINAL._END);
         return null;
     }
 
-    public LexType next(List<Character> l) {
+    public LexTypeTERMINAL next(List<Character> l) {
         this.position_in_lines_old = this.position_in_lines;
         i = 0;
         l.clear();
@@ -213,13 +213,13 @@ public class ScanerV2 {
         try {
             current = t.get(uk);
         } catch (IndexOutOfBoundsException ex) {
-            return LexType._END;
+            return LexTypeTERMINAL._END;
         }
         return startMetka(l);
     }
     public int startLexemPositionInLine = 0;
 
-    public LexType startMetka(List<Character> l) {
+    public LexTypeTERMINAL startMetka(List<Character> l) {
 //        i = 0;
 //        l.clear();
 //        char current = ' ';
@@ -256,7 +256,7 @@ public class ScanerV2 {
         // current = type.get(uk);
         if (t.get(uk) == '\0') {
             l.add('#');         //l.set(0,'#');   // l.get(0) = '#';
-            return LexType._END;
+            return LexTypeTERMINAL._END;
         }
 
 
@@ -280,7 +280,7 @@ public class ScanerV2 {
                             inc_uk();
                         }
                     }
-                    return LexType._TYPE_INT_16;
+                    return LexTypeTERMINAL._TYPE_INT_16;
                 } else if ((t.get(uk) >= '0') && (t.get(uk) <= '7')) { // восьмеричная
                     while ((t.get(uk) >= '0') && (t.get(uk) <= '7')) {
                         if (i < _MAX_LEX - 1) {
@@ -290,9 +290,9 @@ public class ScanerV2 {
                             inc_uk();
                         }
                     }
-                    return LexType._TYPE_INT_8;
+                    return LexTypeTERMINAL._TYPE_INT_8;
                 } else {          // десятичный, причем нуль
-                    return LexType._TYPE_INT_10;
+                    return LexTypeTERMINAL._TYPE_INT_10;
                 }
 
             } else if (t.get(uk) != '0') {     // Десятичная
@@ -306,7 +306,7 @@ public class ScanerV2 {
                         inc_uk();
                     }
                 }
-                return LexType._TYPE_INT_10;
+                return LexTypeTERMINAL._TYPE_INT_10;
             }
         } else if ((t.get(uk) >= 'a' && t.get(uk) <= 'z') || (t.get(uk) >= 'A' && t.get(uk) <= 'Z')) {
             // начинается идентификатор
@@ -322,15 +322,15 @@ public class ScanerV2 {
             // длинный идентификатор обрезали
 
             // проверка на ключевое слово:
-            LexType resultCheckKEYWORD = checkKEYWORD(l);
+            LexTypeTERMINAL resultCheckKEYWORD = checkKEYWORD(l);
             if (resultCheckKEYWORD != null)
                 return resultCheckKEYWORD;
 
-            return LexType._ID;
+            return LexTypeTERMINAL._ID;
         } else if (t.get(uk) == '.') {
             l.add(t.get(inc_uk()));
             i++; //l[i++]=type[inc_uk()];
-            return LexType._POINT;
+            return LexTypeTERMINAL._POINT;
         } else
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             if (t.get(uk) == '\'') {
@@ -347,10 +347,10 @@ public class ScanerV2 {
                 if (t.get(uk) != '\'' || i > 1) /// || i > 1 проверка на длину константы
                 {
                     printError("Неверная символьная константа", l);
-                    return LexType._ERROR;
+                    return LexTypeTERMINAL._ERROR;
                 }
                 inc_uk(); // закрывающая кавычка
-                return LexType._TYPE_CHAR;
+                return LexTypeTERMINAL._TYPE_CHAR;
             }
         if (t.get(uk) == '>') {
             l.add(t.get(inc_uk()));
@@ -359,13 +359,13 @@ public class ScanerV2 {
             if (t.get(uk) == '=') {
                 l.add(t.get(inc_uk()));
                 i++;
-                return LexType._GREAT_EQUALLY;
+                return LexTypeTERMINAL._GREAT_EQUALLY;
             } else if (t.get(uk) == '>') {
                 l.add(t.get(inc_uk()));
                 i++;
-                return LexType._SHIFT_RIGHT;
+                return LexTypeTERMINAL._SHIFT_RIGHT;
             }
-            return LexType._GREAT;
+            return LexTypeTERMINAL._GREAT;
         } else if (t.get(uk) == '<') {
             l.add(t.get(inc_uk()));
             i++;
@@ -373,23 +373,23 @@ public class ScanerV2 {
             if (t.get(uk) == '=') {
                 l.add(t.get(inc_uk()));
                 i++;
-                return LexType._LESS_EQUALLY;
+                return LexTypeTERMINAL._LESS_EQUALLY;
             } else if (t.get(uk) == '<') {
                 l.add(t.get(inc_uk()));
                 i++;
-                return LexType._SHIFT_LEFT;
+                return LexTypeTERMINAL._SHIFT_LEFT;
             }
-            return LexType._LESS;
+            return LexTypeTERMINAL._LESS;
         } else if (t.get(uk) == '!') {
             l.add(t.get(inc_uk()));
             i++;  //l[i++]=type[inc_uk()];
             if (t.get(uk) == '=') {
                 l.add(t.get(inc_uk()));
                 i++;  //l[i++]=type[inc_uk()];
-                return LexType._NOT_EQUALLY;
+                return LexTypeTERMINAL._NOT_EQUALLY;
             } else {
                 printError("Неверный символ  ", l); // ошибка
-                return LexType._ERROR;
+                return LexTypeTERMINAL._ERROR;
             }
         } else if (t.get(uk) == '=') {
             l.add(t.get(inc_uk()));
@@ -397,62 +397,62 @@ public class ScanerV2 {
             if (t.get(uk) == '=') {
                 l.add(t.get(inc_uk()));
                 i++;  //l[i++]=type[inc_uk()];
-                return LexType._EQUALLY;
+                return LexTypeTERMINAL._EQUALLY;
             } else
-                return LexType._ASSIGN;
+                return LexTypeTERMINAL._ASSIGN;
         } else if (t.get(uk) == '+') {
             l.add(t.get(inc_uk()));
             i++;  //l[i++]=type[inc_uk()];
-            return LexType._PLUS;
+            return LexTypeTERMINAL._PLUS;
         } else if (t.get(uk) == '-') {
             l.add(t.get(inc_uk()));
             i++;  //l[i++]=type[inc_uk()];
-            return LexType._MINUS;
+            return LexTypeTERMINAL._MINUS;
         } else if (t.get(uk) == '*') {
             l.add(t.get(inc_uk()));
             i++;  //l[i++]=type[inc_uk()];
-            return LexType._STAR;
+            return LexTypeTERMINAL._STAR;
         } else if (t.get(uk) == '%') {
             l.add(t.get(inc_uk()));
             i++;  //l[i++]=type[inc_uk()];
-            return LexType._PERCENT;
+            return LexTypeTERMINAL._PERCENT;
         } else if (t.get(uk) == '/') {
             l.add(t.get(inc_uk()));
             i++;  //l[i++]=type[inc_uk()];
-            return LexType._SLASH;
+            return LexTypeTERMINAL._SLASH;
         } else if (t.get(uk) == ';') {
             l.add(t.get(inc_uk()));
             i++;  //l[i++]=type[inc_uk()];
-            return LexType._SEMICOLON;
+            return LexTypeTERMINAL._SEMICOLON;
         } else if (t.get(uk) == ',') {
             l.add(t.get(inc_uk()));
             i++;  //l[i++]=type[inc_uk()];
-            return LexType._COMMA;
+            return LexTypeTERMINAL._COMMA;
         } else if (t.get(uk) == '(') {
             l.add(t.get(inc_uk()));
             i++;  //l[i++]=type[inc_uk()];
-            return LexType._PARENTHESIS_OPEN;
+            return LexTypeTERMINAL._PARENTHESIS_OPEN;
         } else if (t.get(uk) == ')') {
             l.add(t.get(inc_uk()));
             i++;  //l[i++]=type[inc_uk()];
-            return LexType._PARENTHESIS_CLOSE;
+            return LexTypeTERMINAL._PARENTHESIS_CLOSE;
         } else if (t.get(uk) == '{') {
             l.add(t.get(inc_uk()));
             i++;  //l[i++]=type[inc_uk()];
-            return LexType._BRACE_OPEN;
+            return LexTypeTERMINAL._BRACE_OPEN;
         } else if (t.get(uk) == '}') {
             l.add(t.get(inc_uk()));
             i++;  //l[i++]=type[inc_uk()];
-            return LexType._BRACE_CLOSE;
+            return LexTypeTERMINAL._BRACE_CLOSE;
         } else {
             printError("Неверный символ", l); // ошибка
             inc_uk();
-            return LexType._ERROR;
+            return LexTypeTERMINAL._ERROR;
         }
     }
 
     // проверка на ключевое слово:
-    public LexType checkKEYWORD(List<Character> l) {
+    public LexTypeTERMINAL checkKEYWORD(List<Character> l) {
         // формируем строку из текущей лексеым
         String lexem = "";
         for (int j = 0; j < l.size(); j++)

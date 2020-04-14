@@ -19,7 +19,7 @@ public class ReadSymbol {
     /**
      * Тип, если терминал то LLK._XXX \ иначе Scaner._
      */
-    public LexType typ;
+    public LexTypeTERMINAL typ;
 
     /**
      * Лексема в виде строки, для вывода в дебаге
@@ -28,7 +28,7 @@ public class ReadSymbol {
 
     public ElemType elemType;
 
-    public ReadSymbol(LexType typ, List<Character> lexString, ElemType elemType) {
+    public ReadSymbol(LexTypeTERMINAL typ, List<Character> lexString, ElemType elemType) {
         this.typ = typ;
         this.lexString = lexString.stream().map(Object::toString).collect(Collectors.joining());
         this.elemType = elemType;
