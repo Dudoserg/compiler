@@ -27,4 +27,10 @@ public class SavePoint {
         this.position_old = position_old;
         this.startPosition = startPosition;
     }
+
+    public void print() {
+        System.out.println("lines = " + (lines + 1));
+        System.out.println("position = " + position);
+        System.out.println("startPosition = " + startPosition);
+    }
 }
