@@ -1,4 +1,4 @@
-package main;
+package main.Lab3;
 
 import java.util.ArrayList;
 

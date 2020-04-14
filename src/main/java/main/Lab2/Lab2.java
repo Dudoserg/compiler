@@ -1,8 +1,7 @@
 package main.Lab2;
 
-import com.sun.xml.internal.fastinfoset.algorithm.BooleanEncodingAlgorithm;
 import javafx.util.Pair;
-import main.SavePoint;
+import main.Lab3.SavePoint;
 import main.algoritm_1and2.maga.*;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;

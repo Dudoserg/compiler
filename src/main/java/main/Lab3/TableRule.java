@@ -1,4 +1,4 @@
-package main;
+package main.Lab3;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import javafx.util.Pair;

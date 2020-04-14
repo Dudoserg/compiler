@@ -1,4 +1,4 @@
-package main;
+package main.Lab3;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

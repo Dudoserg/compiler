@@ -1,4 +1,4 @@
-package main;
+package main.Lab3;
 
 public class Container {
     int type;

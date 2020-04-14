@@ -1,7 +1,7 @@
 package main.Lab2;
 
 
-import main.SavePoint;
+import main.Lab3.SavePoint;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
