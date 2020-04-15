@@ -137,10 +137,16 @@ public class LLK {
                             // ЕСЛИ
                             if (next_2 == LexTypeTERMINAL._PARENTHESIS_OPEN) {
                                 //<вызов_функции>
-                                stack.push(new Elem(ElemType.NOT_TERMINAL, "_вызов_функции", LexTypeNot._вызов_функции));
+                                RightPart neededPart = findNeededPart(
+                                        rightParts, new Elem(ElemType.NOT_TERMINAL, "_вызов_функции", LexTypeNot._вызов_функции));
+                                pushRightPartToStack(neededPart);
+                                //stack.push(new Elem(ElemType.NOT_TERMINAL, "_вызов_функции", LexTypeNot._вызов_функции));
                             } else {
                                 //идентификатор
-                                stack.push(new Elem(ElemType.TERMINAL, "идентификатор", LexTypeTERMINAL._ID));
+                                RightPart neededPart = findNeededPart(
+                                        rightParts, new Elem(ElemType.TERMINAL, "идентификатор", LexTypeTERMINAL._ID));
+                                pushRightPartToStack(neededPart);
+                                //stack.push(new Elem(ElemType.TERMINAL, "идентификатор", LexTypeTERMINAL._ID));
                             }
 
                             System.out.print("");
@@ -250,6 +256,14 @@ public class LLK {
             semantic.drawTree();
         }
         return true;
+    }
+
+    private RightPart findNeededPart(List<RightPart> rightParts, Elem elem) {
+        List<RightPart> tmpList = rightParts.stream()
+                .filter(rightPart -> rightPart.isContain(elem))
+                .collect(Collectors.toList());
+        RightPart rightPart = tmpList.get(0);
+        return rightPart;
     }
 
     private void pushRightPartToStack(RightPart rightPart) {

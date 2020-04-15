@@ -302,6 +302,12 @@ public class Semantic {
             this.stackType.push(NodeType.TYPE_DOUBLE);
         if (next == LexTypeTERMINAL._TYPE_CHAR)
             this.stackType.push(NodeType.TYPE_CHAR);
+
+        // переменная, ищем ее тип
+        if(next == LexTypeTERMINAL._ID){
+            this.stackType.push(find_last.nodeType);
+        }
+
     }
 
     public Node find(String lexemToStr) throws Exception {
@@ -369,10 +375,12 @@ public class Semantic {
         }
 
     }
-
+    // TODO желательно бы еще сделать matchCompare, чтобы отдельно разбираться ситуации со сравнением
     public void match() {
         NodeType rightType = this.stackType.pop();
         NodeType leftType = this.stackType.pop();
+        // TODO ченить пихаем в тип)0
+        this.stackType.push(NodeType.TYPE_DOUBLE);
         System.out.println();
     }
 }

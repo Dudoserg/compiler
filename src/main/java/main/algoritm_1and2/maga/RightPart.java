@@ -29,4 +29,12 @@ public class RightPart {
 		result.elemList = tmp;
 		return result;
 	}
+
+	public boolean isContain(Elem checking){
+		for (Elem elem : this.elemList) {
+			if (elem.equals(checking))
+				return true;
+		}
+		return false;
+	}
 }
