@@ -222,8 +222,8 @@ public class LLK {
                             break;
                         }
                         case "saveVariable": {
-                            semantic.saveVariable();
-                            System.out.print("");
+//                            semantic.saveVariable();
+//                            System.out.print("");
                             break;
                         }
                         case "matchLeft": {

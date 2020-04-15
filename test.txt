@@ -5,5 +5,17 @@ int func(int a){
 
 int main(int a){
     int dudos = func(1 + 2 * 3 + 4 * (5 - func(1)));
+    int q = 1 + 2 * 3 + 4 * (5 - a);
+    dudos = 2 + 3 * a;
+    double beforeIf;
+    if( dudos == 2 * a){
+        dudos = 3;
+        int insideIf;
+    }
+    else{
+        dudos = 4;
+        int insideElse;
+    }
+    double afterIf;
 }
 

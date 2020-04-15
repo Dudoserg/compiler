@@ -33,6 +33,7 @@ public class Semantic {
     private Stack<Pair<NodeType, String>> stackType = new Stack<>();
     private int parameter_counting;
 
+    // Запомнить тип в глобальную переменную dataType, установить флаг описания данных
     public void startDecl(LexTypeTERMINAL dataType) throws Exception {
         if (dataType != LexTypeTERMINAL._INT && dataType != LexTypeTERMINAL._DOUBLE)
             throw new Exception("dataType != LexTypeTERMINAL._INT || dataType != LexTypeTERMINAL._DOUBLE");
@@ -40,15 +41,13 @@ public class Semantic {
         this.flag_Decl = true;
     }
 
-
+    // сбросить флаг описания данных
     public void endDecl() {
         this.flag_Decl = false;
     }
 
-
+    // заносим идентификатор в таблицу с типом dataType, проверяем дубликаты
     public void setIdent(String lexem) throws Exception {
-        // Проверить дублирование
-
         // занести идентификатор в таблицу с типом dataType;
         Node node = new Node();
         switch (dataType) {
@@ -63,11 +62,14 @@ public class Semantic {
                 break;
             }
         }
+        // Проверить дублирование
         if (checkDublicate(node)) {
             // нашли дубликат, ошибка
             throw new Exception("Нашли дубликат: " + node.lexem);
         }
+        // Запоминаем переменную
         this.savedVariable = node;
+
         current.left = node;
         node.parent = current;
         current = node;
@@ -113,9 +115,8 @@ public class Semantic {
         } while (true);
     }
 
-
+    // начать новый уровень в дереве.
     public void startLevel() {
-
         {
             Node node = new Node();
             node.nodeType = NodeType.TYPE_BLACK;
@@ -124,7 +125,6 @@ public class Semantic {
             node.parent = this.current;
             this.current = node;
         }
-
         {
             Node node = new Node();
             node.nodeType = NodeType.TYPE_BLACK;
@@ -133,10 +133,9 @@ public class Semantic {
             node.parent = this.current;
             this.current = node;
         }
-
     }
 
-
+    // вернуться к началу текущего уровня
     public void endLevel() {
 
         Node checking = this.current;
@@ -159,20 +158,25 @@ public class Semantic {
 
     }
 
+    // создаем вершину – функцию (запоминаем тип возвращаемых данных), проверяем дубликаты.
+    // Запоминаем указатель на функцию в переменную «k».
     public void startFunc(String lexem) throws Exception {
 
         Node node = new Node();
+
         node.lexem = lexem;
         node.nodeType = NodeType.TYPE_FUNC;
         node.returnType = this.dataType;
-        this.k = node;
 
         addToCurrentTo_Left(node);
 
-        //TODO проверить на дублирование айдишника
+        // проверяем дубликаты функции
         if (checkDublicateFunc(node)) {
             throw new Exception("дублирование функции " + node.lexem);
         }
+        // Запоминаем указатель на функцию в переменную «k».
+        this.k = node;
+
 //        {
 //            Node black = new Node();
 //            black.lexem = lexem;
@@ -182,7 +186,7 @@ public class Semantic {
 
     }
 
-
+    // новая черная вершина, необходима, чтобы отделить параметры функции от локальных переменных
     public void newBlack() {
         Node node = new Node(); // разделяем параметры функции и локальные переменные
         node.nodeType = NodeType.TYPE_BLACK;
@@ -284,7 +288,6 @@ public class Semantic {
 
     }
 
-
     public void drawTree() throws IOException {
         if (System.getProperty("os.name").equals("Linux")) {
             Runtime.getRuntime().exec("dot result.gv -Tpng -o result.jpg");
@@ -294,7 +297,7 @@ public class Semantic {
         }
     }
 
-
+    // Кладем в магазин тип текущей лексемы
     public void push_t(LexTypeTERMINAL next, String lexem) {
         if (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._TYPE_INT_8 ||
                 next == LexTypeTERMINAL._TYPE_INT_10 || next == LexTypeTERMINAL._TYPE_INT_16) {
@@ -318,6 +321,7 @@ public class Semantic {
 
     int countFind = 0;
 
+    //
     public Node find(String lexemToStr) throws Exception {
         countFind++;
         System.out.println("countFind = " + countFind);
