@@ -4,11 +4,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import main.Lab2.LexTypeTERMINAL;
+import main.Lab3.Node.NodeType;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 
@@ -18,14 +20,18 @@ public class Semantic {
     private LexTypeTERMINAL dataType;
 
     private Node root = new Node();
+    private LexTypeTERMINAL savedType;
 
     {
-        root.nodeType = Node.NodeType.TYPE_BLACK;
+        root.nodeType = NodeType.TYPE_BLACK;
     }
 
     private Node current = root;
     private Node k;
+    private Node find_last;
+    private Node savedVariable;
 
+    private Stack<NodeType> stackType = new Stack<>();
 
     public void startDecl(LexTypeTERMINAL dataType) throws Exception {
         if (dataType != LexTypeTERMINAL._INT && dataType != LexTypeTERMINAL._DOUBLE)
@@ -47,12 +53,12 @@ public class Semantic {
         Node node = new Node();
         switch (dataType) {
             case _INT: {
-                node.nodeType = Node.NodeType.TYPE_INTEGER;
+                node.nodeType = NodeType.TYPE_INTEGER;
                 node.lexem = lexem;
                 break;
             }
             case _DOUBLE: {
-                node.nodeType = Node.NodeType.TYPE_DOUBLE;
+                node.nodeType = NodeType.TYPE_DOUBLE;
                 node.lexem = lexem;
                 break;
             }
@@ -67,7 +73,7 @@ public class Semantic {
     }
 
     private boolean checkDublicateFunc(Node node) throws Exception {
-        if (node.nodeType != Node.NodeType.TYPE_FUNC)
+        if (node.nodeType != NodeType.TYPE_FUNC)
             throw new Exception("checkDublicateFunc, вы проверяете не функцию!");
         Node checking = current.parent;
         do {
@@ -85,14 +91,14 @@ public class Semantic {
         do {
             if (checking.nodeType == node.nodeType && checking.lexem.equals(node.lexem))
                 return true;
-            if ((checking.nodeType == Node.NodeType.TYPE_INTEGER || checking.nodeType == Node.NodeType.TYPE_DOUBLE) &&
-                    (node.nodeType == Node.NodeType.TYPE_INTEGER || node.nodeType == Node.NodeType.TYPE_DOUBLE)
+            if ((checking.nodeType == NodeType.TYPE_INTEGER || checking.nodeType == NodeType.TYPE_DOUBLE) &&
+                    (node.nodeType == NodeType.TYPE_INTEGER || node.nodeType == NodeType.TYPE_DOUBLE)
                     && checking.lexem.equals(node.lexem))
                 return true;
-            if (checking.nodeType == Node.NodeType.TYPE_BLACK &&
+            if (checking.nodeType == NodeType.TYPE_BLACK &&
                     checking.parent != null &&
                     checking.parent.right == checking &&
-                    checking.parent.nodeType == Node.NodeType.TYPE_BLACK)            // Дошли до черной вершины символизирующей новый уровень
+                    checking.parent.nodeType == NodeType.TYPE_BLACK)            // Дошли до черной вершины символизирующей новый уровень
                 return false;
             if (checking.parent == null)            // Дошли до корня
                 return false;
@@ -111,7 +117,7 @@ public class Semantic {
 
         {
             Node node = new Node();
-            node.nodeType = Node.NodeType.TYPE_BLACK;
+            node.nodeType = NodeType.TYPE_BLACK;
 
             this.current.left = node;
             node.parent = this.current;
@@ -120,7 +126,7 @@ public class Semantic {
 
         {
             Node node = new Node();
-            node.nodeType = Node.NodeType.TYPE_BLACK;
+            node.nodeType = NodeType.TYPE_BLACK;
 
             this.current.right = node;
             node.parent = this.current;
@@ -137,9 +143,9 @@ public class Semantic {
         do {
             //TODO и ели функция
             // Нашли черную вершину
-            if (checking.nodeType == Node.NodeType.TYPE_BLACK &&
+            if (checking.nodeType == NodeType.TYPE_BLACK &&
                     checking.parent.right == checking &&
-                    checking.parent.nodeType == Node.NodeType.TYPE_BLACK
+                    checking.parent.nodeType == NodeType.TYPE_BLACK
             ) {
 
                 // делаем текущей вершиной, родителя черной вершины
@@ -156,7 +162,7 @@ public class Semantic {
 
         Node node = new Node();
         node.lexem = lexem;
-        node.nodeType = Node.NodeType.TYPE_FUNC;
+        node.nodeType = NodeType.TYPE_FUNC;
         node.returnType = this.dataType;
         this.k = node;
 
@@ -178,7 +184,7 @@ public class Semantic {
 
     public void newBlack() {
         Node node = new Node(); // разделяем параметры функции и локальные переменные
-        node.nodeType = Node.NodeType.TYPE_BLACK;
+        node.nodeType = NodeType.TYPE_BLACK;
         addToCurrentTo_Left(node);
     }
 
@@ -197,6 +203,10 @@ public class Semantic {
     // увеличиваем число параметров у функции (вершина с указателем «k»)
     public void plusParam() {
         this.k.countParams++;
+    }
+
+    public void saveType(LexTypeTERMINAL lexTypeTERMINAL) {
+        this.savedType = lexTypeTERMINAL;
     }
 
 
@@ -222,17 +232,17 @@ public class Semantic {
         Node left = node.left;
         Node right = node.right;
 
-        if (node.nodeType == Node.NodeType.TYPE_BLACK) {
+        if (node.nodeType == NodeType.TYPE_BLACK) {
             writer.write("v" + node.id + "[style=filled, fillcolor=grey]" + "\n");
-            writer.write("v" + node.id + "[label=\"" + " #" + node.id  + "\"]" + "\n");
-        } else if (node.nodeType == Node.NodeType.TYPE_FUNC) {
+            writer.write("v" + node.id + "[label=\"" + " #" + node.id + "\"]" + "\n");
+        } else if (node.nodeType == NodeType.TYPE_FUNC) {
             String type = node.returnType == LexTypeTERMINAL._INT ? "int" : "double";
             writer.write("v" + node.id + "[style=filled, fillcolor=red]" + "\n");
-            writer.write("v" + node.id + "[label=\"" + node.lexem + "(" + node.countParams + ")"  + " #" + node.id  + "\"]" + "\n");
-            writer.write("v" + node.id + "[xlabel=\"" + type + " " +  "\"]" + "\n");
-        } else if (node.nodeType == Node.NodeType.TYPE_INTEGER || node.nodeType == Node.NodeType.TYPE_DOUBLE) {
-            String type = node.nodeType == Node.NodeType.TYPE_INTEGER ? "int" : "double";
-            writer.write("v" + node.id + "[label=\"" + node.lexem + " #" + node.id   + "\"]" + "\n");
+            writer.write("v" + node.id + "[label=\"" + node.lexem + "(" + node.countParams + ")" + " #" + node.id + "\"]" + "\n");
+            writer.write("v" + node.id + "[xlabel=\"" + type + " " + "\"]" + "\n");
+        } else if (node.nodeType == NodeType.TYPE_INTEGER || node.nodeType == NodeType.TYPE_DOUBLE) {
+            String type = node.nodeType == NodeType.TYPE_INTEGER ? "int" : "double";
+            writer.write("v" + node.id + "[label=\"" + node.lexem + " #" + node.id + "\"]" + "\n");
             writer.write("v" + node.id + "[xlabel=\"" + type + "\"]" + "\n");
         }
 
@@ -284,4 +294,85 @@ public class Semantic {
     }
 
 
+    public void push_t(LexTypeTERMINAL next) {
+        if (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._TYPE_INT_8 ||
+                next == LexTypeTERMINAL._TYPE_INT_10 || next == LexTypeTERMINAL._TYPE_INT_16)
+            this.stackType.push(NodeType.TYPE_INTEGER);
+        if (next == LexTypeTERMINAL._DOUBLE)
+            this.stackType.push(NodeType.TYPE_DOUBLE);
+        if (next == LexTypeTERMINAL._TYPE_CHAR)
+            this.stackType.push(NodeType.TYPE_CHAR);
+    }
+
+    public Node find(String lexemToStr) throws Exception {
+        Node node = this.current;
+        do {
+            if (node.lexem.equals(lexemToStr)) {
+                find_last = node;
+                return node;
+            }
+            node = node.parent;
+            if (node == null) {
+                find_last = node;
+                throw new Exception("find не нашел " + lexemToStr);
+            }
+
+        } while (true);
+    }
+
+    public void saveVariable() {
+        this.savedVariable = find_last;
+    }
+
+    public void matchLeft() throws Exception {
+        if (this.stackType.size() == 0)
+            throw new Exception("stack size = 0");
+        NodeType rightType = this.stackType.pop();
+        Node left = this.savedVariable;
+
+        switch (left.nodeType){
+            case TYPE_INTEGER:{
+                switch (rightType){
+                    // int = int
+                    case TYPE_INTEGER:{
+                        break;
+                    }
+                    // int = double
+                    case TYPE_DOUBLE:{
+                        break;
+                    }
+                    default:{
+                        throw new Exception("matchLeft default error");
+                    }
+                }
+                break;
+            }
+            case TYPE_DOUBLE:{
+                switch (rightType){
+                    // double = int
+                    case TYPE_INTEGER:{
+                        break;
+                    }
+                    // double = double
+                    case TYPE_DOUBLE:{
+                        break;
+                    }
+                    default:{
+                        throw new Exception("matchLeft default error");
+                    }
+                }
+                break;
+            }
+            default:{
+                throw new Exception("matchLeft default error");
+            }
+        }
+
+    }
+
+    public void match() {
+        NodeType rightType = this.stackType.pop();
+        NodeType leftType = this.stackType.pop();
+        System.out.println();
+    }
 }

@@ -204,6 +204,31 @@ public class LLK {
                             semantic.plusParam(); // возвращаем current
                             break;
                         }
+                        case "find": {
+                            semantic.find(lexemToStr(lexem));
+                            System.out.print("");
+                            break;
+                        }
+                        case "saveVariable": {
+                            semantic.saveVariable();
+                            System.out.print("");
+                            break;
+                        }
+                        case "matchLeft": {
+                            semantic.matchLeft();
+                            System.out.print("");
+                            break;
+                        }
+                        case "match": {
+                            semantic.match();
+                            System.out.print("");
+                            break;
+                        }
+                        case "push_t": {
+                            semantic.push_t(next); // возвращаем current
+                            System.out.print("");
+                            break;
+                        }
                     }
                 } else {
                     throw new Exception("errorina");
