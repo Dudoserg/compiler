@@ -241,6 +241,27 @@ public class LLK {
                             System.out.print("");
                             break;
                         }
+                        case "callFunc": {
+                            semantic.callFunc(); // возвращаем current
+                            System.out.print("");
+                            break;
+                        }
+                        case "start_parameter_counting": {
+                            semantic.start_parameter_counting();
+
+                            System.out.print("");
+                            break;
+                        }
+                        case "end_parameter_counting": {
+                            semantic.end_parameter_counting();
+                            System.out.print("");
+                            break;
+                        }
+                        case "plus_parameter_counting": {
+                            semantic.plus_parameter_counting();
+                            System.out.print("");
+                            break;
+                        }
                     }
                 } else {
                     throw new Exception("errorina");

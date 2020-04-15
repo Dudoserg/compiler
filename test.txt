@@ -1,10 +1,9 @@
-int a = 11;
-double b = 22;
 
-int func(int qq){
-
+int func(int a){
+    int tmp = func(1);
 }
 
-int c = a + func();
+int main(int a){
+    int dudos = func(1 + 2 * 3 + 4 * (5 - func(1)));
+}
 
-int q = 1 + 2 * 3 + 4 * (5 - b);

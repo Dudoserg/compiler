@@ -31,6 +31,7 @@ public class Semantic {
     private Node savedVariable;
 
     private Stack<Pair<NodeType, String>> stackType = new Stack<>();
+    private int parameter_counting;
 
     public void startDecl(LexTypeTERMINAL dataType) throws Exception {
         if (dataType != LexTypeTERMINAL._INT && dataType != LexTypeTERMINAL._DOUBLE)
@@ -296,15 +297,15 @@ public class Semantic {
 
     public void push_t(LexTypeTERMINAL next, String lexem) {
         if (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._TYPE_INT_8 ||
-                next == LexTypeTERMINAL._TYPE_INT_10 || next == LexTypeTERMINAL._TYPE_INT_16){
+                next == LexTypeTERMINAL._TYPE_INT_10 || next == LexTypeTERMINAL._TYPE_INT_16) {
             this.stackType.push(new Pair<>(NodeType.TYPE_INTEGER, lexem));
         }
 
-        if (next == LexTypeTERMINAL._DOUBLE){
+        if (next == LexTypeTERMINAL._DOUBLE) {
             this.stackType.push(new Pair<>(NodeType.TYPE_DOUBLE, lexem));
         }
 
-        if (next == LexTypeTERMINAL._TYPE_CHAR){
+        if (next == LexTypeTERMINAL._TYPE_CHAR) {
             this.stackType.push(new Pair<>(NodeType.TYPE_CHAR, lexem));
         }
 
@@ -322,7 +323,15 @@ public class Semantic {
         System.out.println("countFind = " + countFind);
         if (countFind == 5)
             System.out.print("");
-        Node node = this.current.parent;
+//        Node node = this.current.parent;
+        Node node;
+        // Если сейчас объявление переменных, то начинаем искать с предка, чтобы избежать ситуации
+        // когда int a = 2 + a ; будет нормой
+        if (flag_Decl)
+            node = this.current.parent;
+        else
+            node = this.current;
+
         do {
             if (node.lexem != null && node.lexem.equals(lexemToStr)) {
                 find_last = node;
@@ -344,8 +353,9 @@ public class Semantic {
     public void matchLeft() throws Exception {
         if (this.stackType.size() == 0)
             throw new Exception("stack size = 0");
-        Pair<NodeType, String> pop = this.stackType.pop();
-        NodeType rightType = pop.getKey();
+        Pair<NodeType, String> rightPair = this.stackType.pop();
+        NodeType rightType = rightPair.getKey();
+        String  rightLexem = rightPair.getValue();
         Node left = this.savedVariable;
 
         switch (left.nodeType) {
@@ -357,6 +367,10 @@ public class Semantic {
                     }
                     // int = double
                     case TYPE_DOUBLE: {
+                        break;
+                    }
+                    // int = func()
+                    case TYPE_FUNC: {
                         break;
                     }
                     default: {
@@ -373,6 +387,10 @@ public class Semantic {
                     }
                     // double = double
                     case TYPE_DOUBLE: {
+                        break;
+                    }
+                    // double = func()
+                    case TYPE_FUNC: {
                         break;
                     }
                     default: {
@@ -397,8 +415,32 @@ public class Semantic {
         final Pair<NodeType, String> leftPair = this.stackType.pop();
         String leftLExem = leftPair.getValue();
         NodeType leftType = leftPair.getKey();
+        System.out.println("match: " + "(" + leftLExem + ")" + " and " + "(" + rightLexem + ")");
         // TODO ченить пихаем в тип)0
-        this.stackType.push(new Pair<>( NodeType.TYPE_DOUBLE, leftLExem + " and " + rightLexem));
+        this.stackType.push(new Pair<>(NodeType.TYPE_DOUBLE, "(" + leftLExem + ")" + " and " + "(" + rightLexem + ")"));
         System.out.println();
     }
+    Node node_callFunc;
+    public void callFunc() {
+        node_callFunc = this.find_last;
+    }
+
+    public void start_parameter_counting() {
+        parameter_counting = 0;
+    }
+
+    public void plus_parameter_counting() {
+        parameter_counting++;
+    }
+
+    public void end_parameter_counting() throws Exception {
+        // TODO проверяем количество параметров у вызываемой функции
+        if( this.node_callFunc.countParams != this.parameter_counting)
+            throw new Exception("Несовпадение сигнатуры вызываемой функции с фактическим числом параметров:\n" +
+                    "ожидалось: " +  this.find_last.countParams + "\n" +
+                    "фактически: " + this.parameter_counting );
+        System.out.print("");
+    }
+
+
 }
