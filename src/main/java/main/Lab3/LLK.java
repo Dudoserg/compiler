@@ -40,7 +40,7 @@ public class LLK {
     }
 
     private void tableInit() throws Exception {
-        CreateLLK createLLK = new CreateLLK();
+        CreateLLK createLLK = new CreateLLK(devMode);
         ReadLLK readLLK = new ReadLLK();
         table = readLLK.getTable();
         tableObj = readLLK.getTableOjb();
@@ -196,6 +196,10 @@ public class LLK {
                             semantic.startFunc(lexemToStr(lexem)); // возвращаем current
                             break;
                         }
+                        case "newBlack": {
+                            semantic.newBlack(); // возвращаем current
+                            break;
+                        }
                     }
                 } else {
                     throw new Exception("errorina");
@@ -204,15 +208,18 @@ public class LLK {
 
                 System.out.println();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("ошибка");
             savePointCurrent.print();
             throw e;
         }
 
-        semantic.createGraphViz();
+
         System.out.print("Все чики-пуки\n\n");
-        semantic.drawTree();
+        if (devMode) {
+            semantic.createGraphViz();
+            semantic.drawTree();
+        }
         return true;
     }
 

@@ -1,6 +1,7 @@
 double c = 136;
 
 int privet2(int c){
+    double a = 2;
     if(c == 3){
        heh();
     }else

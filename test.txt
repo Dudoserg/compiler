@@ -1,8 +1,26 @@
 double a = 136;
 int b = 136;
-double c = 136;
 
+int privet1(int c){
+    double c1 = 136;
+    {
+        double q2 = 136;
+        {
+            double q3 = 136;
+        }
+        double q4 = 136;
+    }
+    double q5 = 136;
+}
 int privet2(int c){
-    int b2 = 136;
+    double c1 = 136;
+    {
+        double q2 = 136;
+        {
+            double q3 = 136;
+        }
+        double q4 = 136;
+    }
+    double q5 = 136;
 }
 int b2 = 136;

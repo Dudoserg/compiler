@@ -44,14 +44,16 @@ public class CreateLLK {
     Map<Elem, Set<Elem>> first = new LinkedHashMap<Elem, Set<Elem>>();
     Map<Pair<Elem, Elem>, List<RightPart>> table;
     Map<String, LexTypeTERMINAL> map_TERMINAL = new HashMap<>();
+    private boolean devMode;
 
     public static void main(String[] args) throws Exception {
         long startTime = System.currentTimeMillis();
-        CreateLLK createLLK = new CreateLLK();
+        CreateLLK createLLK = new CreateLLK(true);
         System.out.println("CreateLLK time = " + (System.currentTimeMillis() - startTime) / 1000.0 + " s.");
     }
 
-    public CreateLLK() throws Exception {
+    public CreateLLK(boolean devMode) throws Exception {
+        this.devMode = devMode;
         this.rows = this.readFromFile(System.getProperty("user.dir") + "/файлики/LLK_грамматика.txt");
 
         this.initRules();
@@ -409,7 +411,8 @@ public class CreateLLK {
             for (Elem elem1 : elems) {
                 str += elem1.getStrByType_SHARP() + ", ";
             }
-            System.out.println(str);
+            if (devMode)
+                System.out.println(str);
         }
     }
 
@@ -470,7 +473,8 @@ public class CreateLLK {
                 line = line.replace("  ", " ");
 
             while (line != null) {
-                System.out.println(line);
+                if (devMode)
+                    System.out.println(line);
                 row.add(line);
                 // считываем остальные строки в цикле
                 line = reader.readLine();

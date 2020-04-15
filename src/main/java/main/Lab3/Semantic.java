@@ -65,11 +65,27 @@ public class Semantic {
         current = node;
     }
 
-
+    private boolean checkDublicateFunc(Node node) throws Exception {
+        if(node.nodeType != Node.NodeType.TYPE_FUNC)
+            throw new Exception("checkDublicateFunc, вы проверяете не функцию!");
+        Node checking = current.parent;
+        do {
+            if (checking.nodeType == node.nodeType && checking.lexem.equals(node.lexem))
+                return true;
+            if (checking.parent == null)            // Дошли до корня
+                return false;
+            checking = checking.parent;
+        } while (checking.parent != null);
+        return false;
+    }
     private boolean checkDublicate(Node node) {
         Node checking = current;
         do {
             if (checking.nodeType == node.nodeType && checking.lexem.equals(node.lexem))
+                return true;
+            if ((checking.nodeType == Node.NodeType.TYPE_INTEGER || checking.nodeType == Node.NodeType.TYPE_DOUBLE) &&
+                    (node.nodeType == Node.NodeType.TYPE_INTEGER || node.nodeType == Node.NodeType.TYPE_DOUBLE)
+                    && checking.lexem.equals(node.lexem))
                 return true;
             if (checking.nodeType == Node.NodeType.TYPE_BLACK &&
                     checking.parent != null &&
@@ -90,6 +106,7 @@ public class Semantic {
 
 
     public void startLevel() {
+
         {
             Node node = new Node();
             node.nodeType = Node.NodeType.TYPE_BLACK;
@@ -112,6 +129,7 @@ public class Semantic {
 
 
     public void endLevel() {
+
         Node checking = this.current;
 
         do {
@@ -132,16 +150,18 @@ public class Semantic {
 
     }
 
-    public void startFunc(String lexem) {
-        {
-            Node node = new Node();
-            node.lexem = lexem;
-            node.nodeType = Node.NodeType.TYPE_FUNC;
+    public void startFunc(String lexem) throws Exception {
 
-            addToCurrentTo_Left(node);
-        }
+        Node node = new Node();
+        node.lexem = lexem;
+        node.nodeType = Node.NodeType.TYPE_FUNC;
+
+        addToCurrentTo_Left(node);
+
         //TODO проверить на дублирование айдишника
-
+        if (checkDublicateFunc(node)){
+            throw new Exception("дублирование функции " + node.lexem);
+        }
 //        {
 //            Node black = new Node();
 //            black.lexem = lexem;
@@ -149,6 +169,14 @@ public class Semantic {
 //            addToCurrentTo_Left(black);
 //        }
 
+    }
+
+
+
+    public void newBlack() {
+        Node node = new Node(); // разделяем параметры функции и локальные переменные
+        node.nodeType = Node.NodeType.TYPE_BLACK;
+        addToCurrentTo_Left(node);
     }
 
     private void addToCurrentTo_Left(Node node) {
@@ -162,6 +190,7 @@ public class Semantic {
         node.parent = this.current;
         this.current = node;
     }
+
 
     public void createGraphViz() {
         try (FileWriter writer = new FileWriter("result.gv", false)) {
@@ -199,7 +228,7 @@ public class Semantic {
         }
 
         writer.write("v" + node.id + "center" + "[style=invis, width=0, label=\"\"];" + "\n");
-        writer.write("v" + node.id + " -- " + "v" + node.id + "center" + "[style=invis]" + "\n");
+        writer.write("v" + node.id + " -- " + "v" + node.id + "center" + "" + "\n");
 
 
         List<String> rankSame = new ArrayList<>();
@@ -209,7 +238,7 @@ public class Semantic {
             rankSame.add("v" + left.id);
         } else {
             writer.write("v" + node.id + "notVisibleL" + "[style=invis]" + "\n");
-            writer.write("v" + node.id + " -- " + "v" + node.id + "notVisibleL" + "[style=invis]" + "\n");
+            writer.write("v" + node.id + " -- " + "v" + node.id + "notVisibleL" + "" + "\n");
             rankSame.add("v" + node.id + "notVisibleL");
         }
 
@@ -221,7 +250,7 @@ public class Semantic {
             rankSame.add("v" + right.id);
         } else {
             writer.write("v" + node.id + "notVisibleR" + "[style=invis]" + "\n");
-            writer.write("v" + node.id + " -- " + "v" + node.id + "notVisibleR" + "[style=invis]" + "\n");
+            writer.write("v" + node.id + " -- " + "v" + node.id + "notVisibleR" + "" + "\n");
             rankSame.add("v" + node.id + "notVisibleR");
         }
         writer.write("{\n\trank=same " +
@@ -244,4 +273,6 @@ public class Semantic {
             Runtime.getRuntime().exec("cmd /c dot result.gv -Tpng -o result.jpg");
         }
     }
+
+
 }

@@ -1,40 +1,40 @@
-int privet2(int a, int b){
-    int c, d;
+int privet1(int a, int b){
+    int a, d;
 }
 
 int privet2(int a, int b){
     int c = 3, d;
 }
 
-int privet2(int a, int b){
+int privet3(int a, int b){
     int c, d = 3;
 }
 
-int privet2(int a, int b){
+int privet4(int a, int b){
     int c = 3, d = 3;
 }
 
 //
-int privet2(int a, int b){
+int privet5(int a, int b){
     int c, d;
     int c = 3, d;
     int c, d = 3;
     int c = 3, d = 3;
 }
 
-int privet2(int a, int b){
+int privet6(int a, int b){
     int c = 3, d;
     int c, d;
     int c, d = 3;
     int c = 3, d = 3;
 }
-int privet2(int a, int b){
+int privet7(int a, int b){
      int c, d = 3;
      int c, d;
      int c = 3, d;
      int c = 3, d = 3;
 }
-int privet2(int a, int b){
+int privet8(int a, int b){
      int c = 3, d = 3;
      int c, d = 3;
      int c, d;
