@@ -6,8 +6,8 @@
 
 <#тип#> -> <@startDecl@> int | <@startDecl@> double 
 
-<#список_переменных#> -> <@setIdent@> <@find@> <@saveVariable@> <#переменная#> <@matchLeft@> <#W2#>
-<#W2#> -> E | , <@setIdent@> <@find@> <@saveVariable@> <#переменная#> <@matchLeft@> <#W2#>
+<#список_переменных#> -> <@setIdent@>  <#переменная#> <@matchLeft@> <#W2#>
+<#W2#> -> E | , <@setIdent@> <#переменная#> <@matchLeft@> <#W2#>
 
 <#переменная#> -> идентификатор <#W3#>
 <#W3#> -> E | = <#A1#>

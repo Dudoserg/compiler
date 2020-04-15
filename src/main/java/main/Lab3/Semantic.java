@@ -66,6 +66,7 @@ public class Semantic {
             // нашли дубликат, ошибка
             throw new Exception("Нашли дубликат: " + node.lexem);
         }
+        this.savedVariable = node;
         current.left = node;
         node.parent = current;
         current = node;

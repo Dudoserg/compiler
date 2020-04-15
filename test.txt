@@ -7,4 +7,4 @@ int func(int qq){
 
 int c = a + func();
 
-int q = 1 + 2 * 3 + 4 * (5 - w);
+int q = 1 + 2 * 3 + 4 * (5 - b);
