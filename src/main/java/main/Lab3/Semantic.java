@@ -1,8 +1,7 @@
 package main.Lab3;
 
-import lombok.Getter;
+import javafx.util.Pair;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import main.Lab2.LexTypeTERMINAL;
 import main.Lab3.Node.NodeType;
 
@@ -31,7 +30,7 @@ public class Semantic {
     private Node find_last;
     private Node savedVariable;
 
-    private Stack<NodeType> stackType = new Stack<>();
+    private Stack<Pair<NodeType, String>> stackType = new Stack<>();
 
     public void startDecl(LexTypeTERMINAL dataType) throws Exception {
         if (dataType != LexTypeTERMINAL._INT && dataType != LexTypeTERMINAL._DOUBLE)
@@ -294,28 +293,35 @@ public class Semantic {
     }
 
 
-    public void push_t(LexTypeTERMINAL next) {
+    public void push_t(LexTypeTERMINAL next, String lexem) {
         if (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._TYPE_INT_8 ||
-                next == LexTypeTERMINAL._TYPE_INT_10 || next == LexTypeTERMINAL._TYPE_INT_16)
-            this.stackType.push(NodeType.TYPE_INTEGER);
-        if (next == LexTypeTERMINAL._DOUBLE)
-            this.stackType.push(NodeType.TYPE_DOUBLE);
-        if (next == LexTypeTERMINAL._TYPE_CHAR)
-            this.stackType.push(NodeType.TYPE_CHAR);
+                next == LexTypeTERMINAL._TYPE_INT_10 || next == LexTypeTERMINAL._TYPE_INT_16){
+            this.stackType.push(new Pair<>(NodeType.TYPE_INTEGER, lexem));
+        }
+
+        if (next == LexTypeTERMINAL._DOUBLE){
+            this.stackType.push(new Pair<>(NodeType.TYPE_DOUBLE, lexem));
+        }
+
+        if (next == LexTypeTERMINAL._TYPE_CHAR){
+            this.stackType.push(new Pair<>(NodeType.TYPE_CHAR, lexem));
+        }
 
         // переменная, ищем ее тип
-        if(next == LexTypeTERMINAL._ID){
-            this.stackType.push(find_last.nodeType);
+        if (next == LexTypeTERMINAL._ID) {
+            this.stackType.push(new Pair<>(find_last.nodeType, lexem));
         }
 
     }
+
     int countFind = 0;
+
     public Node find(String lexemToStr) throws Exception {
         countFind++;
         System.out.println("countFind = " + countFind);
-        if(countFind == 5)
+        if (countFind == 5)
             System.out.print("");
-        Node node = this.current;
+        Node node = this.current.parent;
         do {
             if (node.lexem != null && node.lexem.equals(lexemToStr)) {
                 find_last = node;
@@ -337,54 +343,61 @@ public class Semantic {
     public void matchLeft() throws Exception {
         if (this.stackType.size() == 0)
             throw new Exception("stack size = 0");
-        NodeType rightType = this.stackType.pop();
+        Pair<NodeType, String> pop = this.stackType.pop();
+        NodeType rightType = pop.getKey();
         Node left = this.savedVariable;
 
-        switch (left.nodeType){
-            case TYPE_INTEGER:{
-                switch (rightType){
+        switch (left.nodeType) {
+            case TYPE_INTEGER: {
+                switch (rightType) {
                     // int = int
-                    case TYPE_INTEGER:{
+                    case TYPE_INTEGER: {
                         break;
                     }
                     // int = double
-                    case TYPE_DOUBLE:{
+                    case TYPE_DOUBLE: {
                         break;
                     }
-                    default:{
+                    default: {
                         throw new Exception("matchLeft default error");
                     }
                 }
                 break;
             }
-            case TYPE_DOUBLE:{
-                switch (rightType){
+            case TYPE_DOUBLE: {
+                switch (rightType) {
                     // double = int
-                    case TYPE_INTEGER:{
+                    case TYPE_INTEGER: {
                         break;
                     }
                     // double = double
-                    case TYPE_DOUBLE:{
+                    case TYPE_DOUBLE: {
                         break;
                     }
-                    default:{
+                    default: {
                         throw new Exception("matchLeft default error");
                     }
                 }
                 break;
             }
-            default:{
+            default: {
                 throw new Exception("matchLeft default error");
             }
         }
 
     }
+
     // TODO желательно бы еще сделать matchCompare, чтобы отдельно разбираться ситуации со сравнением
     public void match() {
-        NodeType rightType = this.stackType.pop();
-        NodeType leftType = this.stackType.pop();
+        final Pair<NodeType, String> rightPair = this.stackType.pop();
+        NodeType rightType = rightPair.getKey();
+        String rightLexem = rightPair.getValue();
+
+        final Pair<NodeType, String> leftPair = this.stackType.pop();
+        String leftLExem = leftPair.getValue();
+        NodeType leftType = leftPair.getKey();
         // TODO ченить пихаем в тип)0
-        this.stackType.push(NodeType.TYPE_DOUBLE);
+        this.stackType.push(new Pair<>( NodeType.TYPE_DOUBLE, leftLExem + " and " + rightLexem));
         System.out.println();
     }
 }

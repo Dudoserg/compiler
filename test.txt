@@ -1,10 +1,10 @@
-int privet2(int c){
-    if(c == 3){
-       heh();
-       heh( 5 + 3 * 5 + 9 * (2 - 1));
-       heh();
-    }else{
-       {{}kek();{}}
-       heh();{;;;}
-    }
+int a = 11;
+double b = 22;
+
+int func(int qq){
+
 }
+
+int c = a + func();
+
+int q = 1 + 2 * 3 + 4 * (5 - w);

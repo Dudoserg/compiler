@@ -237,7 +237,7 @@ public class LLK {
                             break;
                         }
                         case "push_t": {
-                            semantic.push_t(next); // возвращаем current
+                            semantic.push_t(next, lexemToStr(lexem)); // возвращаем current
                             System.out.print("");
                             break;
                         }

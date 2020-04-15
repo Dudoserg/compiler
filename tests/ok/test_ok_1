@@ -1,5 +1,13 @@
 double c = 136;
 
+int kek(int n){
+
+}
+
+int heh(int n){
+
+}
+
 int privet2(int c){
     double a = 2;
     if(c == 3){
