@@ -165,10 +165,16 @@ public class LLK {
                             // ЕСЛИ
                             if (next_2 == LexTypeTERMINAL._ASSIGN) {
                                 //<присваивание>
-                                stack.push(new Elem(ElemType.NOT_TERMINAL, "_присваивание", LexTypeNot._присваивание));
+                                RightPart neededPart = findNeededPart(
+                                        rightParts, new Elem(ElemType.NOT_TERMINAL, "_присваивание", LexTypeNot._присваивание));
+                                pushRightPartToStack(neededPart);
+                                //stack.push(new Elem(ElemType.NOT_TERMINAL, "_присваивание", LexTypeNot._присваивание));
                             } else if (next_2 == LexTypeTERMINAL._PARENTHESIS_OPEN) {
                                 // <вызов_функции>
-                                stack.push(new Elem(ElemType.NOT_TERMINAL, "_вызов_функции", LexTypeNot._вызов_функции));
+                                RightPart neededPart = findNeededPart(
+                                        rightParts, new Elem(ElemType.NOT_TERMINAL, "_вызов_функции", LexTypeNot._вызов_функции));
+                                pushRightPartToStack(neededPart);
+                                //stack.push(new Elem(ElemType.NOT_TERMINAL, "_вызов_функции", LexTypeNot._вызов_функции));
                             }
 
                             System.out.print("");

@@ -309,18 +309,22 @@ public class Semantic {
         }
 
     }
-
+    int countFind = 0;
     public Node find(String lexemToStr) throws Exception {
+        countFind++;
+        System.out.println("countFind = " + countFind);
+        if(countFind == 5)
+            System.out.print("");
         Node node = this.current;
         do {
-            if (node.lexem.equals(lexemToStr)) {
+            if (node.lexem != null && node.lexem.equals(lexemToStr)) {
                 find_last = node;
                 return node;
             }
             node = node.parent;
             if (node == null) {
                 find_last = node;
-                throw new Exception("find не нашел " + lexemToStr);
+                throw new Exception("Неизвестный идентификатор !" + "    " + "find не нашел " + lexemToStr);
             }
 
         } while (true);

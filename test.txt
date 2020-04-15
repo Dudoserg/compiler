@@ -1,3 +1,10 @@
-int a = 11;
-double b = 22;
-int c = a + b;
+int privet2(int c){
+    if(c == 3){
+       heh();
+       heh( 5 + 3 * 5 + 9 * (2 - 1));
+       heh();
+    }else{
+       {{}kek();{}}
+       heh();{;;;}
+    }
+}
