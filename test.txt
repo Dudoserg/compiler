@@ -1,9 +1,8 @@
 double a = 136;
-double b = 136;
+int b = 136;
 double c = 136;
 
 int privet2(int c){
-    double d = 136;
-    {double a = 136;
-    {double a = 136;}}
+    int b2 = 136;
 }
+int b2 = 136;

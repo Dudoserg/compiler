@@ -192,6 +192,10 @@ public class LLK {
                             semantic.endLevel(); // возвращаем current
                             break;
                         }
+                        case "startFunc": {
+                            semantic.startFunc(lexemToStr(lexem)); // возвращаем current
+                            break;
+                        }
                     }
                 } else {
                     throw new Exception("errorina");
@@ -206,7 +210,9 @@ public class LLK {
             throw e;
         }
 
+        semantic.createGraphViz();
         System.out.print("Все чики-пуки\n\n");
+        semantic.drawTree();
         return true;
     }
 

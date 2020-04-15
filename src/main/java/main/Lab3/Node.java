@@ -1,6 +1,8 @@
 package main.Lab3;
 
 public class Node {
+    static int count = 0;
+
     enum NodeType{
         TYPE_FUNC ,
         TYPE_DOUBLE,
@@ -17,4 +19,9 @@ public class Node {
 
     NodeType nodeType;
     String lexem;
+    int id;
+
+    public Node() {
+        this.id = Node.count++;
+    }
 }
