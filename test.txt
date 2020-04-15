@@ -1,7 +1,7 @@
 double a = 136;
 int b = 136;
 
-int privet1(int c){
+double privet1(int param1, int param2){
     double c1 = 136;
     {
         double q2 = 136;
@@ -12,7 +12,7 @@ int privet1(int c){
     }
     double q5 = 136;
 }
-int privet2(int c){
+double privet2(int q){
     double c1 = 136;
     {
         double q2 = 136;

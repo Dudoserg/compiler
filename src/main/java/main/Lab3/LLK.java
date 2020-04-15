@@ -200,6 +200,10 @@ public class LLK {
                             semantic.newBlack(); // возвращаем current
                             break;
                         }
+                        case "plusParam": {
+                            semantic.plusParam(); // возвращаем current
+                            break;
+                        }
                     }
                 } else {
                     throw new Exception("errorina");
@@ -241,7 +245,7 @@ public class LLK {
     private void printStack() throws Exception {
         ++count;
 
-        if (count > 1000)
+        if (count > 10000)
             throw new Exception("count > 10000");
 
         if (devMode == false)

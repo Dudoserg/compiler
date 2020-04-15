@@ -24,6 +24,7 @@ public class Semantic {
     }
 
     private Node current = root;
+    private Node k;
 
 
     public void startDecl(LexTypeTERMINAL dataType) throws Exception {
@@ -66,7 +67,7 @@ public class Semantic {
     }
 
     private boolean checkDublicateFunc(Node node) throws Exception {
-        if(node.nodeType != Node.NodeType.TYPE_FUNC)
+        if (node.nodeType != Node.NodeType.TYPE_FUNC)
             throw new Exception("checkDublicateFunc, вы проверяете не функцию!");
         Node checking = current.parent;
         do {
@@ -78,6 +79,7 @@ public class Semantic {
         } while (checking.parent != null);
         return false;
     }
+
     private boolean checkDublicate(Node node) {
         Node checking = current;
         do {
@@ -155,11 +157,13 @@ public class Semantic {
         Node node = new Node();
         node.lexem = lexem;
         node.nodeType = Node.NodeType.TYPE_FUNC;
+        node.returnType = this.dataType;
+        this.k = node;
 
         addToCurrentTo_Left(node);
 
         //TODO проверить на дублирование айдишника
-        if (checkDublicateFunc(node)){
+        if (checkDublicateFunc(node)) {
             throw new Exception("дублирование функции " + node.lexem);
         }
 //        {
@@ -170,7 +174,6 @@ public class Semantic {
 //        }
 
     }
-
 
 
     public void newBlack() {
@@ -189,6 +192,11 @@ public class Semantic {
         this.current.right = node;
         node.parent = this.current;
         this.current = node;
+    }
+
+    // увеличиваем число параметров у функции (вершина с указателем «k»)
+    public void plusParam() {
+        this.k.countParams++;
     }
 
 
@@ -216,14 +224,15 @@ public class Semantic {
 
         if (node.nodeType == Node.NodeType.TYPE_BLACK) {
             writer.write("v" + node.id + "[style=filled, fillcolor=grey]" + "\n");
-            writer.write("v" + node.id + "[label=\"" + "[" + node.id + "]" + "\"]" + "\n");
+            writer.write("v" + node.id + "[label=\"" + " #" + node.id  + "\"]" + "\n");
         } else if (node.nodeType == Node.NodeType.TYPE_FUNC) {
+            String type = node.returnType == LexTypeTERMINAL._INT ? "int" : "double";
             writer.write("v" + node.id + "[style=filled, fillcolor=red]" + "\n");
-            writer.write("v" + node.id + "[label=\"" + node.lexem + "[" + node.id + "]" + "\"]" + "\n");
-            writer.write("v" + node.id + "[xlabel=\"" + "func" + "\"]" + "\n");
+            writer.write("v" + node.id + "[label=\"" + node.lexem + "(" + node.countParams + ")"  + " #" + node.id  + "\"]" + "\n");
+            writer.write("v" + node.id + "[xlabel=\"" + type + " " +  "\"]" + "\n");
         } else if (node.nodeType == Node.NodeType.TYPE_INTEGER || node.nodeType == Node.NodeType.TYPE_DOUBLE) {
             String type = node.nodeType == Node.NodeType.TYPE_INTEGER ? "int" : "double";
-            writer.write("v" + node.id + "[label=\"" + node.lexem + "[" + node.id + "]" + "\"]" + "\n");
+            writer.write("v" + node.id + "[label=\"" + node.lexem + " #" + node.id   + "\"]" + "\n");
             writer.write("v" + node.id + "[xlabel=\"" + type + "\"]" + "\n");
         }
 
