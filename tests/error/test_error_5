@@ -1,9 +1,7 @@
-double c = 136 + 88;            // +
+int func(int a){
 
-int privet2(int c){
-    if(c == heh();){             // ;
-       heh();
-    }else{
-       kek();
-    }
+}
+
+int func(int b){
+
 }

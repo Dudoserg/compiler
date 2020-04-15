@@ -1,4 +1,8 @@
 import main.Lab3.LLK;
+import main.Lab3.exceptions.Ex_Dublicate;
+import main.Lab3.exceptions.Ex_Dublicate_Func;
+import main.Lab3.exceptions.Ex_NotFound;
+import main.Lab3.exceptions.Ex_Signature;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -7,16 +11,98 @@ public class Lab3Test {
 
     Boolean devMode = false;
 
-    @Test(expected = Exception.class)
+    @Test(expected = Ex_Dublicate.class)
     public void test_error_1() throws Exception {
         LLK LLK = new LLK(devMode);
-        boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_1");
+        try {
+            boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_1");
+        }catch (Ex_Dublicate ex){
+            Assert.assertEquals(ex.savePoint.lines + 1, 2);
+            throw ex;
+        }
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = Ex_Dublicate.class)
     public void test_error_2() throws Exception {
         LLK LLK = new LLK(devMode);
-        boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_2");
+        try {
+            boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_2");
+        }catch (Ex_Dublicate ex){
+            Assert.assertEquals(ex.savePoint.lines + 1, 2);
+            throw ex;
+        }
+    }
+
+    @Test(expected = Ex_NotFound.class)
+    public void test_error_3() throws Exception {
+        LLK LLK = new LLK(devMode);
+        try {
+            boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_3");
+        }catch (Ex_Dublicate ex){
+            Assert.assertEquals(ex.savePoint.lines + 1, 1);
+            throw ex;
+        }
+    }
+
+    @Test(expected = Ex_NotFound.class)
+    public void test_error_4() throws Exception {
+        LLK LLK = new LLK(devMode);
+        try {
+            boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_4");
+        }catch (Ex_NotFound ex){
+            Assert.assertEquals(ex.savePoint.lines + 1, 1);
+            throw ex;
+        }
+    }
+
+    @Test(expected = Ex_Dublicate_Func.class)
+    public void test_error_5() throws Exception {
+        LLK LLK = new LLK(devMode);
+        try {
+            boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_5");
+        }catch (Ex_Dublicate_Func ex){
+            Assert.assertEquals(ex.savePoint.lines + 1, 5);
+            throw ex;
+        }
+    }
+
+    @Test(expected = Ex_NotFound.class)
+    public void test_error_6() throws Exception {
+        LLK LLK = new LLK(devMode);
+        try {
+            boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_6");
+        }catch (Ex_NotFound ex){
+            Assert.assertEquals(ex.savePoint.lines + 1, 2);
+            throw ex;
+        }
+    }
+
+    @Test(expected = Ex_Signature.class)
+    public void test_error_7() throws Exception {
+        LLK LLK = new LLK(devMode);
+        try {
+            boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_7");
+        }catch (Ex_Signature ex){
+            Assert.assertEquals(ex.savePoint.lines + 1, 6);
+            throw ex;
+        }
+    }
+
+    @Test(expected = Ex_Signature.class)
+    public void test_error_10() throws Exception {
+        LLK LLK = new LLK(devMode);
+        try {
+            boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_10");
+        }catch (Ex_Signature ex){
+            Assert.assertEquals(ex.savePoint.lines + 1, 5);
+            throw ex;
+        }
+
+    }
+    /*@Test(expected = Exception.class)
+    public void test_error_10() throws Exception {
+        LLK LLK = new LLK(devMode);
+        boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error" + "/test_error_10");
     }
 
     @Test(expected = Exception.class)
@@ -158,6 +244,6 @@ public class Lab3Test {
         LLK LLK = new LLK(devMode);
         boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_14");
         Assert.assertTrue(isOk);
-    }
+    }*/
 
 }

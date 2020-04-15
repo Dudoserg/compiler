@@ -32,7 +32,7 @@ public class LLK {
     List<Elem> historyStack = new ArrayList<>();
     List<Pair<LexTypeTERMINAL, String>> historyScaner = new ArrayList<>();
     Semantic semantic = new Semantic();
-    SavePoint savePointCurrent;
+    public static SavePoint savePointCurrent;
 
     public LLK(boolean devMode) throws Exception {
         this.devMode = devMode;

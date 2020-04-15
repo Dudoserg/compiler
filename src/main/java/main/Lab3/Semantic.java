@@ -4,6 +4,10 @@ import javafx.util.Pair;
 import lombok.NoArgsConstructor;
 import main.Lab2.LexTypeTERMINAL;
 import main.Lab3.Node.NodeType;
+import main.Lab3.exceptions.Ex_Dublicate;
+import main.Lab3.exceptions.Ex_Dublicate_Func;
+import main.Lab3.exceptions.Ex_NotFound;
+import main.Lab3.exceptions.Ex_Signature;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -65,7 +69,7 @@ public class Semantic {
         // Проверить дублирование
         if (checkDublicate(node)) {
             // нашли дубликат, ошибка
-            throw new Exception("Нашли дубликат: " + node.lexem);
+            throw new Ex_Dublicate(node.lexem);
         }
         // Запоминаем переменную
         this.savedVariable = node;
@@ -172,7 +176,7 @@ public class Semantic {
 
         // проверяем дубликаты функции
         if (checkDublicateFunc(node)) {
-            throw new Exception("дублирование функции " + node.lexem);
+            throw new Ex_Dublicate_Func( node.lexem);
         }
         // Запоминаем указатель на функцию в переменную «k».
         this.k = node;
@@ -344,7 +348,7 @@ public class Semantic {
             node = node.parent;
             if (node == null) {
                 find_last = node;
-                throw new Exception("Неизвестный идентификатор !" + "    " + "find не нашел " + lexemToStr);
+                throw new Ex_NotFound(lexemToStr);
             }
 
         } while (true);
@@ -359,7 +363,7 @@ public class Semantic {
             throw new Exception("stack size = 0");
         Pair<NodeType, String> rightPair = this.stackType.pop();
         NodeType rightType = rightPair.getKey();
-        String  rightLexem = rightPair.getValue();
+        String rightLexem = rightPair.getValue();
         Node left = this.savedVariable;
 
         switch (left.nodeType) {
@@ -424,7 +428,9 @@ public class Semantic {
         this.stackType.push(new Pair<>(NodeType.TYPE_DOUBLE, "(" + leftLExem + ")" + " and " + "(" + rightLexem + ")"));
         System.out.println();
     }
+
     Node node_callFunc;
+
     public void callFunc() {
         node_callFunc = this.find_last;
     }
@@ -439,10 +445,8 @@ public class Semantic {
 
     public void end_parameter_counting() throws Exception {
         // TODO проверяем количество параметров у вызываемой функции
-        if( this.node_callFunc.countParams != this.parameter_counting)
-            throw new Exception("Несовпадение сигнатуры вызываемой функции с фактическим числом параметров:\n" +
-                    "ожидалось: " +  this.find_last.countParams + "\n" +
-                    "фактически: " + this.parameter_counting );
+        if (this.node_callFunc.countParams != this.parameter_counting)
+            throw new Ex_Signature(this.find_last.countParams, this.parameter_counting);
         System.out.print("");
     }
 

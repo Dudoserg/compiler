@@ -1,8 +1,2 @@
-//double c = 136;
-
-int privet2(int c){
-    if(c == 3){
-       heh();
-    else                // }
-       kek();
-}
+int a = 11;
+int a = 11;

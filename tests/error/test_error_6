@@ -1,20 +1,3 @@
-int privet2(int c){
-    if(heh() == heh()){
-        ;;heh(;;;                                       // )
-        ;;;heh( 5 + 3 * 5 + heh() * 9 * (2 - 1));;
-
-        if(c == 3){
-              ;;heh();;;
-              ;;;heh( 5 + 3 * 5 + 9 * (2 - 1));;
-             ; ;heh();;
-           }else
-              {{}kek();{}}
-
-        heh();{;;;}
-
-        ; ;heh();;
-    }else{
-       {{}kek(heh());{}}
-       heh();{;;;}
-    }
+int main(int a){
+    int c = a + func();
 }
