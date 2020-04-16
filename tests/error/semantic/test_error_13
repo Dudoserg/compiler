@@ -1,4 +1,4 @@
-int heh(){
+int heh(int a, int b){
 }
 int privet2(int c){
     heh(1);

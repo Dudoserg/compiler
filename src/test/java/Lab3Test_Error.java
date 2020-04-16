@@ -115,7 +115,7 @@ public class Lab3Test_Error {
             Assert.assertEquals(ex.savePoint.lines + 1, 5);
             throw ex;
         }
-    } 
+    }
     @Test(expected = Ex_Dublicate.class)
     public void test_error_11() throws Exception {
         LLK LLK = new LLK(devMode);
@@ -126,6 +126,37 @@ public class Lab3Test_Error {
             throw ex;
         }
     }
+    @Test(expected = Ex_Signature.class)
+    public void test_error_12() throws Exception {
+        LLK LLK = new LLK(devMode);
+        try {
+            boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error/semantic" + "/test_error_12");
+        }catch (Ex_Signature ex){
+            Assert.assertEquals(ex.savePoint.lines + 1, 5);
+            throw ex;
+        }
+    }
+    @Test(expected = Ex_Signature.class)
+    public void test_error_13() throws Exception {
+        LLK LLK = new LLK(devMode);
+        try {
+            boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error/semantic" + "/test_error_13");
+        }catch (Ex_Signature ex){
+            Assert.assertEquals(ex.savePoint.lines + 1, 4);
+            throw ex;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
     @Test(expected = Ex_Exception.class)
     public void test_error_1g() throws Exception {
         LLK LLK = new LLK(devMode);
@@ -323,16 +354,16 @@ public class Lab3Test_Error {
     }
 
     @Test
-    public void test_ok_12() throws Exception {
+    public void test_ok_16() throws Exception {
         LLK LLK = new LLK(devMode);
-        boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_12");
+        boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_16");
         Assert.assertTrue(isOk);
     }
 
     @Test
-    public void test_ok_13() throws Exception {
+    public void test_ok_15() throws Exception {
         LLK LLK = new LLK(devMode);
-        boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_13");
+        boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_15");
         Assert.assertTrue(isOk);
     }
 

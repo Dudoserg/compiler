@@ -90,13 +90,13 @@ public class Lab3Test_Ok {
     @Test
     public void test_ok_12() throws Exception {
         LLK LLK = new LLK(devMode);
-        boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_12");
+        boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_16");
         Assert.assertTrue(isOk);
     }
     @Test
     public void test_ok_13() throws Exception {
         LLK LLK = new LLK(devMode);
-        boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_13");
+        boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_15");
         Assert.assertTrue(isOk);
     }
     @Test
@@ -105,5 +105,16 @@ public class Lab3Test_Ok {
         boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_14");
         Assert.assertTrue(isOk);
     }
-
+    @Test
+    public void test_ok_15() throws Exception {
+        LLK LLK = new LLK(devMode);
+        boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_15");
+        Assert.assertTrue(isOk);
+    }
+    @Test
+    public void test_ok_16() throws Exception {
+        LLK LLK = new LLK(devMode);
+        boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/ok" + "/test_ok_16");
+        Assert.assertTrue(isOk);
+    }
 }

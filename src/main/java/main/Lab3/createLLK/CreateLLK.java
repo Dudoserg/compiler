@@ -690,5 +690,9 @@ public class CreateLLK {
         // <R1>  ,
         this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R1), Elem.createEpsilon(LexTypeTERMINAL._COMMA));
 
+
+        // Случай, когда функция без параметров
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._список_параметров), Elem.createEpsilon(LexTypeTERMINAL._PARENTHESIS_CLOSE));
+
     }
 }
