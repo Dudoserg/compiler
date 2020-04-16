@@ -29,8 +29,8 @@ public class SavePoint {
     }
 
     public void print() {
-        System.out.println("lines = " + (lines + 1));
-        System.out.println("position = " + position);
-        System.out.println("startPosition = " + startPosition);
+        System.out.print("строка = " + (lines + 1) + "\t");
+        //System.out.println("position = " + position);
+        System.out.print("символ = " + startPosition + "\n");
     }
 }

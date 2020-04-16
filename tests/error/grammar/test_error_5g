@@ -1,0 +1,13 @@
+int heh(int b){
+}
+int privet2(int c){
+    if(heh(55) == heh(12)){
+        ;;heh(;;;                                       // )
+        if(c == 3)
+            ;
+        else
+            ;
+    }else{
+        ;
+    }
+}

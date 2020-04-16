@@ -4,6 +4,7 @@ import javafx.util.Pair;
 import main.Lab2.LexTypeTERMINAL;
 import main.Lab2.ScanerV2;
 import main.Lab3.createLLK.CreateLLK;
+import main.Lab3.exceptions.Ex_Exception;
 import main.SavePoint;
 import main.algoritm_1and2.maga.Elem;
 import main.algoritm_1and2.maga.ElemType;
@@ -80,14 +81,14 @@ public class LLK {
                             historyScaner.add(0, new Pair<>(next, lexemToStr(lexem)));
                         }
                     } else {
-                        throw new Exception("терминалы не совпали");
+                        throw new Ex_Exception("терминалы не совпали");
                     }
 
                 } else if (topELem.elementType == ElemType.NOT_TERMINAL) {
                     List<RightPart> rightParts = table.get(new Pair<>(topELem, new Elem(ElemType.TERMINAL, lexemToStr(lexem), next)));
 
                     if (rightParts == null || rightParts.size() == 0) {
-                        throw new Exception("нет такого в таблице : " + topELem.getStrByType_LIGHT() + "  " + lexemToStr(lexem));
+                        throw new Ex_Exception("нет такого в таблице : " + topELem.getStrByType_LIGHT() + "  " + lexemToStr(lexem));
                     }
                     if (rightParts.size() == 1) {
                         pushRightPartToStack(rightParts.get(0));
@@ -119,7 +120,7 @@ public class LLK {
                                 stack.push(new Elem(ElemType.NOT_TERMINAL, "_объявление_переменных", LexTypeNot._объявление_переменных));
 
                             } else {
-                                throw new Exception("Чета не то, тут и ни <функция> и <объявление_переменных> [" + next_3.getString() + "]");
+                                throw new Ex_Exception("Чета не то, тут и ни <функция> и <объявление_переменных> [" + next_3.getString() + "]");
                             }
 
                             System.out.print("");
@@ -264,14 +265,14 @@ public class LLK {
                         }
                     }
                 } else {
-                    throw new Exception("errorina");
+                    throw new Ex_Exception("errorina");
                 }
 
 
                 System.out.println();
             }
         } catch (Exception e) {
-            System.out.println("ошибка");
+            System.out.println("ошибка : " + lexemToStr(lexem));
             savePointCurrent.print();
             throw e;
         }
@@ -312,7 +313,7 @@ public class LLK {
         ++count;
 
         if (count > 10000)
-            throw new Exception("count > 10000");
+            throw new Ex_Exception("count > 10000");
 
         if (devMode == false)
             return;

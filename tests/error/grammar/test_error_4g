@@ -1,0 +1,11 @@
+double a = 136 + 88;            // +
+int heh(int b){
+
+}
+int privet2(int c){
+    if(c == heh(12);){             // ;
+       heh();
+    }else{
+       kek();
+    }
+}
