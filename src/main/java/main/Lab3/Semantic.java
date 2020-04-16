@@ -176,7 +176,7 @@ public class Semantic {
 
         // проверяем дубликаты функции
         if (checkDublicateFunc(node)) {
-            throw new Ex_Dublicate_Func( node.lexem);
+            throw new Ex_Dublicate_Func(node.lexem);
         }
         // Запоминаем указатель на функцию в переменную «k».
         this.k = node;
@@ -451,4 +451,15 @@ public class Semantic {
     }
 
 
+    public void checkDubl(String lexemToStr) throws Exception {
+        Node node = null;
+        try {
+            node = this.find(lexemToStr);
+        } catch (Exception e) {
+
+        }
+        if (node != null)
+            throw new Ex_Dublicate(lexemToStr);
+
+    }
 }

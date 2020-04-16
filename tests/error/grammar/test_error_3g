@@ -1,4 +1,4 @@
-double c = 136 + 88;
+double cq = 136 + 88;
 
 int privet2(int c){
     +                       // +

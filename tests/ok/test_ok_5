@@ -1,9 +1,11 @@
-double c = 136 + 88;            // +
+double w = 136 + 88;            // +
+int heh(int a){
 
+}
 int privet2(int c){
-    if(c == heh()){
-       heh();
+    if(c == heh(123)){
+       heh(1);
     }else{
-       kek();
+       heh(c);
     }
 }

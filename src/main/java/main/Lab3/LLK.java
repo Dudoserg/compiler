@@ -222,6 +222,11 @@ public class LLK {
                             System.out.print("");
                             break;
                         }
+                        case "checkDubl": {
+                            semantic.checkDubl(lexemToStr(lexem));
+                            System.out.print("");
+                            break;
+                        }
                         case "saveVariable": {
 //                            semantic.saveVariable();
 //                            System.out.print("");

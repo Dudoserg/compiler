@@ -3,7 +3,7 @@ import main.Lab3.exceptions.*;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class Lab3Test {
+public class Lab3Test_Error {
 
 
     Boolean devMode = false;
@@ -113,6 +113,16 @@ public class Lab3Test {
             boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error/semantic" + "/test_error_10");
         }catch (Ex_Signature ex){
             Assert.assertEquals(ex.savePoint.lines + 1, 5);
+            throw ex;
+        }
+    } 
+    @Test(expected = Ex_Dublicate.class)
+    public void test_error_11() throws Exception {
+        LLK LLK = new LLK(devMode);
+        try {
+            boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error/semantic" + "/test_error_11");
+        }catch (Ex_Dublicate ex){
+            Assert.assertEquals(ex.savePoint.lines + 1, 3);
             throw ex;
         }
     }

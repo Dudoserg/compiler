@@ -1,12 +1,17 @@
-double c = 136;
+double w = 136;
+int heh(int a){
 
+}
+int kek(int a){
+
+}
 int privet2(int c){
     if(c == 3){
-       heh();
-       heh();
-       heh();
-       heh();;;;;;;{;;}
+       heh(1);
+       heh(2);
+       heh(3);
+       heh(4 + c);;;;;;;{;;}
     }else{
-       kek();
+       kek(22);
     }
 }

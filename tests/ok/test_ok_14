@@ -1,4 +1,4 @@
-int privet1(int a, int b){
+int privet1(int a1, int b1){
     int a, d;
 }
 
@@ -16,27 +16,27 @@ int privet4(int a, int b){
 
 //
 int privet5(int a, int b){
-    int c, d;
-    int c = 3, d;
-    int c, d = 3;
-    int c = 3, d = 3;
+    int c1, d1;
+    int c2 = 3, d2;
+    int c3, d3 = 3;
+    int c4 = 3, d4 = 3;
 }
 
 int privet6(int a, int b){
-    int c = 3, d;
-    int c, d;
-    int c, d = 3;
-    int c = 3, d = 3;
+    int c1 = 3, d1;
+    int c2, d2;
+    int c3, d3 = 3;
+    int c4 = 3, d4 = 3;
 }
 int privet7(int a, int b){
-     int c, d = 3;
-     int c, d;
-     int c = 3, d;
-     int c = 3, d = 3;
+     int c1, d1 = 3;
+     int c2, d2;
+     int c3 = 3, d3;
+     int c4 = 3, d4 = 3;
 }
 int privet8(int a, int b){
-     int c = 3, d = 3;
-     int c, d = 3;
-     int c, d;
-     int c = 3, d;
+     int c1 = 3, d1 = 3;
+     int c2, d2 = 3;
+     int c3, d3;
+     int c4 = 3, d4;
  }

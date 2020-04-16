@@ -1,15 +1,21 @@
+double heh(int a){
+
+}
+double kek(int a){
+
+}
 int privet2(int c){
     if(c == 3){
-       heh();
-       heh();
+       heh(1);
+       heh(2);
        heh( 5 + 3 * 5 + 9 * (2 - 1));
        heh( 5 + 3 * 5 + 9 * (2 - 1));
-       heh();
+       heh(3);
        heh( 5 + 3 * 5 + 9 * (2 - 1));
-       heh();
+       heh(4);
     }else
-       {{}kek();{}}
-    heh();{;;;}
+       {{}kek(6);{}}
+    heh(5);{;;;}
 
 }
 

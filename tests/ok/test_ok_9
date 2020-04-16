@@ -1,28 +1,34 @@
+int heh(int a){
+
+}
+int kek(int a){
+
+}
 int privet2(int c){
     if(c == 3){
-       heh();
-       heh();
+       heh(c);
+       heh(c);
        heh( 5 + 3 * 5 + 9 * (2 - 1));
+       heh( 5 + c * 5 + 9 * (c - 1));
+       heh(c + 3);
        heh( 5 + 3 * 5 + 9 * (2 - 1));
-       heh();
-       heh( 5 + 3 * 5 + 9 * (2 - 1));
-       heh();
+       heh(c);
     }else{
-       {{}kek();{}}
-       heh();{;;;}
+       {{}kek(123);{}}
+       heh( c + c + 1);{;;;}
     }
 
     if(c == 3){
-       heh();
-       heh();
+       heh(1);
+       heh(2);
        heh( 5 + 3 * 5 + 9 * (2 - 1));
        heh( 5 + 3 * 5 + 9 * (2 - 1));
-       heh();
+       heh(3);
        heh( 5 + 3 * 5 + 9 * (2 - 1));
-       heh();
+       heh(4);
     }else{
-       {{}kek();{}}
-       heh();{;;;}
+       {{}kek(5);{}}
+       heh(6);{;;;}
     }
 }
 

@@ -1,12 +1,14 @@
-double c = 136 + 88;            // +
-
+double w = 136 + 88;
+double heh(int a){
+    int q = 1 + 2 * 3 + 4 * (5 - w);
+}
 int privet2(int c){
     if(c == 3){
-       heh();
-       heh();
-       heh();
-       heh();;;;;;;{;;}
+       heh(1);
+       heh(c);
+       heh(3);
+       heh(c + 2);;;;;;;{;;}
     }else{
-       kek();
+       heh(1 + 2 * 3 + 4 * (5 - w));;;;;;;{;;}
     }
 }
