@@ -283,7 +283,7 @@ public class LLK {
         }
 
 
-        System.out.print("Все чики-пуки\n\n");
+        System.out.print("Ошибок не найдено =) \n\n");
         if (devMode) {
             semantic.createGraphViz();
             semantic.drawTree();

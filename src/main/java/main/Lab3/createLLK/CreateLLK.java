@@ -694,5 +694,30 @@ public class CreateLLK {
         // Случай, когда функция без параметров
         this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._список_параметров), Elem.createEpsilon(LexTypeTERMINAL._PARENTHESIS_CLOSE));
 
+        // Случай, для знака больше if( a > b)
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R5), Elem.createEpsilon(LexTypeTERMINAL._GREAT));
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R4), Elem.createEpsilon(LexTypeTERMINAL._GREAT));
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R3), Elem.createEpsilon(LexTypeTERMINAL._GREAT));
+
+        // Случай, для знака меньше if( a < b)
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R5), Elem.createEpsilon(LexTypeTERMINAL._LESS));
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R4), Elem.createEpsilon(LexTypeTERMINAL._LESS));
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R3), Elem.createEpsilon(LexTypeTERMINAL._LESS));
+
+        // Случай, для знака больше или равно if( a >= b)
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R5), Elem.createEpsilon(LexTypeTERMINAL._GREAT_EQUALLY));
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R4), Elem.createEpsilon(LexTypeTERMINAL._GREAT_EQUALLY));
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R3), Elem.createEpsilon(LexTypeTERMINAL._GREAT_EQUALLY));
+
+        // Случай, для знака меньше или равно if( a <= b)
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R5), Elem.createEpsilon(LexTypeTERMINAL._LESS_EQUALLY));
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R4), Elem.createEpsilon(LexTypeTERMINAL._LESS_EQUALLY));
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R3), Elem.createEpsilon(LexTypeTERMINAL._LESS_EQUALLY));
+
+        // Случай, для знака неравно if( a != b)
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R5), Elem.createEpsilon(LexTypeTERMINAL._NOT_EQUALLY));
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R4), Elem.createEpsilon(LexTypeTERMINAL._NOT_EQUALLY));
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R3), Elem.createEpsilon(LexTypeTERMINAL._NOT_EQUALLY));
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R2), Elem.createEpsilon(LexTypeTERMINAL._NOT_EQUALLY));
     }
 }

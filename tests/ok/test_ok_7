@@ -1,7 +1,7 @@
 int heh(int a){
 
 }
-int kek(int a){
+int kek(){
 
 }
 int privet2(int c){
@@ -10,7 +10,7 @@ int privet2(int c){
        heh( 5 + 3 * 5 + 9 * (2 - 1));
        heh(1);
     }else{
-       {{}kek(1);{}}
+       {{}kek();{}}
        heh(1);{;;;}
     }
 }
