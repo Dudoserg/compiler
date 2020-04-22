@@ -195,21 +195,21 @@ public class LLK {
                             semantic.setIdent(lexemToStr(lexem));
                             break;
                         }
-                        case "triad_new_variable":{
+                        case "triad_new_variable": {
                             this.triads.add(semantic.dataType.toString(), lexemToStr(lexem), null);
                             this.triads.stackAdd(lexemToStr(lexem));
                             break;
                         }
-                        case "triad_new_func":{
+                        case "triad_new_func": {
                             this.triads.add("proc", lexemToStr(lexem), null);
 //                            this.triads.stackAdd(lexemToStr(lexem));
                             break;
                         }
-                        case "triad_prolog" : {
+                        case "triad_prolog": {
                             this.triads.add("prolog", null, null);
                             break;
                         }
-                        case "triad_epilog" : {
+                        case "triad_epilog": {
                             this.triads.add("epilog", null, null);
                             this.triads.add("ret", null, null);
                             this.triads.add("endp", null, null);
@@ -269,10 +269,18 @@ public class LLK {
                             this.triads.triad_remember_if_num.push(this.triads.triadList.size() - 1);
                             break;
                         }
-
+                        case "triad_setAddr": {
+                            break;
+                        }
+                        case "triad_form_if": {
+                            break;
+                        }
                         case "triad_gener_goto": {
                             this.triads.add("goto", "xz", null);
                             this.triads.triad_remember_goto_num.push(this.triads.triadList.size() - 1);
+                            break;
+                        }
+                        case "triad_form_GOTO": {
                             break;
                         }
                         case "triad_gener_if_NOP": {
@@ -308,8 +316,28 @@ public class LLK {
                             break;
                         }
 
+                        case "gener_equal": {
+                            this.triads.addMathOperation("==");
+                            break;
+                        }
+                        case "gener_not_equal": {
+                            this.triads.addMathOperation("!=");
+                            break;
+                        }
                         case "gener_great": {
                             this.triads.addMathOperation(">");
+                            break;
+                        }
+                        case "gener_great_equal": {
+                            this.triads.addMathOperation(">=");
+                            break;
+                        }
+                        case "gener_less": {
+                            this.triads.addMathOperation("<");
+                            break;
+                        }
+                        case "gener_less_equal": {
+                            this.triads.addMathOperation("<=");
                             break;
                         }
                         case "gener=": {
@@ -363,6 +391,12 @@ public class LLK {
                             semantic.plus_parameter_counting();
                             System.out.print("");
                             break;
+                        }
+                        case "endFunc":{
+                            break;
+                        }
+                        default: {
+                            throw new Exception("семантическое правило " + topELem.str + " из файла грамматики не найдено в списке");
                         }
                     }
                 } else {
