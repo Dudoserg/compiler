@@ -719,5 +719,19 @@ public class CreateLLK {
         this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R4), Elem.createEpsilon(LexTypeTERMINAL._NOT_EQUALLY));
         this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R3), Elem.createEpsilon(LexTypeTERMINAL._NOT_EQUALLY));
         this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._R2), Elem.createEpsilon(LexTypeTERMINAL._NOT_EQUALLY));
+
+
+        //  <W7>  double
+        // if( 0 - 2 + 5 > 3)
+        //     int a = 2;
+        // double cc = 228;
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._W7), Elem.createEpsilon(LexTypeTERMINAL._DOUBLE));
+
+        // <W7>  int
+        //i f( 0 - 2 + 5 > 3)
+        //     int a = 2;
+        // int cc = 228;
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._W7), Elem.createEpsilon(LexTypeTERMINAL._INT));
+
     }
 }

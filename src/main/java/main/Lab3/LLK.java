@@ -246,6 +246,26 @@ public class LLK {
                             System.out.print("");
                             break;
                         }
+                        case "triad_gener_if": {
+                            this.triads.add("if", "(" + String.valueOf(this.triads.triadList.size() + 1) + ")", "numFalse");
+                            this.triads.triad_remember_if_num = this.triads.triadList.size() - 1;
+                            break;
+                        }
+
+                        case "triad_gener_goto": {
+                            this.triads.add("goto", "xz", null);
+                            this.triads.triad_remember_goto_num = this.triads.triadList.size() - 1;
+                            break;
+                        }
+                        case "triad_gener_if_NOP": {
+                            this.triads.add("NOP", null, null);
+                            int num_NOP = this.triads.triadList.size() - 1;
+                            // установим правильные адреса в if и goto
+                            this.triads.triadList.get(this.triads.triad_remember_goto_num).first = "(" + num_NOP + ")";
+                            this.triads.triadList.get(this.triads.triad_remember_if_num).second = "(" + num_NOP + ")";
+                            break;
+                        }
+
                         case "triad_push": {
                             triads.stackAdd(lexemToStr(lexem));
                             break;
@@ -260,6 +280,7 @@ public class LLK {
                             System.out.print("");
                             String s_1 = this.triads.stackGetId(-1);
                             triads.add("call", s_1, null);
+                            this.triads.stackAdd("(" + (this.triads.triadList.size() - 1) + ")");
                             break;
                         }
                         case "triad_remember_call": {

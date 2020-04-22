@@ -6,4 +6,13 @@ int heh(int a){
 double xx = 137 + 256 / 321 * 866;
 double yy = heh(xx) + 68 * 2 / 1;
 
-
+int main(){
+    if( 0 - 2 + 5 > 3){
+        int a = 2;
+        if( 123 > 138 )
+            a = 228;
+        else
+            a = 282;
+    }
+    double cc = 228;
+}
