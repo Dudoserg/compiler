@@ -185,6 +185,7 @@ public class CreateLLK {
             map_TERMINAL.put("константа_16сс", LexTypeTERMINAL._TYPE_INT_16);
             map_TERMINAL.put("конст.символьн.", LexTypeTERMINAL._TYPE_CHAR);
             map_TERMINAL.put("E", LexTypeTERMINAL._epsilon);
+            map_TERMINAL.put("return", LexTypeTERMINAL._RETURN);
         }
         elem.lexTypeTERMINAL = map_TERMINAL.get(elem.str);
 
@@ -732,6 +733,13 @@ public class CreateLLK {
         //     int a = 2;
         // int cc = 228;
         this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._W7), Elem.createEpsilon(LexTypeTERMINAL._INT));
+
+
+        // <операторы_и_описания>  return
+//        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._операторы_и_описания), Elem.createEpsilon(LexTypeTERMINAL._RETURN));
+
+        // <возврат>  }
+//        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._возврат), Elem.createEpsilon(LexTypeTERMINAL._BRACE_CLOSE));
 
     }
 }

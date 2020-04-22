@@ -164,6 +164,7 @@ public class Semantic {
 
     // создаем вершину – функцию (запоминаем тип возвращаемых данных), проверяем дубликаты.
     // Запоминаем указатель на функцию в переменную «k».
+    // сбрасываем счетчик return-ов
     public void startFunc(String lexem) throws Exception {
 
         Node node = new Node();

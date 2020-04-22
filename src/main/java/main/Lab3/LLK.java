@@ -98,7 +98,7 @@ public class LLK {
                         //printNext(lexem, next);
                         //System.out.print("");
                     } else {
-                        //<одно_описание> _INT
+                            //<одно_описание> _INT
                         if (topELem.lexTypeNot == LexTypeNot._одно_описание && (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._DOUBLE)) {
                             // тут либо <функция> либо <объявление_переменных>
                             SavePoint savePoint = scanerV2.getSavePoint();
@@ -309,6 +309,11 @@ public class LLK {
                             this.triads.stackAdd("(" + (this.triads.triadList.size() - 1) + ")");
                             break;
                         }
+                        case "triad_return":{
+                            String s_1 = this.triads.stackGetId(-1);
+                            triads.add("push_for_return", s_1, null);
+                            break;
+                        }
                         case "triad_remember_call": {
 //                            this.triads.triad_remember_call = lexemToStr(lexem);
                             this.triads.stackAdd(lexemToStr(lexem));
@@ -456,7 +461,8 @@ public class LLK {
             return;
 
         System.out.println("==========================" + count + "=================================\n");
-
+        if(count == 75)
+            System.out.println();
         List<Elem> stackNaoborot = new ArrayList<>();
         for (Elem elem : stack) {
             stackNaoborot.add(elem);

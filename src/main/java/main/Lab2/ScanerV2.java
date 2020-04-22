@@ -85,6 +85,7 @@ public class ScanerV2 {
         this.KEYWORD.add(new ScanerV2.Tuple<>("else", LexTypeTERMINAL._ELSE));
         //this.KEYWORD.add(new Tuple<>("main",_MAIN));
         this.KEYWORD.add(new ScanerV2.Tuple<>("const", LexTypeTERMINAL._CONST));
+        this.KEYWORD.add(new ScanerV2.Tuple<>("return", LexTypeTERMINAL._RETURN));
 
 
         try {

@@ -36,7 +36,8 @@ public enum LexTypeTERMINAL {
     _ELSE ("_ELSE") ,
     _MAIN ("_MAIN") ,
     _ERROR ("_ERROR") ,
-    _END ("_END") ;
+    _END ("_END") ,
+    _RETURN ("_RETURN") ;
 
     LexTypeTERMINAL(String string) {
         this.string = string;
