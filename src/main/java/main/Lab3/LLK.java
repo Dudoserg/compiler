@@ -193,8 +193,26 @@ public class LLK {
                         }
                         case "setIdent": {
                             semantic.setIdent(lexemToStr(lexem));
+                            break;
+                        }
+                        case "triad_new_variable":{
                             this.triads.add(semantic.dataType.toString(), lexemToStr(lexem), null);
                             this.triads.stackAdd(lexemToStr(lexem));
+                            break;
+                        }
+                        case "triad_new_func":{
+                            this.triads.add("proc", lexemToStr(lexem), null);
+//                            this.triads.stackAdd(lexemToStr(lexem));
+                            break;
+                        }
+                        case "triad_prolog" : {
+                            this.triads.add("prolog", null, null);
+                            break;
+                        }
+                        case "triad_epilog" : {
+                            this.triads.add("epilog", null, null);
+                            this.triads.add("ret", null, null);
+                            this.triads.add("endp", null, null);
                             break;
                         }
                         case "endDecl": {
@@ -248,21 +266,21 @@ public class LLK {
                         }
                         case "triad_gener_if": {
                             this.triads.add("if", "(" + String.valueOf(this.triads.triadList.size() + 1) + ")", "numFalse");
-                            this.triads.triad_remember_if_num = this.triads.triadList.size() - 1;
+                            this.triads.triad_remember_if_num.push(this.triads.triadList.size() - 1);
                             break;
                         }
 
                         case "triad_gener_goto": {
                             this.triads.add("goto", "xz", null);
-                            this.triads.triad_remember_goto_num = this.triads.triadList.size() - 1;
+                            this.triads.triad_remember_goto_num.push(this.triads.triadList.size() - 1);
                             break;
                         }
                         case "triad_gener_if_NOP": {
                             this.triads.add("NOP", null, null);
                             int num_NOP = this.triads.triadList.size() - 1;
                             // установим правильные адреса в if и goto
-                            this.triads.triadList.get(this.triads.triad_remember_goto_num).first = "(" + num_NOP + ")";
-                            this.triads.triadList.get(this.triads.triad_remember_if_num).second = "(" + num_NOP + ")";
+                            this.triads.triadList.get(this.triads.triad_remember_goto_num.pop()).first = "(" + num_NOP + ")";
+                            this.triads.triadList.get(this.triads.triad_remember_if_num.pop()).second = "(" + num_NOP + ")";
                             break;
                         }
 
@@ -290,9 +308,12 @@ public class LLK {
                             break;
                         }
 
+                        case "gener_great": {
+                            this.triads.addMathOperation(">");
+                            break;
+                        }
                         case "gener=": {
                             this.triads.addMathOperation("=");
-
                             break;
                         }
                         case "gener*": {

@@ -2,6 +2,7 @@ package main.Lab3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.stream.IntStream;
 
 public class Triads {
@@ -25,8 +26,8 @@ public class Triads {
 
     String triad_remember_call = "";
 
-    int triad_remember_if_num = 0;
-    int triad_remember_goto_num = 0;
+    Stack<Integer> triad_remember_if_num = new Stack<>();
+    Stack<Integer> triad_remember_goto_num = new Stack<>();
 
     public void add(String o, String f, String s) {
         this.triadList.add(new Triad(o, f, s));
