@@ -10,7 +10,7 @@
 <#W2#> -> E | , <@setIdent@> <@triad_new_variable@> <#переменная#> <#W2#>
 
 <#переменная#> -> идентификатор <#W3#>
-<#W3#> -> E | = <#A1#> <@matchLeft@> <@gener=@>
+<#W3#> -> E | = <#A1#> <@matchLeft@> <@gener_assign@>
 
 <#функция#> -> <#тип#> <@startFunc@> <@triad_new_func@> идентификатор <@startLevel@> ( <#список_параметров#> ) <@newBlack@> <#составной_оператор_функции#> <@endLevel@> <@endFunc@> 
 
@@ -35,7 +35,7 @@
 <#if#> -> if ( <#A1#> ) <@triad_gener_if@> <@triad_setAddr@> <#один_оператор#> <@triad_form_if@> <@triad_gener_goto@> <@triad_setAddr@> <#W7#> <@triad_form_GOTO@> <@triad_gener_if_NOP@>
 <#W7#> -> E | else <#один_оператор#> 
 
-<#присваивание#> -> <@find@> <@triad_push@> идентификатор = <#A1#> <@matchLeft@> <@gener=@> ;
+<#присваивание#> -> <@find@> <@triad_push@> идентификатор = <#A1#> <@matchLeft@> <@gener_assign@> ;
 
 <#A1#> -> <#A2#> <#R1#>
 <#R1#> -> == <#A2#> <@match@> <@gener_equal@> <#R1#> | != <#A2#> <@match@> <@gener_not_equal@> <#R1#> | E
@@ -47,10 +47,10 @@
 <#R3#> -> << <#A4#> <@match@> <@gener@> <#R3#> | >> <#A4#> <@match@> <@gener@> <#R3#> | E
 
 <#A4#> -> <#A5#> <#R4#>
-<#R4#> -> + <#A5#> <@match@> <@gener+@> <#R4#> | - <#A5#> <@match@> <@gener-@> <#R4#> | E
+<#R4#> -> + <#A5#> <@match@> <@gener_plus@> <#R4#> | - <#A5#> <@match@> <@gener_minus@> <#R4#> | E
 
 <#A5#> -> <#A6#> <#R5#>
-<#R5#> -> * <#A6#> <@match@> <@gener*@> <#R5#> | / <#A6#> <@match@> <@gener/@> <#R5#> | % <#A6#> <@match@> <@gener%@> <#R5#> | E
+<#R5#> -> * <#A6#> <@match@> <@gener_star@> <#R5#> | / <#A6#> <@match@> <@gener_div@> <#R5#> | % <#A6#> <@match@> <@gener_percent@> <#R5#> | E
 
 <#A6#> -> ( <#A1#> ) | <@find@>  <@triad_push@> <@push_t@> идентификатор | <@triad_push@> <@push_t@> <#константа#> | <@find@> <@push_t@> <@triad_remember_call@> <#вызов_функции#>  <@triad_call@>
 

@@ -4,20 +4,20 @@ import javafx.util.Pair;
 import main.Lab2.LexTypeTERMINAL;
 import main.Lab2.ScanerV2;
 import main.Lab3.createLLK.CreateLLK;
+import main.Lab3.createLLK.ReadLLK;
+import main.Lab3.createLLK.Table;
 import main.Lab3.exceptions.Ex_Exception;
+import main.Lab4.Triads;
 import main.SavePoint;
 import main.algoritm_1and2.maga.Elem;
 import main.algoritm_1and2.maga.ElemType;
 import main.algoritm_1and2.maga.RightPart;
-import main.Lab3.createLLK.ReadLLK;
-import main.Lab3.createLLK.Table;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class LLK {
     public static void main(String[] args) throws Exception {
@@ -35,7 +35,7 @@ public class LLK {
     Stack<Elem> stack = new Stack<>();
     List<Elem> historyStack = new ArrayList<>();
     List<Pair<LexTypeTERMINAL, String>> historyScaner = new ArrayList<>();
-    Semantic semantic ;
+    Semantic semantic;
     public static SavePoint savePointCurrent;
 
     public LLK(boolean devMode) throws Exception {
@@ -200,23 +200,22 @@ public class LLK {
                             break;
                         }
                         case "triad_new_variable": {
-                            this.triads.add(semantic.dataType.toString(), lexemToStr(lexem), null);
-                            this.triads.stackAdd(lexemToStr(lexem));
-                            break;
-                        }
-                        case "triad_new_func": {
-                            this.triads.add("proc", lexemToStr(lexem), null);
+                            this.triads.triad_new_variable(semantic.dataType, lexemToStr(lexem));
+//                            this.triads.add(semantic.dataType.toString(), lexemToStr(lexem), null);
 //                            this.triads.stackAdd(lexemToStr(lexem));
                             break;
                         }
+                        case "triad_new_func": {
+                            this.triads.triad_new_func(lexemToStr(lexem));
+//                            this.triads.add("proc", lexemToStr(lexem), null);
+                            break;
+                        }
                         case "triad_prolog": {
-                            this.triads.add("prolog", null, null);
+                            this.triads.triad_prolog();
                             break;
                         }
                         case "triad_epilog": {
-                            this.triads.add("epilog", null, null);
-                            this.triads.add("ret", null, null);
-                            this.triads.add("endp", null, null);
+                            this.triads.triad_epilog();
                             break;
                         }
                         case "endDecl": {
@@ -269,8 +268,7 @@ public class LLK {
                             break;
                         }
                         case "triad_gener_if": {
-                            this.triads.add("if", "(" + String.valueOf(this.triads.triadList.size() + 1) + ")", "numFalse");
-                            this.triads.triad_remember_if_num.push(this.triads.triadList.size() - 1);
+                            this.triads.triad_gener_if();
                             break;
                         }
                         case "triad_setAddr": {
@@ -280,97 +278,84 @@ public class LLK {
                             break;
                         }
                         case "triad_gener_goto": {
-                            this.triads.add("goto", "xz", null);
-                            this.triads.triad_remember_goto_num.push(this.triads.triadList.size() - 1);
+                            this.triads.triad_gener_goto();
                             break;
                         }
                         case "triad_form_GOTO": {
                             break;
                         }
                         case "triad_gener_if_NOP": {
-                            this.triads.add("NOP", null, null);
-                            int num_NOP = this.triads.triadList.size() - 1;
-                            // установим правильные адреса в if и goto
-                            this.triads.triadList.get(this.triads.triad_remember_goto_num.pop()).first = "(" + num_NOP + ")";
-                            this.triads.triadList.get(this.triads.triad_remember_if_num.pop()).second = "(" + num_NOP + ")";
+                            this.triads.triad_gener_if_NOP();
                             break;
                         }
 
                         case "triad_push": {
-                            triads.stackAdd(lexemToStr(lexem));
+                            this.triads.triad_push(lexemToStr(lexem));
                             break;
                         }
                         case "triad_push_param": {
-                            System.out.print("");
-                            String s_1 = this.triads.stackGetId(-1);
-                            triads.add("push", s_1, null);
+                            this.triads.triad_push_param();
                             break;
                         }
                         case "triad_call": {
-                            System.out.print("");
-                            String s_1 = this.triads.stackGetId(-1);
-                            triads.add("call", s_1, null);
-                            this.triads.stackAdd("(" + (this.triads.triadList.size() - 1) + ")");
+                            this.triads.triad_call();
                             break;
                         }
                         case "triad_return": {
-                            String s_1 = this.triads.stackGetId(-1);
-                            triads.add("push_for_return", s_1, null);
+                            this.triads.triad_return();
                             break;
                         }
                         case "triad_remember_call": {
-//                            this.triads.triad_remember_call = lexemToStr(lexem);
-                            this.triads.stackAdd(lexemToStr(lexem));
-                            System.out.print("");
+                            this.triads.triad_remember_call(lexemToStr(lexem));
                             break;
                         }
 
                         case "gener_equal": {
-                            this.triads.addMathOperation("==");
+                            this.triads.gener_equal();
                             break;
                         }
                         case "gener_not_equal": {
-                            this.triads.addMathOperation("!=");
+                            this.triads.gener_not_equal();
                             break;
                         }
                         case "gener_great": {
-                            this.triads.addMathOperation(">");
+                            this.triads.gener_great();
                             break;
                         }
                         case "gener_great_equal": {
-                            this.triads.addMathOperation(">=");
+                            this.triads.gener_great_equal();
                             break;
                         }
                         case "gener_less": {
-                            this.triads.addMathOperation("<");
+                            this.triads.gener_less();
                             break;
                         }
                         case "gener_less_equal": {
-                            this.triads.addMathOperation("<=");
+                            this.triads.gener_less_equal();
                             break;
                         }
-                        case "gener=": {
-                            this.triads.addMathOperation("=");
+                        case "gener_assign": {
+                            this.triads.gener_assign();
                             break;
                         }
-                        case "gener*": {
-                            this.triads.addMathOperation("*");
+                        case "gener_star": {
+                            this.triads.gener_star();
                             break;
                         }
-                        case "gener/": {
-                            this.triads.addMathOperation("/");
+                        case "gener_div": {
+                            this.triads.gener_div();
                             break;
                         }
-                        case "gener%": {
-                            this.triads.addMathOperation("%");
+                        case "gener_percent": {
+                            this.triads.gener_percent();
                             break;
                         }
-                        case "gener+": {
-                            this.triads.addMathOperation("+");
+                        case "gener_plus": {
+                            this.triads.gener_plus();
                             break;
                         }
-                        case "gener-": {
-                            this.triads.addMathOperation("-");
+                        case "gener_minus": {
+                            this.triads.gener_minus();
                             break;
                         }
 
@@ -427,7 +412,9 @@ public class LLK {
             semantic.createGraphViz();
             semantic.drawTree();
         }
-        this.triads.printTriads();
+        String triadsStr = this.triads.printTriads();
+        if (!triadsStr.equals(lolkek))
+            throw new Exception("!triadsStr.equals(\"lolkek\")");
         return true;
     }
 
@@ -484,4 +471,46 @@ public class LLK {
         System.out.println("next: " + lexem_str + "     type: " + next.getString());
         System.out.println();
     }
+
+    String lolkek = "0)    proc    heh\n" +
+            "1)    prolog\n" +
+            "2)    _INT    x\n" +
+            "3)    *    a    a\n" +
+            "4)    =    x    (3)\n" +
+            "5)    *    x    3\n" +
+            "6)    push_for_return    (5)\n" +
+            "7)    epilog\n" +
+            "8)    ret\n" +
+            "9)    endp\n" +
+            "10)    proc    main\n" +
+            "11)    prolog\n" +
+            "12)    -    0    2\n" +
+            "13)    +    (12)    5\n" +
+            "14)    >    (13)    3\n" +
+            "15)    if    (16)    (33)\n" +
+            "16)    _INT    a\n" +
+            "17)    =    a    2\n" +
+            "18)    _INT    qwer\n" +
+            "19)    push    a\n" +
+            "20)    call    heh\n" +
+            "21)    =    qwer    (20)\n" +
+            "22)    _INT    b\n" +
+            "23)    =    b    2\n" +
+            "24)    >    123    138\n" +
+            "25)    if    (26)    (29)\n" +
+            "26)    =    a    228\n" +
+            "27)    goto    (29)\n" +
+            "28)    =    a    282\n" +
+            "29)    NOP\n" +
+            "30)    goto    (33)\n" +
+            "31)    _INT    x\n" +
+            "32)    =    x    2\n" +
+            "33)    NOP\n" +
+            "34)    _DOUBLE    cc\n" +
+            "35)    =    cc    228\n" +
+            "36)    *    cc    3\n" +
+            "37)    push_for_return    (36)\n" +
+            "38)    epilog\n" +
+            "39)    ret\n" +
+            "40)    endp";
 }
