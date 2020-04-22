@@ -99,12 +99,12 @@ public class LLK {
 
 	private void printLex(ArrayList<Character> lex) {
 		if (PRINTLOGS == 1) {
-			System.out.println();
+			//System.out.println();
 			System.out.print("lex = ");
 			for (Character c : lex) {
 				System.out.print(c);
 			}
-			System.out.println();
+			//System.out.println();
 		}
 	}
 

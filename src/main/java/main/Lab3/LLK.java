@@ -21,9 +21,10 @@ import java.util.stream.IntStream;
 
 public class LLK {
     public static void main(String[] args) throws Exception {
+        long start = System.currentTimeMillis();
         LLK llk = new LLK(true);
         llk.start(System.getProperty("user.dir") + "/test.txt");
-
+        System.out.println("\n\n\nFULL TIME = " + (System.currentTimeMillis() - start) / 1000.0);
     }
 
     Triads triads = new Triads();
@@ -34,16 +35,19 @@ public class LLK {
     Stack<Elem> stack = new Stack<>();
     List<Elem> historyStack = new ArrayList<>();
     List<Pair<LexTypeTERMINAL, String>> historyScaner = new ArrayList<>();
-    Semantic semantic = new Semantic();
+    Semantic semantic ;
     public static SavePoint savePointCurrent;
 
     public LLK(boolean devMode) throws Exception {
         this.devMode = devMode;
+        this.semantic = new Semantic(devMode);
         this.tableInit();
     }
 
     private void tableInit() throws Exception {
-        CreateLLK createLLK = new CreateLLK(devMode);
+        CreateLLK createLLK;
+        if (devMode)
+            createLLK = new CreateLLK(devMode);
         ReadLLK readLLK = new ReadLLK();
         table = readLLK.getTable();
         tableObj = readLLK.getTableOjb();
@@ -65,7 +69,7 @@ public class LLK {
                 printStack();
                 printNext(lexem, next);
                 if (count == 84)
-                    System.out.println();
+                    System.out.print("");
 
                 Elem topELem = this.stack.pop();
                 historyStack.add(0, topELem);
@@ -98,7 +102,7 @@ public class LLK {
                         //printNext(lexem, next);
                         //System.out.print("");
                     } else {
-                            //<одно_описание> _INT
+                        //<одно_описание> _INT
                         if (topELem.lexTypeNot == LexTypeNot._одно_описание && (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._DOUBLE)) {
                             // тут либо <функция> либо <объявление_переменных>
                             SavePoint savePoint = scanerV2.getSavePoint();
@@ -309,7 +313,7 @@ public class LLK {
                             this.triads.stackAdd("(" + (this.triads.triadList.size() - 1) + ")");
                             break;
                         }
-                        case "triad_return":{
+                        case "triad_return": {
                             String s_1 = this.triads.stackGetId(-1);
                             triads.add("push_for_return", s_1, null);
                             break;
@@ -397,7 +401,7 @@ public class LLK {
                             System.out.print("");
                             break;
                         }
-                        case "endFunc":{
+                        case "endFunc": {
                             break;
                         }
                         default: {
@@ -409,7 +413,7 @@ public class LLK {
                 }
 
 
-                System.out.println();
+                System.out.print("");
             }
         } catch (Exception e) {
             System.out.println("ошибка : " + lexemToStr(lexem));
@@ -461,7 +465,7 @@ public class LLK {
             return;
 
         System.out.println("==========================" + count + "=================================\n");
-        if(count == 75)
+        if (count == 75)
             System.out.println();
         List<Elem> stackNaoborot = new ArrayList<>();
         for (Elem elem : stack) {
@@ -473,6 +477,8 @@ public class LLK {
     }
 
     private void printNext(List<Character> lexem, LexTypeTERMINAL next) {
+        if (!devMode)
+            return;
         System.out.println();
         String lexem_str = this.lexemToStr(lexem);
         System.out.println("next: " + lexem_str + "     type: " + next.getString());

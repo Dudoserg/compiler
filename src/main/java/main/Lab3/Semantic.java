@@ -17,8 +17,9 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 
-@NoArgsConstructor
 public class Semantic {
+    private boolean devMode;
+
     private boolean flag_Decl;
     public LexTypeTERMINAL dataType;
 
@@ -36,6 +37,10 @@ public class Semantic {
 
     private Stack<Pair<NodeType, String>> stackType = new Stack<>();
     private int parameter_counting;
+
+    public Semantic(boolean devMode) {
+        this.devMode = devMode;
+    }
 
     // Запомнить тип в глобальную переменную dataType, установить флаг описания данных
     public void startDecl(LexTypeTERMINAL dataType) throws Exception {
@@ -329,9 +334,9 @@ public class Semantic {
     //
     public Node find(String lexemToStr) throws Exception {
         countFind++;
-        System.out.println("countFind = " + countFind);
-        if (countFind == 5)
-            System.out.print("");
+        if (devMode)
+            System.out.println("countFind = " + countFind);
+
 //        Node node = this.current.parent;
         Node node;
         // Если сейчас объявление переменных, то начинаем искать с предка, чтобы избежать ситуации
@@ -424,10 +429,11 @@ public class Semantic {
         final Pair<NodeType, String> leftPair = this.stackType.pop();
         String leftLExem = leftPair.getValue();
         NodeType leftType = leftPair.getKey();
-        System.out.println("match: " + "(" + leftLExem + ")" + " and " + "(" + rightLexem + ")");
+        if (devMode)
+            System.out.println("match: " + "(" + leftLExem + ")" + " and " + "(" + rightLexem + ")");
         // TODO ченить пихаем в тип)0
         this.stackType.push(new Pair<>(NodeType.TYPE_DOUBLE, "(" + leftLExem + ")" + " and " + "(" + rightLexem + ")"));
-        System.out.println();
+//        System.out.println();
     }
 
     Node node_callFunc;

@@ -3,3 +3,20 @@ int heh(int a){
     int x = a * a;
     return x * 3;
 }
+
+
+int main(){
+    if( 0 - 2 + 5 > 3){
+        int a = 2;
+        int qwer = heh(a);
+        int b = 2;
+
+        if( 123 > 138)
+            a = 228;
+        else
+            a = 282;
+    }else
+        int x = 2;
+    double cc = 228;
+    return cc * 3;
+}
