@@ -1,9 +1,9 @@
+
 int heh(int a){
 
 }
-int main(){
-    if( 0 - 2 + 5 > 3)
-        int a = 2;
-    else
-        ;
-}
+
+double xx = 137 + 256 / 321 * 866;
+double yy = heh(xx) + 68 * 2 / 1;
+
+

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class Semantic {
     private boolean flag_Decl;
-    private LexTypeTERMINAL dataType;
+    public LexTypeTERMINAL dataType;
 
     private Node root = new Node();
     private LexTypeTERMINAL savedType;
@@ -461,5 +461,13 @@ public class Semantic {
         if (node != null)
             throw new Ex_Dublicate(lexemToStr);
 
+    }
+
+    public Stack<Pair<NodeType, String>> getStackType() {
+        return stackType;
+    }
+
+    public void setStackType(Stack<Pair<NodeType, String>> stackType) {
+        this.stackType = stackType;
     }
 }

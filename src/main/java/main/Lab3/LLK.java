@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class LLK {
     public static void main(String[] args) throws Exception {
@@ -25,6 +26,7 @@ public class LLK {
 
     }
 
+    Triads triads = new Triads();
     Map<Pair<Elem, Elem>, List<RightPart>> table;
     Table tableObj;
     boolean flag_working = true;
@@ -191,6 +193,8 @@ public class LLK {
                         }
                         case "setIdent": {
                             semantic.setIdent(lexemToStr(lexem));
+                            this.triads.add(semantic.dataType.toString(), lexemToStr(lexem), null);
+                            this.triads.stackAdd(lexemToStr(lexem));
                             break;
                         }
                         case "endDecl": {
@@ -242,11 +246,61 @@ public class LLK {
                             System.out.print("");
                             break;
                         }
+                        case "triad_push": {
+                            triads.stackAdd(lexemToStr(lexem));
+                            break;
+                        }
+                        case "triad_push_param": {
+                            System.out.print("");
+                            String s_1 = this.triads.stackGetId(-1);
+                            triads.add("push", s_1, null);
+                            break;
+                        }
+                        case "triad_call": {
+                            System.out.print("");
+                            String s_1 = this.triads.stackGetId(-1);
+                            triads.add("call", s_1, null);
+                            break;
+                        }
+                        case "triad_remember_call": {
+//                            this.triads.triad_remember_call = lexemToStr(lexem);
+                            this.triads.stackAdd(lexemToStr(lexem));
+                            System.out.print("");
+                            break;
+                        }
+
+                        case "gener=": {
+                            this.triads.addMathOperation("=");
+
+                            break;
+                        }
+                        case "gener*": {
+                            this.triads.addMathOperation("*");
+                            break;
+                        }
+                        case "gener/": {
+                            this.triads.addMathOperation("/");
+                            break;
+                        }
+                        case "gener%": {
+                            this.triads.addMathOperation("%");
+                            break;
+                        }
+                        case "gener+": {
+                            this.triads.addMathOperation("+");
+                            break;
+                        }
+                        case "gener-": {
+                            this.triads.addMathOperation("-");
+                            break;
+                        }
+
                         case "push_t": {
                             semantic.push_t(next, lexemToStr(lexem)); // возвращаем current
                             System.out.print("");
                             break;
                         }
+
                         case "callFunc": {
                             semantic.callFunc(); // возвращаем current
                             System.out.print("");
@@ -288,8 +342,10 @@ public class LLK {
             semantic.createGraphViz();
             semantic.drawTree();
         }
+        this.triads.printTriads();
         return true;
     }
+
 
     private RightPart findNeededPart(List<RightPart> rightParts, Elem elem) {
         List<RightPart> tmpList = rightParts.stream()
@@ -317,8 +373,8 @@ public class LLK {
     private void printStack() throws Exception {
         ++count;
 
-        if (count > 10000)
-            throw new Ex_Exception("count > 10000");
+        if (count > 30000)
+            throw new Ex_Exception("count > 30000");
 
         if (devMode == false)
             return;
