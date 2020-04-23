@@ -15,6 +15,7 @@ public class Triad_PUSH extends _Triad_Base {
 
     // Если кладем идентификатор переменно
     public String lexemStr = null;
+
     public String constantStr = null;
 
 

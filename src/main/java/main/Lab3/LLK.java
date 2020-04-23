@@ -1,5 +1,7 @@
 package main.Lab3;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 import main.Lab2.LexTypeTERMINAL;
 import main.Lab2.ScanerV2;
@@ -13,6 +15,7 @@ import main.algoritm_1and2.maga.Elem;
 import main.algoritm_1and2.maga.ElemType;
 import main.algoritm_1and2.maga.RightPart;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -414,6 +417,21 @@ public class LLK {
             semantic.drawTree();
         }
         String triadsStr = this.triads.printTriads();
+
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
+//                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+//                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+//                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
+//                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
+//
+//        String json = mapper.writeValueAsString(this.triads);
+//
+//
+//        try (PrintWriter out = new PrintWriter("файлики/triadsStr.json")) {
+//            out.println(json);
+//        }
+
         if (!triadsStr.equals(lolkek))
             throw new Exception("!triadsStr.equals(\"lolkek\")");
         return true;

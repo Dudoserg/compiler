@@ -485,4 +485,8 @@ public class Semantic {
     public Node getNode_callFunc() {
         return node_callFunc;
     }
+
+    public Node getFind_last() {
+        return find_last;
+    }
 }

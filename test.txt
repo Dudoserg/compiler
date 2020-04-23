@@ -1,14 +1,14 @@
 
 int heh(int a){
-    int x = a * 47;
-    return x + 66;
+    int x = a * a + 37;
+    return x * 3;
 }
 
 
 int main(){
     if( 0 - 2 + 5 > 3){
         int a = 2;
-        int qwer = heh(heh( 2));
+        int qwer = heh(a);
         int b = 2;
 
         if( 123 > 138)

@@ -2,6 +2,7 @@ package main.Lab4;
 
 import lombok.*;
 import main.Lab2.LexTypeTERMINAL;
+import main.Lab3.Node;
 import main.Lab3.Semantic;
 import main.Lab4.TriadsByType.*;
 
@@ -25,7 +26,7 @@ public class Triads {
     public List<Triad> triadList = new ArrayList<>();
 
     // тут для V хранятся индексы уже рассчитанных триад, константы, идентификаторы
-    public List<String> stack = new ArrayList<>();
+    public List<StackElem> stack = new ArrayList<>();
 
     @Builder
     @Getter
@@ -48,6 +49,7 @@ public class Triads {
         private boolean isDeclareFunc = false;
 
         private boolean isCallFunc = false;
+        private Node node;
 
         public static StackElem createDeclareVariable(LexTypeTERMINAL dataType, String lexem) {
             StackElem stackElem = new StackElem();
@@ -57,11 +59,12 @@ public class Triads {
             return stackElem;
         }
 
-        public static StackElem createCallVariable(LexTypeTERMINAL next, String lexemStr) {
+        public static StackElem createCallVariable(LexTypeTERMINAL next, String lexemStr, Node find_last) {
             StackElem stackElem = new StackElem();
             stackElem.isCallVariable = true;
             stackElem.lexTypeTERMINAL = next;
             stackElem.lexemStr = lexemStr;
+            stackElem.node = find_last;
             return stackElem;
         }
 
@@ -125,31 +128,68 @@ public class Triads {
         return all;
     }
 
-    public void stackAdd(String s) {
-        stack.add(s);
+    public void stackAdd(StackElem stackElem) {
+        stack.add(stackElem);
     }
 
-    public String stackGetId(int index) {
+    public StackElem stackGetId(int index) {
         if (index >= 0) {
-            String result = stack.get(index);
+            StackElem result = stack.get(index);
             stack.remove(index);
             return result;
         } else {
-            String result = stack.get(stack.size() + index);
+            StackElem result = stack.get(stack.size() + index);
             stack.remove(stack.size() + index);
             return result;
         }
     }
 
     public void addMathOperation(String sign) {
-        String s_2 = this.stackGetId(-1);
-        String s_1 = this.stackGetId(-1);
-        this.add(sign, s_1, s_2);
-        if (!sign.equals("=")){
-            StackElem stackElem = StackElem.createTriad((this.triadList.size() - 1));
-            this.stackAdd("(" + (this.triadList.size() - 1) + ")");
+        StackElem s_2 = this.stackGetId(-1);
+        StackElem s_1 = this.stackGetId(-1);
+        String s_1Str = s_1.isTriad == true ? "(" + s_1.triad_index + ")" : s_1.lexemStr;
+        String s_2Str = s_2.isTriad == true ? "(" + s_2.triad_index + ")" : s_2.lexemStr;
+
+        Triad triad = new Triad(sign, s_1Str, s_2Str);
+//        this.add(sign, s_1Str, s_2Str);
+
+        Triad_Math_Operation triad_math_operation = new Triad_Math_Operation();
+
+        {
+            if (s_1.isTriad) {
+                triad_math_operation.left_index = s_1.triad_index;
+                triad_math_operation.left_triad = this.triadList.get(s_1.triad_index);
+            } else if (s_1.isCallVariable) {
+                triad_math_operation.left_lexemStr = s_1.lexemStr;
+                triad_math_operation.left_node = s_1.node;
+            } else if (s_1.isConstant) {
+                triad_math_operation.left_lexTypeTERMINAL = s_1.lexTypeTERMINAL;
+                triad_math_operation.left_lexemStr = s_1.lexemStr;
+            }
         }
-        else
+        {
+            if (s_2.isTriad) {
+                triad_math_operation.right_index = s_2.triad_index;
+                triad_math_operation.right_triad = this.triadList.get(s_2.triad_index);
+            } else if (s_2.isCallVariable) {
+                triad_math_operation.right_lexemStr = s_2.lexemStr;
+                triad_math_operation.right_node = s_2.node;
+            } else if (s_2.isConstant) {
+                triad_math_operation.right_lexTypeTERMINAL = s_2.lexTypeTERMINAL;
+                triad_math_operation.right_lexemStr = s_2.lexemStr;
+            }
+        }
+
+        triad.triad_base = triad_math_operation;
+
+        this.triadList.add(triad);
+
+
+        if (!sign.equals("=")) {
+            StackElem stackElem = StackElem.createTriad((this.triadList.size() - 1));
+//            this.stackAdd("(" + (this.triadList.size() - 1) + ")");
+            this.stackAdd(stackElem);
+        } else
             System.out.print("");
     }
 
@@ -167,7 +207,7 @@ public class Triads {
 
         StackElem stackElem = StackElem.createDeclareVariable(dataType, lexemStr);
 
-        this.stackAdd(lexemStr);
+        this.stackAdd(stackElem);
     }
 
     public void triad_new_func(String lexemStr) {
@@ -290,28 +330,36 @@ public class Triads {
     }
 
     public void triad_push(String lexemStr, LexTypeTERMINAL next) throws Exception {
-        StackElem stackElem;
+        StackElem stackElem = null;
         if (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._DOUBLE ||
-                next ==  LexTypeTERMINAL._TYPE_INT_10 || next ==  LexTypeTERMINAL._TYPE_INT_16 ||
-                next ==  LexTypeTERMINAL._TYPE_INT_8)
+                next == LexTypeTERMINAL._TYPE_INT_10 || next == LexTypeTERMINAL._TYPE_INT_16 ||
+                next == LexTypeTERMINAL._TYPE_INT_8)
             stackElem = StackElem.createConstant(next, lexemStr);
         else if (next == LexTypeTERMINAL._ID)
-            stackElem = StackElem.createCallVariable(next, lexemStr);
+            stackElem = StackElem.createCallVariable(next, lexemStr, semantic.getFind_last());
         else
             throw new Exception("triad_push не константа и не переменная");
-        this.stackAdd(lexemStr);
+        this.stackAdd(stackElem);
     }
 
     public void triad_push_param() {
-        String s_1 = this.stackGetId(-1);
-        Triad triad = new Triad("push", s_1, null);
+        StackElem stackElem = this.stackGetId(-1);
+        Triad triad = null;
 
         Triad_PUSH triad_push = new Triad_PUSH();
-        if (s_1.charAt(0) == '(' && s_1.charAt(s_1.length() - 1) == ')') {
-            triad_push.index = Integer.valueOf(s_1.substring(1, s_1.length() - 1));
+
+        if (stackElem.isTriad) {
+            triad = new Triad("push", "(" + stackElem.triad_index + ")", null);
+            triad_push.index = stackElem.triad_index;
             triad_push.triad = this.triadList.get(triad_push.index);
-        } else {
-            triad_push.lexemStr = s_1;
+
+        } else if (stackElem.isCallVariable) {
+            triad = new Triad("push", stackElem.lexemStr , null);
+            triad_push.lexemStr = stackElem.lexemStr;
+
+        } else if (stackElem.isConstant) {
+            triad = new Triad("push", stackElem.lexemStr , null);
+            triad_push.constantStr = stackElem.lexemStr;
         }
 
         triad.triad_base = triad_push;
@@ -321,7 +369,8 @@ public class Triads {
     }
 
     public void triad_call() {
-        String s_1 = this.stackGetId(-1);
+        StackElem stackElem = this.stackGetId(-1);
+        String s_1 = stackElem.lexemStr;
 //        this.add("call", s_1, null);
         Triad triad = new Triad("call", s_1, null);
 
@@ -330,18 +379,29 @@ public class Triads {
         triad.triad_base = triad_call;
 
         triadList.add(triad);
-        StackElem stackElem = StackElem.createCallFunc();
-        this.stackAdd("(" + (this.triadList.size() - 1) + ")");
+        StackElem stackElemResult = StackElem.createTriad((this.triadList.size() - 1));
+//        this.stackAdd("(" + (this.triadList.size() - 1) + ")");
+        this.stackAdd(stackElemResult);
     }
 
     public void triad_return() {
-        String s_1 = this.stackGetId(-1);
-        this.add("push_for_return", s_1, null);
+        StackElem stackElem = this.stackGetId(-1);
+        if (stackElem.isTriad) {
+            this.add("push_for_return", "(" + stackElem.triad_index + ")", null);
+
+        } else if (stackElem.isCallVariable) {
+            this.add("push_for_return", stackElem.lexemStr, null);
+
+        } else if (stackElem.isConstant) {
+            this.add("push_for_return", stackElem.lexemStr, null);
+
+        }
     }
 
     public void triad_remember_call(String lexemStr) {
         StackElem stackElem = StackElem.createDeclareFunc(lexemStr);
-        this.stackAdd(lexemStr);
+//        this.stackAdd(lexemStr);
+        this.stackAdd(stackElem);
     }
 
     public void gener_equal() {
