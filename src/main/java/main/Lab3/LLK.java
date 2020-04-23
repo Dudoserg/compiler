@@ -291,7 +291,7 @@ public class LLK {
                         }
 
                         case "triad_push": {
-                            this.triads.triad_push(lexemToStr(lexem));
+                            this.triads.triad_push(lexemToStr(lexem), next);
                             break;
                         }
                         case "triad_push_param": {

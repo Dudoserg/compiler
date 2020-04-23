@@ -1,7 +1,7 @@
 
 int heh(int a){
-    int x = a * a;
-    return 1;
+    int x = a * 47;
+    return x + 66;
 }
 
 

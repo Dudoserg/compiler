@@ -1,5 +1,6 @@
 package main.Lab4;
 
+import lombok.*;
 import main.Lab2.LexTypeTERMINAL;
 import main.Lab3.Semantic;
 import main.Lab4.TriadsByType.*;
@@ -25,6 +26,72 @@ public class Triads {
 
     // тут для V хранятся индексы уже рассчитанных триад, константы, идентификаторы
     public List<String> stack = new ArrayList<>();
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class StackElem {
+        private String lexemStr;
+        private LexTypeTERMINAL lexTypeTERMINAL;        //
+
+        private boolean isTriad;
+        private int triad_index;
+
+        private boolean isConstant = false;
+
+        private boolean isCallVariable = false;
+
+        private boolean isDeclareVariable = false;
+
+        private boolean isDeclareFunc = false;
+
+        private boolean isCallFunc = false;
+
+        public static StackElem createDeclareVariable(LexTypeTERMINAL dataType, String lexem) {
+            StackElem stackElem = new StackElem();
+            stackElem.isDeclareVariable = true;
+            stackElem.lexemStr = lexem;
+            stackElem.lexTypeTERMINAL = dataType;
+            return stackElem;
+        }
+
+        public static StackElem createCallVariable(LexTypeTERMINAL next, String lexemStr) {
+            StackElem stackElem = new StackElem();
+            stackElem.isCallVariable = true;
+            stackElem.lexTypeTERMINAL = next;
+            stackElem.lexemStr = lexemStr;
+            return stackElem;
+        }
+
+        public static StackElem createConstant(LexTypeTERMINAL next, String lexemStr) {
+            StackElem stackElem = new StackElem();
+            stackElem.isConstant = true;
+            stackElem.lexTypeTERMINAL = next;
+            stackElem.lexemStr = lexemStr;
+            return stackElem;
+        }
+
+        public static StackElem createCallFunc() {
+            StackElem stackElem = new StackElem();
+            return stackElem;
+        }
+
+        public static StackElem createDeclareFunc(String lexemStr) {
+            StackElem stackElem = new StackElem();
+            stackElem.isDeclareFunc = true;
+            stackElem.lexemStr = lexemStr;
+            return stackElem;
+        }
+
+        public static StackElem createTriad(int i) {
+            StackElem stackElem = new StackElem();
+            stackElem.isTriad = true;
+            stackElem.triad_index = i;
+            return stackElem;
+        }
+    }
 
     public String triad_remember_call = "";
 
@@ -78,8 +145,12 @@ public class Triads {
         String s_2 = this.stackGetId(-1);
         String s_1 = this.stackGetId(-1);
         this.add(sign, s_1, s_2);
-        if (!sign.equals("="))
+        if (!sign.equals("=")){
+            StackElem stackElem = StackElem.createTriad((this.triadList.size() - 1));
             this.stackAdd("(" + (this.triadList.size() - 1) + ")");
+        }
+        else
+            System.out.print("");
     }
 
     // =================================================================================================================
@@ -93,6 +164,8 @@ public class Triads {
 
         this.triadList.add(triad);
 //        this.add(dataType.toString(), lexemStr, null);
+
+        StackElem stackElem = StackElem.createDeclareVariable(dataType, lexemStr);
 
         this.stackAdd(lexemStr);
     }
@@ -216,7 +289,16 @@ public class Triads {
         System.out.print("");
     }
 
-    public void triad_push(String lexemStr) {
+    public void triad_push(String lexemStr, LexTypeTERMINAL next) throws Exception {
+        StackElem stackElem;
+        if (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._DOUBLE ||
+                next ==  LexTypeTERMINAL._TYPE_INT_10 || next ==  LexTypeTERMINAL._TYPE_INT_16 ||
+                next ==  LexTypeTERMINAL._TYPE_INT_8)
+            stackElem = StackElem.createConstant(next, lexemStr);
+        else if (next == LexTypeTERMINAL._ID)
+            stackElem = StackElem.createCallVariable(next, lexemStr);
+        else
+            throw new Exception("triad_push не константа и не переменная");
         this.stackAdd(lexemStr);
     }
 
@@ -248,6 +330,7 @@ public class Triads {
         triad.triad_base = triad_call;
 
         triadList.add(triad);
+        StackElem stackElem = StackElem.createCallFunc();
         this.stackAdd("(" + (this.triadList.size() - 1) + ")");
     }
 
@@ -257,6 +340,7 @@ public class Triads {
     }
 
     public void triad_remember_call(String lexemStr) {
+        StackElem stackElem = StackElem.createDeclareFunc(lexemStr);
         this.stackAdd(lexemStr);
     }
 
