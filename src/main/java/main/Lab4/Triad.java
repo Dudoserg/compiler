@@ -12,7 +12,6 @@ public class Triad {
     public String first;
     public String second;
 
-    TriadType triadType;
     _Triad_Base triad_base;
 
 

@@ -477,4 +477,12 @@ public class Semantic {
     public void setStackType(Stack<Pair<NodeType, String>> stackType) {
         this.stackType = stackType;
     }
+
+    public Node getCurrent() {
+        return current;
+    }
+
+    public Node getNode_callFunc() {
+        return node_callFunc;
+    }
 }

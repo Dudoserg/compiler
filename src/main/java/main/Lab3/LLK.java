@@ -27,7 +27,7 @@ public class LLK {
         System.out.println("\n\n\nFULL TIME = " + (System.currentTimeMillis() - start) / 1000.0);
     }
 
-    Triads triads = new Triads();
+    Triads triads;
     Map<Pair<Elem, Elem>, List<RightPart>> table;
     Table tableObj;
     boolean flag_working = true;
@@ -41,6 +41,7 @@ public class LLK {
     public LLK(boolean devMode) throws Exception {
         this.devMode = devMode;
         this.semantic = new Semantic(devMode);
+        triads = new Triads(semantic, devMode);
         this.tableInit();
     }
 

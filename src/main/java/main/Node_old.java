@@ -2,7 +2,7 @@ package main;
 
 import java.util.ArrayList;
 
-public class Node {
+public class Node_old {
 
 
     static final int TYPE_FUNC = 1;
@@ -27,7 +27,7 @@ public class Node {
 
     int flag_declared;
 
-    public Node() {
+    public Node_old() {
         flag_constant = 0;
         flag_declared = 0;
     }

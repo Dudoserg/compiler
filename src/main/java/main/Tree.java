@@ -14,10 +14,10 @@ public class Tree {
 
     static Scaner scaner;
 
-    public Node n;
+    public Node_old n;
     public Tree up,left,right;
 
-    public Tree(Tree left, Tree right, Tree up, Node n) {
+    public Tree(Tree left, Tree right, Tree up, Node_old n) {
         this.n = n;
         this.up = up;
         this.left = left;
@@ -26,18 +26,18 @@ public class Tree {
 
 
     public Tree(){
-        n = new Node();
+        n = new Node_old();
         up = null;
     }
 
 
-    public void setLeft(Node data){
+    public void setLeft(Node_old data){
         Tree tmp = new Tree(null, null, this, data);
         left = tmp;
     }
 
 
-    public void setRight(Node data){
+    public void setRight(Node_old data){
         Tree tmp = new Tree(null, null, this, data);
         right = tmp;
     }
@@ -55,7 +55,7 @@ public class Tree {
         // Пока не корень и строки( изображения ликсем) не равны, идем в родителя
         while (current != null ){
             // Если очередная вершина не равна
-            if( current.n.dataType == Node.TYPE_BLACK){
+            if( current.n.dataType == Node_old.TYPE_BLACK){
                 current = current.up;
             }
             else{
@@ -118,7 +118,7 @@ public class Tree {
                 break;
             }
             if(  current.up.right != current){
-                if( current.n.dataType != Node.TYPE_BLACK)
+                if( current.n.dataType != Node_old.TYPE_BLACK)
                     if( current.n.id.equals(id))
                         return current; // нaшли совпадающий идентификатор
                 current = current.up; // поднимаемся наверх по связям
@@ -173,11 +173,11 @@ public class Tree {
         // Пока не корень и строки( изображения ликсем) не равны, идем в родителя
         while (current != null ){
             // Если очередная вершина не равна
-            if( current.n.dataType == Node.TYPE_BLACK){
+            if( current.n.dataType == Node_old.TYPE_BLACK){
                 current = current.up;
             }
             else{
-                if (current.n.id.equals(lex) == true && current.n.dataType == Node.TYPE_FUNC)
+                if (current.n.id.equals(lex) == true && current.n.dataType == Node_old.TYPE_FUNC)
                     return current;
                     // Иначе выходим, мы нашли нужную вершину
                 else

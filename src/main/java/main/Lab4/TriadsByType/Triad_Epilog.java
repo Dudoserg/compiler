@@ -8,9 +8,8 @@ import main.Lab4.TriadType;
 
 @Getter
 @Setter
-
-public class Triad_Prolog extends _Triad_Base{
-    public Triad_Prolog() {
-        this.triadType = TriadType.PROLOG;
+public class Triad_Epilog extends _Triad_Base {
+    public Triad_Epilog() {
+        this.triadType = TriadType.EPILOG;
     }
 }
