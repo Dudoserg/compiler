@@ -416,27 +416,15 @@ public class LLK {
             semantic.createGraphViz();
             semantic.drawTree();
         }
-        String triadsStr = this.triads.printTriads();
-
-//        ObjectMapper mapper = new ObjectMapper();
-//        mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
-//                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-//                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
-//                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
-//                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
-//
-//        String json = mapper.writeValueAsString(this.triads);
-//
-//
-//        try (PrintWriter out = new PrintWriter("файлики/triadsStr.json")) {
-//            out.println(json);
-//        }
+        triadsStr = this.triads.printTriads();
 
         if (!triadsStr.equals(lolkek))
-            throw new Exception("!triadsStr.equals(\"lolkek\")");
+            if(devMode)
+                throw new Exception("!triadsStr.equals(\"lolkek\")");
         return true;
     }
 
+    public String triadsStr;
 
     private RightPart findNeededPart(List<RightPart> rightParts, Elem elem) {
         List<RightPart> tmpList = rightParts.stream()

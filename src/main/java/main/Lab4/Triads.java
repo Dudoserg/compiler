@@ -384,18 +384,35 @@ public class Triads {
         this.stackAdd(stackElemResult);
     }
 
-    public void triad_return() {
+    public void triad_return() throws Exception {
         StackElem stackElem = this.stackGetId(-1);
+        Triad triad ;
+        Triad_Push_For_Return triad_push_for_return = new Triad_Push_For_Return();
         if (stackElem.isTriad) {
-            this.add("push_for_return", "(" + stackElem.triad_index + ")", null);
+            triad = new Triad("push_for_return", "(" + stackElem.triad_index + ")", null);
+            triad_push_for_return.index = stackElem.triad_index;
+            triad_push_for_return.triad = this.triadList.get(stackElem.triad_index);
+//            this.add("push_for_return", "(" + stackElem.triad_index + ")", null);
 
         } else if (stackElem.isCallVariable) {
-            this.add("push_for_return", stackElem.lexemStr, null);
+            triad = new Triad("push_for_return", stackElem.lexemStr, null);
+            triad_push_for_return.lexemStr = stackElem.lexemStr;
+            triad_push_for_return.node = stackElem.node;
+//            this.add("push_for_return", stackElem.lexemStr, null);
 
         } else if (stackElem.isConstant) {
-            this.add("push_for_return", stackElem.lexemStr, null);
-
+            triad = new Triad("push_for_return", stackElem.lexemStr, null);
+            triad_push_for_return.lexTypeTERMINAL = stackElem.lexTypeTERMINAL;
+            triad_push_for_return.lexemStr = stackElem.lexemStr;
+            //this.add("push_for_return", stackElem.lexemStr, null);
+        }else {
+            throw  new Exception("triad_return");
         }
+
+        triad.triad_base = triad_push_for_return;
+
+        triadList.add(triad);
+
     }
 
     public void triad_remember_call(String lexemStr) {
