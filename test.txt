@@ -26,15 +26,15 @@ int main2(int x){
 int x = 228 * 1488 + 1337;
 
 
-int kek(int n, int w){
+int kek(int n, int two){
 
 }
 
-int heh(int n, int n2){
+int heh(int n, int n2, int n3){
 
 }
 
 int privet2(){
-    double a = kek(heh(1, 66 * 96 + 5)) + 8;
+    double a = kek(heh(1, 66 * 96 + 5,333333), 2) + 8;
 
 }
