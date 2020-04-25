@@ -1,7 +1,4 @@
+int a = (96 / 55) + (5 * 6);
 int main(int x){
-    if(x)
-        int c = 1;
-    else
-        int q  = 2;
-    return 23;
+    int b = (96 / 55) + a ;
 }

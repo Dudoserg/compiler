@@ -14,17 +14,26 @@ public class Node {
         TYPE_CHAR,
         TYPE_BOOLEAN;
     }
+    public LexTypeTERMINAL getLexTypeTERMINAL() throws Exception {
+        switch (this.nodeType){
+            case TYPE_DOUBLE: return LexTypeTERMINAL._DOUBLE;
+            case TYPE_INTEGER: return LexTypeTERMINAL._INT;
+            default:{
+                throw new Exception("getLexTypeTERMINAL error");
+            }
+        }
+    }
     
     public Node left;
     public Node right;
     public Node parent;
 
-    NodeType nodeType;
-    LexTypeTERMINAL returnType = null;  // Если этот узел функция, то тут тип возвращаемого результата
-    int countParams = 0;                // Если этот узел функция, то тут количество параметров функции
+    public NodeType nodeType;
+    public LexTypeTERMINAL returnType = null;  // Если этот узел функция, то тут тип возвращаемого результата
+    public int countParams = 0;                // Если этот узел функция, то тут количество параметров функции
 
-    String lexem;
-    int id;
+    public String lexem;
+    public int id;
 
     public Node() {
         this.id = Node.count++;

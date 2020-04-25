@@ -9,6 +9,7 @@ import main.Lab3.createLLK.CreateLLK;
 import main.Lab3.createLLK.ReadLLK;
 import main.Lab3.createLLK.Table;
 import main.Lab3.exceptions.Ex_Exception;
+import main.Lab4.TreeNext.TreeNext;
 import main.Lab4.Triads;
 import main.SavePoint;
 import main.algoritm_1and2.maga.Elem;
@@ -39,12 +40,14 @@ public class LLK {
     List<Elem> historyStack = new ArrayList<>();
     List<Pair<LexTypeTERMINAL, String>> historyScaner = new ArrayList<>();
     Semantic semantic;
+    TreeNext treeNext;
     public static SavePoint savePointCurrent;
 
     public LLK(boolean devMode) throws Exception {
         this.devMode = devMode;
         this.semantic = new Semantic(devMode);
         triads = new Triads(semantic, devMode);
+        treeNext = new TreeNext(semantic, triads, devMode);
         this.tableInit();
     }
 
@@ -205,6 +208,7 @@ public class LLK {
                         }
                         case "triad_new_variable": {
                             this.triads.triad_new_variable(semantic.dataType, lexemToStr(lexem));
+                            this.treeNext.new_variable(semantic.dataType, lexemToStr(lexem));
 //                            this.triads.add(semantic.dataType.toString(), lexemToStr(lexem), null);
 //                            this.triads.stackAdd(lexemToStr(lexem));
                             break;
@@ -236,6 +240,7 @@ public class LLK {
                         }
                         case "startFunc": {
                             semantic.startFunc(lexemToStr(lexem)); // возвращаем current
+                            this.treeNext.startFunc(lexemToStr(lexem));
                             break;
                         }
                         case "newBlack": {
@@ -341,14 +346,17 @@ public class LLK {
                         }
                         case "gener_assign": {
                             this.triads.gener_assign();
+                            this.treeNext.generAssign();
                             break;
                         }
                         case "gener_star": {
                             this.triads.gener_star();
+                            this.treeNext.generStar();
                             break;
                         }
                         case "gener_div": {
                             this.triads.gener_div();
+                            this.treeNext.generDiv();
                             break;
                         }
                         case "gener_percent": {
@@ -357,6 +365,7 @@ public class LLK {
                         }
                         case "gener_plus": {
                             this.triads.gener_plus();
+                            this.treeNext.generPlus();
                             break;
                         }
                         case "gener_minus": {
@@ -366,6 +375,8 @@ public class LLK {
 
                         case "push_t": {
                             semantic.push_t(next, lexemToStr(lexem)); // возвращаем current
+                            this.treeNext.push(next, lexemToStr(lexem));
+
                             System.out.print("");
                             break;
                         }
@@ -419,8 +430,10 @@ public class LLK {
         }
         triadsStr = this.triads.printTriads();
 
+        treeNext.draw();
+
         if (!triadsStr.equals(lolkek))
-            if(devMode)
+            if (devMode)
                 throw new Exception("!triadsStr.equals(\"lolkek\")");
         return true;
     }
