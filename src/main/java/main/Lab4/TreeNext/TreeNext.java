@@ -11,7 +11,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class TreeNext {
     Semantic semantic;
@@ -19,6 +18,7 @@ public class TreeNext {
     boolean devMode;
     private NextNode savedVariable;
     private NextNode find_last;
+    private NextNode node_callFunc;
 
     public TreeNext(Semantic semantic, Triads triads, boolean devMode) {
         this.semantic = semantic;
@@ -131,7 +131,7 @@ public class TreeNext {
         this.stack.add(plusVertex);
     }
 
-    public void push(LexTypeTERMINAL next, String lexem) throws Exception {
+    public void triad_push(LexTypeTERMINAL next, String lexem) throws Exception {
         if (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._TYPE_INT_8 ||
                 next == LexTypeTERMINAL._TYPE_INT_10 || next == LexTypeTERMINAL._TYPE_INT_16) {
             NextNode intVertex = new NextNode();
@@ -337,6 +337,7 @@ public class TreeNext {
     }
 
     public void callFunc() {
+        node_callFunc = this.find_last;
     }
 
     public void start_parameter_counting() {
@@ -357,7 +358,9 @@ public class TreeNext {
     public void checkDubl(String lexemToStr) {
     }
 
-    public NextNode find(String lexemToStr) throws Ex_NotFound {
+    public NextNode find(String lexemToStr) throws Exception {
+        if (lexemToStr.equals("kek"))
+            System.out.print("");
         NextNode node;
         if (flag_Decl)
             node = this.current.parent;
@@ -365,6 +368,8 @@ public class TreeNext {
             node = this.current;
 
         do {
+            if (lexemToStr.equals("kek"))
+                this.draw(node);
             NextNode left = node.left;
             if (left == null) {
                 NextNode nodeOld = node;
@@ -487,7 +492,7 @@ public class TreeNext {
         NextNode rightElseNext = new NextNode();
         rightElseNext.nodeBase = new _NextNode_Next();
 
-        nodeElse.right = rightElseNext;
+        nodeElse.setRight(rightElseNext);
 
         this.current = rightElseNext;
 //        this.draw(this.current);
@@ -578,5 +583,73 @@ public class TreeNext {
 
     public void endFunc() {
         this.current = k.parent;
+    }
+
+    List<NextNode> stackPushParam = new ArrayList<>();
+
+    public void triad_push_param() throws Exception {
+        NextNode nodePushParam = new NextNode();
+        _NextNode_Push_Param nodeBase = new _NextNode_Push_Param();
+        nodePushParam.nodeBase = nodeBase;
+
+        NextNode fromStack = this.getFromStack(-1);
+        if (fromStack.nodeBase instanceof _NextNode_Int) {
+            nodeBase.whatIsPush = fromStack;
+        } else if (fromStack.nodeBase instanceof _NextNode_Double) {
+            nodeBase.whatIsPush = fromStack;
+
+        } else if (fromStack.nodeBase instanceof _NextNode_ID) {
+            nodeBase.whatIsPush = fromStack;
+        } else {
+            throw new Exception("TreeNext triad_push_param");
+        }
+        this.stackPushParam.add(nodePushParam);
+
+
+        System.out.print("");
+    }
+
+    public void triad_remember_call(String lexemToStr) {
+        this.stackPushParam.add(find_last);
+        System.out.print("");
+    }
+
+    public void triad_call() {
+        NextNode funcNode = this.stackPushParam.get(0);
+
+        // ВЫЗОВ ФУНКЦИИ
+        NextNode funcCallNode = new NextNode();
+        _NextNode_Call nodebase = new _NextNode_Call();
+        funcCallNode.nodeBase = nodebase;
+        // какую функцию вызываем
+        nodebase.func = funcNode;
+
+        /// ПУШИМ ПАРАМЕТРЫ В СТЕК ДЛЯ ВЫЗОВА ФУНКЦИИ
+        NextNode nextNode = new NextNode();
+        nextNode.nodeBase = new _NextNode_Next();
+        funcCallNode.setLeft(nextNode);
+
+        NextNode last = nextNode;
+        for (int i = 1; i < this.stackPushParam.size(); i++) {
+            NextNode tmp = new NextNode();
+            tmp.nodeBase = new _NextNode_Next();
+//
+//            NextNode nodePushParam = new NextNode();
+//            _NextNode_Push_Param push_param = new _NextNode_Push_Param();
+//            nodePushParam.nodeBase = push_param;
+            NextNode nodePushParam = this.stackPushParam.get(i);
+//            push_param.whatIsPush = this.stackPushParam.get(i);
+
+            tmp.setLeft(nodePushParam);
+
+            last.setRight(tmp);
+            last = tmp;
+        }
+
+        this.stack.add(funcCallNode);
+
+        this.stackPushParam.clear();
+        System.out.print("");
+
     }
 }

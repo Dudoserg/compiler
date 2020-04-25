@@ -312,14 +312,17 @@ public class LLK {
                         }
 
                         case "triad_push": {
+                            treeNext.triad_push(next, lexemToStr(lexem));
                             this.triads.triad_push(lexemToStr(lexem), next);
                             break;
                         }
                         case "triad_push_param": {
                             this.triads.triad_push_param();
+                            this.treeNext.triad_push_param();
                             break;
                         }
                         case "triad_call": {
+                            this.treeNext.triad_call();
                             this.triads.triad_call();
                             break;
                         }
@@ -329,6 +332,7 @@ public class LLK {
                             break;
                         }
                         case "triad_remember_call": {
+                            this.treeNext.triad_remember_call(lexemToStr(lexem));
                             this.triads.triad_remember_call(lexemToStr(lexem));
                             break;
                         }
@@ -395,7 +399,6 @@ public class LLK {
                         }
 
                         case "push_t": {
-                            treeNext.push(next, lexemToStr(lexem));
                             semantic.push_t(next, lexemToStr(lexem)); // возвращаем current
                             break;
                         }

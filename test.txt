@@ -1,26 +1,11 @@
 
-int main(int x){
-    int beforeIf;
-
-    if(x >= 23 + 3){
-        int c = 1;
-    }
-    else
-        int q  = 2;
-    int afterIf;
-    return 23 + 2;
+int kek(int n){
 
 }
-int main2(int x){
-    int beforeIf;
 
-    if(x >= 23 + 3){
-        int c = 1;
-    }
-    else
-        int q  = 2;
-    int afterIf;
-    return 23 + 2;
+
+
+int privet2(){
+    double a = kek(kek(1)) + 8;
 
 }
-int x = 228 * 1488 + 1337;
