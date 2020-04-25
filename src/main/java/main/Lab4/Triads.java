@@ -202,7 +202,7 @@ public class Triads {
 
         triad.triad_base = triad_declare_variable;
 
-        this.triadList.add(triad);
+        //this.triadList.add(triad);///////////////////// сказали что триады такие не нужны
 //        this.add(dataType.toString(), lexemStr, null);
 
         StackElem stackElem = StackElem.createDeclareVariable(dataType, lexemStr);
@@ -266,6 +266,17 @@ public class Triads {
         }
     }
 
+    // тут добавляем + 0 x, чтобы работало сравнение
+    // если в стеке лежит адрес триады. то сусммировать с нулем не нужно, т.к. операция уже выполнена.
+    public void triads_gener_if_before() {
+        final StackElem current = this.stack.get(this.stack.size() - 1);
+        if(current.isTriad)
+            return;
+        StackElem stackElem_0 = StackElem.createConstant(LexTypeTERMINAL._INT, "0");
+        this.stack.add(stackElem_0);
+        this.stack.add(current);
+        this.gener_plus();
+    }
     public void triad_gener_if() {
         Triad triad = new Triad("if", null, "numFalse");
 

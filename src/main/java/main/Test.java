@@ -10,6 +10,19 @@ public class Test {
         System.out.println();
     }
 
+    public int kek() {
+        int i = (int) Math.random() * 10;
+        if (i > 5) {
+            if (i == 2)
+                return 1;
+            else
+                return 3;
+        } else {
+            return 23;
+        }
+
+    }
+
     private int func3() {
         return 3;
     }
@@ -18,7 +31,7 @@ public class Test {
         return 2;
     }
 
-    int func1(){
+    int func1() {
         return 1;
     }
 }

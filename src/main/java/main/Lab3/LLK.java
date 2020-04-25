@@ -272,6 +272,7 @@ public class LLK {
                             break;
                         }
                         case "triad_gener_if": {
+                            this.triads.triads_gener_if_before();
                             this.triads.triad_gener_if();
                             break;
                         }
