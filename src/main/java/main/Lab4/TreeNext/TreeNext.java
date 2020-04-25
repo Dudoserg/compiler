@@ -359,8 +359,7 @@ public class TreeNext {
     }
 
     public NextNode find(String lexemToStr) throws Exception {
-        if (lexemToStr.equals("kek"))
-            System.out.print("");
+
         NextNode node;
         if (flag_Decl)
             node = this.current.parent;
@@ -368,8 +367,7 @@ public class TreeNext {
             node = this.current;
 
         do {
-            if (lexemToStr.equals("kek"))
-                this.draw(node);
+
             NextNode left = node.left;
             if (left == null) {
                 NextNode nodeOld = node;
@@ -593,18 +591,23 @@ public class TreeNext {
         nodePushParam.nodeBase = nodeBase;
 
         NextNode fromStack = this.getFromStack(-1);
-        if (fromStack.nodeBase instanceof _NextNode_Int) {
-            nodeBase.whatIsPush = fromStack;
-        } else if (fromStack.nodeBase instanceof _NextNode_Double) {
-            nodeBase.whatIsPush = fromStack;
+        nodePushParam.left = fromStack;
 
-        } else if (fromStack.nodeBase instanceof _NextNode_ID) {
-            nodeBase.whatIsPush = fromStack;
-        } else if (fromStack.nodeBase instanceof _NextNode_Call) {
-            nodeBase.whatIsPush = fromStack;
-        }else {
-            throw new Exception("TreeNext triad_push_param");
-        }
+//        if (fromStack.nodeBase instanceof _NextNode_Int) {
+////            nodeBase.whatIsPush = fromStack;
+//            nodePushParam.left = fromStack;
+//        } else if (fromStack.nodeBase instanceof _NextNode_Double) {
+////            nodeBase.whatIsPush = fromStack;
+//            nodePushParam.left = fromStack;
+//        } else if (fromStack.nodeBase instanceof _NextNode_ID) {
+////            nodeBase.whatIsPush = fromStack;
+//            nodePushParam.left = fromStack;
+//        } else if (fromStack.nodeBase instanceof _NextNode_Call) {
+////            nodeBase.whatIsPush = fromStack;
+//            nodePushParam.left = fromStack;
+//        }else {
+//            throw new Exception("TreeNext triad_push_param");
+//        }
         this.stackPushParam.add(nodePushParam);
 
 
@@ -617,7 +620,6 @@ public class TreeNext {
     }
 
     public void triad_call() throws Exception {
-        this.draw(this.current);
         NextNode funcNode = null;
         List<NextNode> tmp_list = new ArrayList<>();
         int index;
@@ -646,7 +648,7 @@ public class TreeNext {
         funcCallNode.setLeft(nextNode);
 
         NextNode last = nextNode;
-        for (int i = 0; i < tmp_list.size(); i++) {
+        for (int i = tmp_list.size() - 1; i >= 0; i--) {
             NextNode tmp = new NextNode();
             tmp.nodeBase = new _NextNode_Next();
 //
@@ -664,7 +666,6 @@ public class TreeNext {
 
         this.stack.add(funcCallNode);
 
-        this.draw(this.current);
         System.out.print("");
 
     }

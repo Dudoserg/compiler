@@ -456,7 +456,7 @@ public class LLK {
 
         if (!triadsStr.equals(lolkek))
             if (devMode)
-                throw new Exception("!triadsStr.equals(\"lolkek\")");
+                throw new Exception("!triadsS197tr.equals(\"lolkek\")");
         return true;
     }
 

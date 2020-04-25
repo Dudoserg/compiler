@@ -1,13 +1,40 @@
 
-int kek(int n){
+int main(int x){
+    int beforeIf;
+
+    if(x >= 23 + 3){
+        int c = 1;
+    }
+    else
+        int q  = 2;
+    int afterIf;
+    return 23 + 2;
+
+}
+int main2(int x){
+    int beforeIf;
+
+    if(x >= 23 + 3){
+        int c = 1;
+    }
+    else
+        int q  = 2;
+    int afterIf;
+    return 23 + 2;
+
+}
+int x = 228 * 1488 + 1337;
+
+
+int kek(int n, int w){
 
 }
 
-int heh(int n){
+int heh(int n, int n2){
 
 }
 
 int privet2(){
-    double a = kek(heh(1)) + 8;
+    double a = kek(heh(1, 66 * 96 + 5)) + 8;
 
 }
