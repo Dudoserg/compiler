@@ -8,4 +8,5 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class _NextNode_Assign extends _NextNodeBase{
+
 }

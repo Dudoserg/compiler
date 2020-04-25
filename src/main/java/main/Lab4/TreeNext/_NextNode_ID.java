@@ -6,17 +6,21 @@ import lombok.Setter;
 import main.Lab2.LexTypeTERMINAL;
 import main.Lab3.Node;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @NoArgsConstructor
 public class _NextNode_ID extends _NextNodeBase{
-    public LexTypeTERMINAL next;
+    public LexTypeTERMINAL lexTypeTERMINAL;
     public String lexem;
-    public Node node;
+    public NextNode nextNode;
 
-    public _NextNode_ID(LexTypeTERMINAL next, String lexem, Node node) {
-        this.next = next;
+    public _NextNode_ID(LexTypeTERMINAL lexTypeTERMINAL, String lexem, NextNode nextNode) {
+        this.lexTypeTERMINAL = lexTypeTERMINAL;
         this.lexem = lexem;
-        this.node = node;
+        this.nextNode = nextNode;
     }
+
+
 }

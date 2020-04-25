@@ -1,7 +1,5 @@
 package main.Lab3;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 import main.Lab2.LexTypeTERMINAL;
 import main.Lab2.ScanerV2;
@@ -16,7 +14,6 @@ import main.algoritm_1and2.maga.Elem;
 import main.algoritm_1and2.maga.ElemType;
 import main.algoritm_1and2.maga.RightPart;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -199,10 +196,12 @@ public class LLK {
                     Elem tmp = historyStack.get(1);
                     switch (topELem.str) {
                         case "startDecl": {
+                            treeNext.startDecl(next); // тут тип int\double
                             semantic.startDecl(next); // тут тип int\double
                             break;
                         }
                         case "setIdent": {
+                            treeNext.setIdent(lexemToStr(lexem));
                             semantic.setIdent(lexemToStr(lexem));
                             break;
                         }
@@ -227,51 +226,60 @@ public class LLK {
                             break;
                         }
                         case "endDecl": {
+                            treeNext.endDecl();
                             semantic.endDecl();
                             break;
                         }
                         case "startLevel": {
+                            treeNext.startLevel(); // отводка вправо в дереве
                             semantic.startLevel(); // отводка вправо в дереве
                             break;
                         }
                         case "endLevel": {
+                            treeNext.endLevel(); // возвращаем current
                             semantic.endLevel(); // возвращаем current
                             break;
                         }
                         case "startFunc": {
+                            treeNext.startFunc(lexemToStr(lexem)); // возвращаем current
                             semantic.startFunc(lexemToStr(lexem)); // возвращаем current
-                            this.treeNext.startFunc(lexemToStr(lexem));
                             break;
                         }
                         case "newBlack": {
+                            treeNext.newBlack(); // возвращаем current
                             semantic.newBlack(); // возвращаем current
                             break;
                         }
                         case "plusParam": {
+                            treeNext.plusParam(); // возвращаем current
                             semantic.plusParam(); // возвращаем current
                             break;
                         }
                         case "find": {
+                            treeNext.find(lexemToStr(lexem));
                             semantic.find(lexemToStr(lexem));
                             System.out.print("");
                             break;
                         }
                         case "checkDubl": {
+                            treeNext.checkDubl(lexemToStr(lexem));
                             semantic.checkDubl(lexemToStr(lexem));
                             System.out.print("");
                             break;
                         }
                         case "saveVariable": {
-//                            semantic.saveVariable();
 //                            System.out.print("");
+//                            semantic.saveVariable();
                             break;
                         }
                         case "matchLeft": {
+                            treeNext.matchLeft();
                             semantic.matchLeft();
                             System.out.print("");
                             break;
                         }
                         case "match": {
+                            treeNext.match();
                             semantic.match();
                             System.out.print("");
                             break;
@@ -279,16 +287,19 @@ public class LLK {
                         case "triad_gener_if": {
                             this.triads.triads_gener_if_before();
                             this.triads.triad_gener_if();
+                            this.treeNext.triad_gener_if();
                             break;
                         }
                         case "triad_setAddr": {
                             break;
                         }
                         case "triad_form_if": {
+                            this.treeNext.triad_form_if();
                             break;
                         }
                         case "triad_gener_goto": {
                             this.triads.triad_gener_goto();
+                            this.treeNext.triad_gener_goto();
                             break;
                         }
                         case "triad_form_GOTO": {
@@ -296,6 +307,7 @@ public class LLK {
                         }
                         case "triad_gener_if_NOP": {
                             this.triads.triad_gener_if_NOP();
+                            this.treeNext.triad_gener_if_NOP();
                             break;
                         }
 
@@ -313,6 +325,7 @@ public class LLK {
                         }
                         case "triad_return": {
                             this.triads.triad_return();
+                            this.treeNext.triad_return();
                             break;
                         }
                         case "triad_remember_call": {
@@ -322,41 +335,49 @@ public class LLK {
 
                         case "gener_equal": {
                             this.triads.gener_equal();
+                            this.treeNext.gener_equal();
                             break;
                         }
                         case "gener_not_equal": {
                             this.triads.gener_not_equal();
+                            this.treeNext.gener_not_equal();
                             break;
                         }
                         case "gener_great": {
                             this.triads.gener_great();
+                            this.treeNext.gener_great();
                             break;
                         }
                         case "gener_great_equal": {
                             this.triads.gener_great_equal();
+                            this.treeNext.gener_great_equal();
                             break;
                         }
                         case "gener_less": {
                             this.triads.gener_less();
+                            this.treeNext.gener_less();
+
                             break;
                         }
                         case "gener_less_equal": {
                             this.triads.gener_less_equal();
+                            this.treeNext.gener_less_equal();
+
                             break;
                         }
                         case "gener_assign": {
-                            this.triads.gener_assign();
                             this.treeNext.generAssign();
+                            this.triads.gener_assign();
                             break;
                         }
                         case "gener_star": {
-                            this.triads.gener_star();
                             this.treeNext.generStar();
+                            this.triads.gener_star();
                             break;
                         }
                         case "gener_div": {
-                            this.triads.gener_div();
                             this.treeNext.generDiv();
+                            this.triads.gener_div();
                             break;
                         }
                         case "gener_percent": {
@@ -364,8 +385,8 @@ public class LLK {
                             break;
                         }
                         case "gener_plus": {
-                            this.triads.gener_plus();
                             this.treeNext.generPlus();
+                            this.triads.gener_plus();
                             break;
                         }
                         case "gener_minus": {
@@ -374,35 +395,33 @@ public class LLK {
                         }
 
                         case "push_t": {
+                            treeNext.push(next, lexemToStr(lexem));
                             semantic.push_t(next, lexemToStr(lexem)); // возвращаем current
-                            this.treeNext.push(next, lexemToStr(lexem));
-
-                            System.out.print("");
                             break;
                         }
 
                         case "callFunc": {
+                            treeNext.callFunc(); // возвращаем current
                             semantic.callFunc(); // возвращаем current
-                            System.out.print("");
                             break;
                         }
                         case "start_parameter_counting": {
+                            treeNext.start_parameter_counting();
                             semantic.start_parameter_counting();
-
-                            System.out.print("");
                             break;
                         }
                         case "end_parameter_counting": {
+                            treeNext.end_parameter_counting();
                             semantic.end_parameter_counting();
-                            System.out.print("");
                             break;
                         }
                         case "plus_parameter_counting": {
+                            treeNext.plus_parameter_counting();
                             semantic.plus_parameter_counting();
-                            System.out.print("");
                             break;
                         }
                         case "endFunc": {
+                            this.treeNext.endFunc();
                             break;
                         }
                         default: {
@@ -430,7 +449,7 @@ public class LLK {
         }
         triadsStr = this.triads.printTriads();
 
-        treeNext.draw();
+        treeNext.draw(null);
 
         if (!triadsStr.equals(lolkek))
             if (devMode)
@@ -473,7 +492,7 @@ public class LLK {
             return;
 
         System.out.println("==========================" + count + "=================================\n");
-        if (count == 75)
+        if (count == 152)
             System.out.println();
         List<Elem> stackNaoborot = new ArrayList<>();
         for (Elem elem : stack) {
@@ -482,6 +501,7 @@ public class LLK {
         for (int i = stackNaoborot.size() - 1; i >= 0; --i) {
             System.out.println(stackNaoborot.get(i).getStrByType_LIGHT());
         }
+        System.out.print("");
     }
 
     private void printNext(List<Character> lexem, LexTypeTERMINAL next) {

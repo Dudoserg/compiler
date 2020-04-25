@@ -1,14 +1,12 @@
 package main.Lab4.TreeNext;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import main.Lab3.Node;
+import main.Lab4.TreeNext.Relations.*;
 
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 
 @AllArgsConstructor
@@ -26,6 +24,23 @@ public class NextNode {
         this.id = counter++;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NextNode nextNode = (NextNode) o;
+        return id == nextNode.id &&
+                Objects.equals(parent, nextNode.parent) &&
+                Objects.equals(left, nextNode.left) &&
+                Objects.equals(right, nextNode.right) &&
+                nodeBase.equals(nextNode.nodeBase);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, parent, left, right, nodeBase);
+    }
+
     public void setLeft(NextNode vertex) {
         this.left = vertex;
         vertex.parent = this;
@@ -36,59 +51,107 @@ public class NextNode {
         right.parent = this;
     }
 
-    public void print(FileWriter writer) throws Exception {
+    public void print(FileWriter writer, NextNode current) throws Exception {
         String str = "";
         if (nodeBase instanceof _NextNode_Next) {
-            writer.write("v" + this.id + "[style=filled, fillcolor=grey]" + "\n");
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "[style=filled, fillcolor=grey]" + "\n");
             writer.write("v" + this.id + "[label=\"" + "next" + "\"]" + "\n");
-        }
-        else if(nodeBase instanceof _NextNode_DeclareVariable){
+        } else if (nodeBase instanceof _NextNode_Func) {
+            _NextNode_Func nodeBase = (_NextNode_Func) this.nodeBase;
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "[style=filled, fillcolor=red]" + "\n");
+            writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_DeclareVariable) {
             _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) this.nodeBase;
-            writer.write("v" + this.id + "" + "\n");
-            writer.write("v" + this.id + "[label=\"" + nodeBase.node.lexem + "\"]" + "\n");
-        }
-        else if(nodeBase instanceof _NextNode_Assign){
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "[style=filled, fillcolor=\"#ebcccc\"]" + "\n");
+            writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_Assign) {
             _NextNode_Assign nodeBase = (_NextNode_Assign) this.nodeBase;
-            writer.write("v" + this.id + "" + "\n");
-            writer.write("v" + this.id + "[label=\"" + "="+ "\"]" + "\n");
-        }
-        else if(nodeBase instanceof _NextNode_Div){
-            writer.write("v" + this.id + "" + "\n");
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "" + "\n");
+            writer.write("v" + this.id + "[label=\"" + "=" + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_Div) {
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "[style=filled, fillcolor=\"#ccebe8\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + "/" + "\"]" + "\n");
-        }
-        else if(nodeBase instanceof _NextNode_Star){
-            writer.write("v" + this.id + "" + "\n");
+        } else if (nodeBase instanceof _NextNode_Star) {
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "[style=filled, fillcolor=\"#ccebe8\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + "*" + "\"]" + "\n");
-        }
-        else if(nodeBase instanceof _NextNode_Plus){
-            writer.write("v" + this.id + "" + "\n");
+        } else if (nodeBase instanceof _NextNode_Plus) {
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "[style=filled, fillcolor=\"#ccebe8\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + "+" + "\"]" + "\n");
-        }
-        else if(nodeBase instanceof _NextNode_Int){
+        } else if (nodeBase instanceof _NextNode_Int) {
+
             _NextNode_Int nodeBase = (_NextNode_Int) this.nodeBase;
-            writer.write("v" + this.id + "" + "\n");
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "[style=filled, fillcolor=\"#e1e8bc\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
-        }
-        else if(nodeBase instanceof _NextNode_Double){
+        } else if (nodeBase instanceof _NextNode_Double) {
             _NextNode_Double nodeBase = (_NextNode_Double) this.nodeBase;
-            writer.write("v" + this.id + "" + "\n");
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "[style=filled, fillcolor=\"#e1e8bc\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
-        } else if(nodeBase instanceof _NextNode_ID){
+        } else if (nodeBase instanceof _NextNode_ID) {
             _NextNode_ID nodeBase = (_NextNode_ID) this.nodeBase;
-            writer.write("v" + this.id + "" + "\n");
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "[style=filled, fillcolor=\"#9991e3\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
-        }
-        else {
-            throw  new Exception("ASD1ASDASD " + nodeBase.getClass().getName());
+        } else if (nodeBase instanceof _NextNode_If) {
+            writer.write("v" + this.id + "[style=filled, fillcolor=\"#00c200\"]" + "\n");
+            writer.write("v" + this.id + "[label=\"" + "IF" + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_Else) {
+            writer.write("v" + this.id + "[style=filled, fillcolor=\"#00c200\"]" + "\n");
+            writer.write("v" + this.id + "[label=\"" + "ELSE" + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_Great) {
+            writer.write("v" + this.id + "[label=\"" + ">" + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_Great_Equal) {
+            writer.write("v" + this.id + "[label=\"" + ">=" + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_Less) {
+            writer.write("v" + this.id + "[label=\"" + "<" + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_Less_Equal) {
+            writer.write("v" + this.id + "[label=\"" + "<=" + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_Equal) {
+            writer.write("v" + this.id + "[label=\"" + "==" + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_Not_Equal) {
+            writer.write("v" + this.id + "[label=\"" + "!=" + "\"]" + "\n");
+        }else if (nodeBase instanceof _NextNode_Return) {
+            writer.write("v" + this.id + "[style=filled, fillcolor=\"#00d4d4\"]" + "\n");
+            writer.write("v" + this.id + "[label=\"" + "RETURN" + "\"]" + "\n");
+        } else {
+            throw new Exception("ASD1ASDASD " + nodeBase.getClass().getName());
         }
         String isLeftRightNull = left == null && right == null ? "[style=invis]" : "";
         // прозрачный центр
         writer.write("v" + this.id + "center" + "[style=invis, width=0, label=\"\"];" + "\n");
-        if(left == null && right == null){
+        if (left == null && right == null) {
             // если и правая и левая вершины нули, то и центр тоже не рисуем
             writer.write("v" + this.id + " -- " + "v" + this.id + "center" +
                     "[style=invis]" + "" + "\n");
-        }else {
+        } else {
 //            writer.write("v" + this.id + " -- " + "v" + this.id + "center" +
 //                    "[ label=\"center\" ] " + "" + "\n");
             writer.write("v" + this.id + " -- " + "v" + this.id + "center" +
@@ -124,9 +187,9 @@ public class NextNode {
         writer.write(str);
 
         if (left != null)
-            this.left.print(writer);
+            this.left.print(writer, current);
 
         if (right != null)
-            this.right.print(writer);
+            this.right.print(writer, current);
     }
 }

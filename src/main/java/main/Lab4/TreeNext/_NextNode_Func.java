@@ -1,13 +1,13 @@
 package main.Lab4.TreeNext;
 
-import main.Lab3.Node;
+import main.Lab2.LexTypeTERMINAL;
 
 public class _NextNode_Func extends _NextNodeBase{
-    public String lexemStr;
-    public Node node;
+    public String lexem;
+    public LexTypeTERMINAL lexTypeTERMINAL;
 
-    public _NextNode_Func(String lexemStr, Node node) {
-        this.lexemStr = lexemStr;
-        this.node = node;
+    public _NextNode_Func(String lexem, LexTypeTERMINAL lexTypeTERMINAL) {
+        this.lexem = lexem;
+        this.lexTypeTERMINAL = lexTypeTERMINAL;
     }
 }
