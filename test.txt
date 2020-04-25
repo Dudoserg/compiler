@@ -3,9 +3,11 @@ int kek(int n){
 
 }
 
+int heh(int n){
 
+}
 
 int privet2(){
-    double a = kek(kek(1)) + 8;
+    double a = kek(heh(1)) + 8;
 
 }

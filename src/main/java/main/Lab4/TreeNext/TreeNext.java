@@ -600,7 +600,9 @@ public class TreeNext {
 
         } else if (fromStack.nodeBase instanceof _NextNode_ID) {
             nodeBase.whatIsPush = fromStack;
-        } else {
+        } else if (fromStack.nodeBase instanceof _NextNode_Call) {
+            nodeBase.whatIsPush = fromStack;
+        }else {
             throw new Exception("TreeNext triad_push_param");
         }
         this.stackPushParam.add(nodePushParam);
@@ -614,9 +616,23 @@ public class TreeNext {
         System.out.print("");
     }
 
-    public void triad_call() {
-        NextNode funcNode = this.stackPushParam.get(0);
-
+    public void triad_call() throws Exception {
+        this.draw(this.current);
+        NextNode funcNode = null;
+        List<NextNode> tmp_list = new ArrayList<>();
+        int index;
+        // вытаскиваем из стека параметры который кладем в стек при трансляции, и вызываемую фуцнкцию
+        for(index = this.stackPushParam.size() - 1 ; index>= 0; index--){
+            // если дошли до вызываемой функции
+            if(this.stackPushParam.get(index).nodeBase instanceof _NextNode_Func){
+                funcNode = this.stackPushParam.get(index);
+                break;
+            }else
+                tmp_list.add(this.stackPushParam.get(index));
+        }
+        // удаляем элементы из стека
+        for(int i = this.stackPushParam.size() - 1; i>= index; i-- )
+            this.stackPushParam.remove(i);
         // ВЫЗОВ ФУНКЦИИ
         NextNode funcCallNode = new NextNode();
         _NextNode_Call nodebase = new _NextNode_Call();
@@ -630,14 +646,14 @@ public class TreeNext {
         funcCallNode.setLeft(nextNode);
 
         NextNode last = nextNode;
-        for (int i = 1; i < this.stackPushParam.size(); i++) {
+        for (int i = 0; i < tmp_list.size(); i++) {
             NextNode tmp = new NextNode();
             tmp.nodeBase = new _NextNode_Next();
 //
 //            NextNode nodePushParam = new NextNode();
 //            _NextNode_Push_Param push_param = new _NextNode_Push_Param();
 //            nodePushParam.nodeBase = push_param;
-            NextNode nodePushParam = this.stackPushParam.get(i);
+            NextNode nodePushParam = tmp_list.get(i);
 //            push_param.whatIsPush = this.stackPushParam.get(i);
 
             tmp.setLeft(nodePushParam);
@@ -648,7 +664,7 @@ public class TreeNext {
 
         this.stack.add(funcCallNode);
 
-        this.stackPushParam.clear();
+        this.draw(this.current);
         System.out.print("");
 
     }

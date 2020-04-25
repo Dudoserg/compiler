@@ -146,13 +146,24 @@ public class NextNode {
             String tmp_str = "";
             if (nodeBase.whatIsPush.nodeBase instanceof _NextNode_Int) {
                 tmp_str += ((_NextNode_Int) nodeBase.whatIsPush.nodeBase).lexem;
+                writer.write("v" + this.id + "[style=filled, fillcolor=\"#00d4d4\"]" + "\n");
             } else if (nodeBase.whatIsPush.nodeBase instanceof _NextNode_Double) {
                 tmp_str += ((_NextNode_Double) nodeBase.whatIsPush.nodeBase).lexem;
+                writer.write("v" + this.id + "[style=filled, fillcolor=\"#00d4d4\"]" + "\n");
             } else if (nodeBase.whatIsPush.nodeBase instanceof _NextNode_ID) {
                 tmp_str += ((_NextNode_ID) nodeBase.whatIsPush.nodeBase).lexem;
-            } else
                 writer.write("v" + this.id + "[style=filled, fillcolor=\"#00d4d4\"]" + "\n");
+            } else if (nodeBase.whatIsPush.nodeBase instanceof _NextNode_Call) {
+//                tmp_str +=
+//                        ((_NextNode_Func) ((_NextNode_Call) nodeBase.whatIsPush.nodeBase).func.nodeBase)
+//                                .lexem;
+//                writer.write("v" + this.id + "[style=filled, fillcolor=\"#de7d0d\"]" + "\n");
+//                writer.write("v" + this.id + "[xlabel=\"" + "CALL" + "\"]" + "\n");
+            } else
+                throw new Exception("asd078fa0s");
+
             writer.write("v" + this.id + "[label=\"" + tmp_str + "\"]" + "\n");
+
         } else if (nodeBase instanceof _NextNode_Call) {
             _NextNode_Call nodeBase = (_NextNode_Call) this.nodeBase;
             String tmp_lexem = ((_NextNode_Func) (nodeBase.func.nodeBase)).lexem;
