@@ -1,7 +1,6 @@
 int main(int x){
     int beforeIf;
 }
-int x = 228 * 1488 + 1337;
 
 
 int first(int n, int two){
@@ -16,12 +15,15 @@ int third(int n, int n2){
 
 }
 
+int x = 228 * 1488 + 1337;
 
 int privet2(){
     int asdf = 123 - 5;
     {
         int newLevel = 22;
     }
-    double a = first(second(1, 66 * 96 + 5, 333333), third(1, 2) ) + 8;
-
+    if( x ){
+        double a = first(second(1, 66 * 96 + 5, 333333), third(1, 2) ) + 8;
+    }
+    int afterIf = asdf * 88 + 6;
 }

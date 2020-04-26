@@ -234,7 +234,7 @@ public class LLK {
                             semantic.startLevel(); // отводка вправо в дереве
                             break;
                         }
-                        case "next_startLevel":{
+                        case "next_startLevel": {
                             treeNext.startLevel(); // отводка влево в дереве NEXT
                             break;
                         }
@@ -242,7 +242,7 @@ public class LLK {
                             semantic.endLevel(); // возвращаем current
                             break;
                         }
-                        case "next_endLevel":{
+                        case "next_endLevel": {
                             treeNext.endLevel(); // возвращаем current
                             break;
                         }
@@ -458,10 +458,11 @@ public class LLK {
         }
         triadsStr = this.triads.printTriads();
 
-        treeNext.draw(null);
+        if (devMode)
+            treeNext.draw(null);
 
-        if (!triadsStr.equals(lolkek))
-            if (devMode)
+        if (devMode && triads.isTriads)
+            if (!triadsStr.equals(lolkek))
                 throw new Exception("!triadsS197tr.equals(\"lolkek\")");
         return true;
     }

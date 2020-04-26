@@ -1,8 +1,10 @@
 package main.Lab4.TreeNext;
 
 import main.Lab2.LexTypeTERMINAL;
+import main.Lab3.Node;
 import main.Lab3.Semantic;
 import main.Lab3.exceptions.Ex_Dublicate;
+import main.Lab3.exceptions.Ex_Dublicate_Func;
 import main.Lab3.exceptions.Ex_NotFound;
 import main.Lab3.exceptions.Ex_Signature;
 import main.Lab4.TreeNext.Relations.*;
@@ -40,15 +42,23 @@ public class TreeNext {
     List<NextNode> stack = new ArrayList<>();
 
 
-    public void startFunc(String lexemToStr) {
+    public void startFunc(String lexemToStr) throws Exception {
         // новоя вершина - next
         NextNode nextVertex = new NextNode();
         nextVertex.nodeBase = new _NextNode_Next();
 
+   
+        
         // вершина - функция
         NextNode funcVertex = new NextNode();
-        funcVertex.nodeBase = new _NextNode_Func(lexemToStr, dataType);
+        _NextNode_Func funcNodeBase = new _NextNode_Func(lexemToStr, dataType);
+        funcVertex.nodeBase = funcNodeBase;
         k = funcVertex;
+
+        // проверяем дубликаты функции
+        if (checkDublicateFunc(funcVertex)) {
+            throw new Ex_Dublicate_Func(funcNodeBase.lexem);
+        }
         // вершина - функция становится левым потомком вершины NEXT
         nextVertex.setLeft(funcVertex);
 
@@ -64,6 +74,49 @@ public class TreeNext {
         // текузей вершиной становится первый next в функции
         this.current = firstNextVertex;
 
+
+
+    }
+
+    private boolean checkDublicateFunc(NextNode funcVertex) throws Exception {
+        if (! (funcVertex.nodeBase instanceof  _NextNode_Func) )
+            throw new Exception("checkDublicateFunc, вы проверяете не функцию!");
+
+        _NextNode_Func nodeBase = (_NextNode_Func) funcVertex.nodeBase;
+
+        NextNode checkingNext = current;
+        do {
+
+            if(checkingNext == null)
+                return false;
+            NextNode checking = checkingNext.left;
+            if (checking == null) {
+                // проверяем дальше
+                checkingNext = getCheckNext(checkingNext);
+                if (checkingNext == null)
+                    return false;
+                continue;
+            }
+            if (checking.nodeBase instanceof _NextNode_Func) {
+                _NextNode_Func checking_nodeBase = (_NextNode_Func) checking.nodeBase;
+                if (nodeBase.lexem.equals(checking_nodeBase.lexem)) {
+                    return true;
+                }
+            }
+            if (checking.parent == null)            // Дошли до корня
+                return false;
+            // если следующий функция
+            NextNode checkingOld = checkingNext;
+            do {
+                checkingOld = checkingNext;
+                checkingNext = checkingNext.parent;
+                if (checkingNext != checkingOld && checkingNext.nodeBase instanceof _NextNode_Next)
+                    break;
+            } while (true);
+            System.out.print("");
+
+        } while (checkingNext.parent != null);
+        return false;
     }
 
     public void new_variable(LexTypeTERMINAL dataType, String lexem) throws Exception {
@@ -374,12 +427,15 @@ public class TreeNext {
     }
 
     public void match() {
+        System.out.print("");
     }
 
     public void matchLeft() {
+        System.out.print("");
     }
 
     public void checkDubl(String lexemToStr) {
+        System.out.print("");
     }
 
     public NextNode find(String lexemToStr) throws Exception {

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 
 public class Semantic {
+    public boolean isSemantic = false;
     private boolean devMode;
 
     private boolean flag_Decl;
@@ -44,6 +45,7 @@ public class Semantic {
 
     // Запомнить тип в глобальную переменную dataType, установить флаг описания данных
     public void startDecl(LexTypeTERMINAL dataType) throws Exception {
+        if (!isSemantic) return;
         if (dataType != LexTypeTERMINAL._INT && dataType != LexTypeTERMINAL._DOUBLE)
             throw new Exception("dataType != LexTypeTERMINAL._INT || dataType != LexTypeTERMINAL._DOUBLE");
         this.dataType = dataType;
@@ -52,11 +54,13 @@ public class Semantic {
 
     // сбросить флаг описания данных
     public void endDecl() {
+        if (!isSemantic) return;
         this.flag_Decl = false;
     }
 
     // заносим идентификатор в таблицу с типом dataType, проверяем дубликаты
     public void setIdent(String lexem) throws Exception {
+        if (!isSemantic) return;
         // занести идентификатор в таблицу с типом dataType;
         Node node = new Node();
         switch (dataType) {
@@ -126,6 +130,7 @@ public class Semantic {
 
     // начать новый уровень в дереве.
     public void startLevel() {
+        if (!isSemantic) return;
         {
             Node node = new Node();
             node.nodeType = NodeType.TYPE_BLACK;
@@ -146,6 +151,7 @@ public class Semantic {
 
     // вернуться к началу текущего уровня
     public void endLevel() {
+        if (!isSemantic) return;
 
         Node checking = this.current;
 
@@ -171,6 +177,7 @@ public class Semantic {
     // Запоминаем указатель на функцию в переменную «k».
     // сбрасываем счетчик return-ов
     public void startFunc(String lexem) throws Exception {
+        if (!isSemantic) return;
 
         Node node = new Node();
 
@@ -198,18 +205,24 @@ public class Semantic {
 
     // новая черная вершина, необходима, чтобы отделить параметры функции от локальных переменных
     public void newBlack() {
+        if (!isSemantic) return;
+
         Node node = new Node(); // разделяем параметры функции и локальные переменные
         node.nodeType = NodeType.TYPE_BLACK;
         addToCurrentTo_Left(node);
     }
 
     private void addToCurrentTo_Left(Node node) {
+        if (!isSemantic) return;
+
         this.current.left = node;
         node.parent = this.current;
         this.current = node;
     }
 
     private void addToCurrentTo_Right(Node node) {
+        if (!isSemantic) return;
+
         this.current.right = node;
         node.parent = this.current;
         this.current = node;
@@ -217,15 +230,21 @@ public class Semantic {
 
     // увеличиваем число параметров у функции (вершина с указателем «k»)
     public void plusParam() {
+        if (!isSemantic) return;
+
         this.k.countParams++;
     }
 
     public void saveType(LexTypeTERMINAL lexTypeTERMINAL) {
+        if (!isSemantic) return;
+
         this.savedType = lexTypeTERMINAL;
     }
 
 
     public void createGraphViz() {
+        if (!isSemantic) return;
+
         try (FileWriter writer = new FileWriter("result.gv", false)) {
             // запись всей строки
             String text = "Hello Gold!";
@@ -244,6 +263,7 @@ public class Semantic {
     }
 
     private void reucrsion(Node node, FileWriter writer) throws IOException {
+
         Node left = node.left;
         Node right = node.right;
 
@@ -299,6 +319,8 @@ public class Semantic {
     }
 
     public void drawTree() throws IOException {
+        if (!isSemantic) return;
+
         if (System.getProperty("os.name").equals("Linux")) {
             Runtime.getRuntime().exec("dot result.gv -Tpng -o result.jpg");
 
@@ -309,6 +331,8 @@ public class Semantic {
 
     // Кладем в магазин тип текущей лексемы
     public void push_t(LexTypeTERMINAL next, String lexem) {
+        if (!isSemantic) return;
+
         if (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._TYPE_INT_8 ||
                 next == LexTypeTERMINAL._TYPE_INT_10 || next == LexTypeTERMINAL._TYPE_INT_16) {
             this.stackType.push(new Pair<>(NodeType.TYPE_INTEGER, lexem));
@@ -333,6 +357,8 @@ public class Semantic {
 
     //
     public Node find(String lexemToStr) throws Exception {
+        if (!isSemantic) return null;
+
         countFind++;
         if (devMode)
             System.out.println("countFind = " + countFind);
@@ -361,10 +387,12 @@ public class Semantic {
     }
 
     public void saveVariable() {
+        if (!isSemantic) return;
         this.savedVariable = find_last;
     }
 
     public void matchLeft() throws Exception {
+        if (!isSemantic) return;
         if (this.stackType.size() == 0)
             throw new Exception("stack size = 0");
         Pair<NodeType, String> rightPair = this.stackType.pop();
@@ -422,6 +450,7 @@ public class Semantic {
 
     // TODO желательно бы еще сделать matchCompare, чтобы отдельно разбираться ситуации со сравнением
     public void match() {
+        if (!isSemantic) return;
         final Pair<NodeType, String> rightPair = this.stackType.pop();
         NodeType rightType = rightPair.getKey();
         String rightLexem = rightPair.getValue();
@@ -439,18 +468,22 @@ public class Semantic {
     Node node_callFunc;
 
     public void callFunc() {
+        if (!isSemantic) return;
         node_callFunc = this.find_last;
     }
 
     public void start_parameter_counting() {
+        if (!isSemantic) return;
         parameter_counting = 0;
     }
 
     public void plus_parameter_counting() {
+        if (!isSemantic) return;
         parameter_counting++;
     }
 
     public void end_parameter_counting() throws Exception {
+        if (!isSemantic) return;
         // TODO проверяем количество параметров у вызываемой функции
         if (this.node_callFunc.countParams != this.parameter_counting)
             throw new Ex_Signature(this.find_last.countParams, this.parameter_counting);
@@ -459,6 +492,7 @@ public class Semantic {
 
 
     public void checkDubl(String lexemToStr) throws Exception {
+        if (!isSemantic) return;
         Node node = null;
         try {
             node = this.find(lexemToStr);
@@ -471,22 +505,29 @@ public class Semantic {
     }
 
     public Stack<Pair<NodeType, String>> getStackType() {
+        if (!isSemantic) return null;
         return stackType;
     }
 
     public void setStackType(Stack<Pair<NodeType, String>> stackType) {
+        if (!isSemantic) return;
         this.stackType = stackType;
     }
 
     public Node getCurrent() {
+        if (!isSemantic) return null;
         return current;
     }
 
     public Node getNode_callFunc() {
+        if (!isSemantic) return null;
+
         return node_callFunc;
     }
 
     public Node getFind_last() {
+        if (!isSemantic) return null;
+
         return find_last;
     }
 }

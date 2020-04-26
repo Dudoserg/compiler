@@ -13,6 +13,7 @@ import java.util.Stack;
 import java.util.stream.IntStream;
 
 public class Triads {
+    public boolean isTriads = false;
 
     private Semantic semantic;
     private boolean devMode;
@@ -106,6 +107,8 @@ public class Triads {
     }
 
     public String printTriads() {
+        if (!isTriads) return null;
+
         IntStream.range(0, 100).forEach(value -> System.out.print("+"));
         System.out.println("\n");
         String all = "";
@@ -129,10 +132,14 @@ public class Triads {
     }
 
     public void stackAdd(StackElem stackElem) {
+        if (!isTriads) return ;
+
         stack.add(stackElem);
     }
 
     public StackElem stackGetId(int index) {
+        if (!isTriads) return null;
+
         if (index >= 0) {
             StackElem result = stack.get(index);
             stack.remove(index);
@@ -145,6 +152,8 @@ public class Triads {
     }
 
     public void addMathOperation(String sign) {
+        if (!isTriads) return ;
+
         StackElem s_2 = this.stackGetId(-1);
         StackElem s_1 = this.stackGetId(-1);
         String s_1Str = s_1.isTriad == true ? "(" + s_1.triad_index + ")" : s_1.lexemStr;
@@ -195,6 +204,8 @@ public class Triads {
 
     // =================================================================================================================
     public void triad_new_variable(LexTypeTERMINAL dataType, String lexemStr) {
+        if (!isTriads) return ;
+
         Triad triad = new Triad(dataType.toString(), lexemStr, null);
 
         Triad_Declare_Variable triad_declare_variable =
@@ -211,6 +222,8 @@ public class Triads {
     }
 
     public void triad_new_func(String lexemStr) {
+        if (!isTriads) return ;
+
         Triad triad = new Triad("proc", lexemStr, null);
 
         Triad_Proc triad_proc = new Triad_Proc(lexemStr, this.semantic.getCurrent());
@@ -223,6 +236,8 @@ public class Triads {
     }
 
     public void triad_prolog() {
+        if (!isTriads) return ;
+
         Triad triad = new Triad("prolog", null, null);
 
         Triad_Prolog triad_prolog = new Triad_Prolog();
@@ -234,6 +249,8 @@ public class Triads {
     }
 
     public void triad_epilog() {
+        if (!isTriads) return ;
+
         {
             Triad triad = new Triad("epilog", null, null);
 
@@ -269,6 +286,8 @@ public class Triads {
     // тут добавляем + 0 x, чтобы работало сравнение
     // если в стеке лежит адрес триады. то сусммировать с нулем не нужно, т.к. операция уже выполнена.
     public void triads_gener_if_before() {
+        if (!isTriads) return ;
+
         final StackElem current = this.stack.get(this.stack.size() - 1);
         if(current.isTriad)
             return;
@@ -277,7 +296,10 @@ public class Triads {
         this.stack.add(current);
         this.gener_plus();
     }
+
     public void triad_gener_if() {
+        if (!isTriads) return ;
+
         Triad triad = new Triad("if", null, "numFalse");
 
         Triad_IF triad_if = new Triad_IF();
@@ -291,6 +313,8 @@ public class Triads {
     }
 
     public void triad_gener_goto() {
+        if (!isTriads) return ;
+
         Triad triad = new Triad("goto", "xz", null);
 
         Triad_GOTO triad_goto = new Triad_GOTO();
@@ -303,6 +327,8 @@ public class Triads {
     }
 
     public void triad_gener_if_NOP() throws Exception {
+        if (!isTriads) return ;
+
         Triad triad = new Triad("NOP", null, null);
 
         Triad_NOP triad_nop = new Triad_NOP();
@@ -341,6 +367,8 @@ public class Triads {
     }
 
     public void triad_push(String lexemStr, LexTypeTERMINAL next) throws Exception {
+        if (!isTriads) return ;
+
         StackElem stackElem = null;
         if (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._DOUBLE ||
                 next == LexTypeTERMINAL._TYPE_INT_10 || next == LexTypeTERMINAL._TYPE_INT_16 ||
@@ -354,6 +382,8 @@ public class Triads {
     }
 
     public void triad_push_param() {
+        if (!isTriads) return ;
+
         StackElem stackElem = this.stackGetId(-1);
         Triad triad = null;
 
@@ -380,6 +410,8 @@ public class Triads {
     }
 
     public void triad_call() {
+        if (!isTriads) return ;
+
         StackElem stackElem = this.stackGetId(-1);
         String s_1 = stackElem.lexemStr;
 //        this.add("call", s_1, null);
@@ -396,6 +428,8 @@ public class Triads {
     }
 
     public void triad_return() throws Exception {
+        if (!isTriads) return ;
+
         StackElem stackElem = this.stackGetId(-1);
         Triad triad ;
         Triad_Push_For_Return triad_push_for_return = new Triad_Push_For_Return();
@@ -427,56 +461,82 @@ public class Triads {
     }
 
     public void triad_remember_call(String lexemStr) {
+        if (!isTriads) return ;
+
         StackElem stackElem = StackElem.createDeclareFunc(lexemStr);
 //        this.stackAdd(lexemStr);
         this.stackAdd(stackElem);
     }
 
     public void gener_equal() {
+        if (!isTriads) return ;
+
         this.addMathOperation("==");
     }
 
     public void gener_not_equal() {
+        if (!isTriads) return ;
+
         this.addMathOperation("!=");
     }
 
     public void gener_great() {
+        if (!isTriads) return ;
+
         this.addMathOperation(">");
     }
 
     public void gener_great_equal() {
+        if (!isTriads) return ;
+
         this.addMathOperation(">=");
     }
 
     public void gener_less() {
+        if (!isTriads) return ;
+
         this.addMathOperation("<");
     }
 
     public void gener_less_equal() {
+        if (!isTriads) return ;
+
         this.addMathOperation("<=");
     }
 
     public void gener_assign() {
+        if (!isTriads) return ;
+
         this.addMathOperation("=");
     }
 
     public void gener_star() {
+        if (!isTriads) return ;
+
         this.addMathOperation("*");
     }
 
     public void gener_div() {
+        if (!isTriads) return ;
+
         this.addMathOperation("/");
     }
 
     public void gener_percent() {
+        if (!isTriads) return ;
+
         this.addMathOperation("%");
     }
 
     public void gener_plus() {
+        if (!isTriads) return ;
+
         this.addMathOperation("+");
     }
 
     public void gener_minus() {
+        if (!isTriads) return ;
+
         this.addMathOperation("-");
     }
 

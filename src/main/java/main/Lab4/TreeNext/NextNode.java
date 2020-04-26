@@ -143,6 +143,7 @@ public class NextNode {
             writer.write("v" + this.id + "[label=\"" + "RETURN" + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_StartLevel) {
             writer.write("v" + this.id + "[style=filled, fillcolor=\"#000000\"]" + "\n");
+            writer.write("v" + this.id + "[xlabel=\"" + "level" + "\"]" + "\n");
 //            writer.write("v" + this.id + "[label=\"" + "RETURN" + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_Push_Param) {
             _NextNode_Push_Param nodeBase = (_NextNode_Push_Param) this.nodeBase;
@@ -177,7 +178,6 @@ public class NextNode {
         } else {
             throw new Exception("ASD1ASDASD " + nodeBase.getClass().getName());
         }
-
 
 
         String isLeftRightNull = left == null && right == null ? "[style=invis]" : "";
