@@ -141,6 +141,9 @@ public class NextNode {
         } else if (nodeBase instanceof _NextNode_Return) {
             writer.write("v" + this.id + "[style=filled, fillcolor=\"#00d4d4\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + "RETURN" + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_StartLevel) {
+            writer.write("v" + this.id + "[style=filled, fillcolor=\"#000000\"]" + "\n");
+//            writer.write("v" + this.id + "[label=\"" + "RETURN" + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_Push_Param) {
             _NextNode_Push_Param nodeBase = (_NextNode_Push_Param) this.nodeBase;
             String tmp_str = "";
@@ -174,6 +177,9 @@ public class NextNode {
         } else {
             throw new Exception("ASD1ASDASD " + nodeBase.getClass().getName());
         }
+
+
+
         String isLeftRightNull = left == null && right == null ? "[style=invis]" : "";
         // прозрачный центр
         writer.write("v" + this.id + "center" + "[style=invis, width=0, label=\"\"];" + "\n");

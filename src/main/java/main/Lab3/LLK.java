@@ -231,13 +231,19 @@ public class LLK {
                             break;
                         }
                         case "startLevel": {
-                            treeNext.startLevel(); // отводка вправо в дереве
                             semantic.startLevel(); // отводка вправо в дереве
                             break;
                         }
+                        case "next_startLevel":{
+                            treeNext.startLevel(); // отводка влево в дереве NEXT
+                            break;
+                        }
                         case "endLevel": {
-                            treeNext.endLevel(); // возвращаем current
                             semantic.endLevel(); // возвращаем current
+                            break;
+                        }
+                        case "next_endLevel":{
+                            treeNext.endLevel(); // возвращаем current
                             break;
                         }
                         case "startFunc": {
@@ -410,17 +416,17 @@ public class LLK {
                         }
                         case "start_parameter_counting": {
                             treeNext.start_parameter_counting();
-                            semantic.start_parameter_counting();
+                            // TODO semantic.start_parameter_counting();
                             break;
                         }
                         case "end_parameter_counting": {
                             treeNext.end_parameter_counting();
-                            semantic.end_parameter_counting();
+                            // TODO semantic.end_parameter_counting();
                             break;
                         }
                         case "plus_parameter_counting": {
                             treeNext.plus_parameter_counting();
-                            semantic.plus_parameter_counting();
+                            // TODO semantic.plus_parameter_counting();
                             break;
                         }
                         case "endFunc": {

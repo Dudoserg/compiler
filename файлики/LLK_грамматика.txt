@@ -17,11 +17,11 @@
 <#список_параметров#> -> <#тип#> <@checkDubl@> <@setIdent@> идентификатор <@plusParam@> <#W4#> | E
 <#W4#> -> E | , <#тип#> <@checkDubl@> <@setIdent@> идентификатор <@plusParam@> <#W4#>
 
-<#составной_оператор_функции#> -> { <@triad_prolog@> <#операторы_и_описания#>  <@triad_epilog@>  }
+<#составной_оператор_функции#> -> { <@next_startLevel@> <@triad_prolog@> <#операторы_и_описания#>  <@triad_epilog@>  <@next_endLevel@> }
 <#возврат#> ->  return <#A1#> <@triad_return@> ;
 <#возврат_конец#> ->  return <#A1#> <@triad_return@> ;
 
-<#составной_оператор#> -> { <@startLevel@> <#операторы_и_описания#> <@endLevel@> }
+<#составной_оператор#> -> { <@startLevel@> <@next_startLevel@>  <#операторы_и_описания#> <@endLevel@> <@next_endLevel@> }
 
 <#операторы_и_описания#> -> E | <#один_оператор#> <#операторы_и_описания#>
 

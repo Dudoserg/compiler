@@ -230,7 +230,7 @@ public class Semantic {
             // запись всей строки
             String text = "Hello Gold!";
             writer.write("graph binary {\n" +
-                    "\tdpi=\"400\";\n"
+                    "\tdpi=\"100\";\n"
             );
 
             reucrsion(this.root, writer);

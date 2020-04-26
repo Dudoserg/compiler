@@ -1,40 +1,27 @@
-
 int main(int x){
     int beforeIf;
-
-    if(x >= 23 + 3){
-        int c = 1;
-    }
-    else
-        int q  = 2;
-    int afterIf;
-    return 23 + 2;
-
-}
-int main2(int x){
-    int beforeIf;
-
-    if(x >= 23 + 3){
-        int c = 1;
-    }
-    else
-        int q  = 2;
-    int afterIf;
-    return 23 + 2;
-
 }
 int x = 228 * 1488 + 1337;
 
 
-int kek(int n, int two){
+int first(int n, int two){
 
 }
 
-int heh(int n, int n2, int n3){
+int second(int n, int n2, int n3){
+    int x213 = 0;
+}
+
+int third(int n, int n2){
 
 }
+
 
 int privet2(){
-    double a = kek(heh(1, 66 * 96 + 5, 333333), 2222) + 8;
+    int asdf = 123 - 5;
+    {
+        int newLevel = 22;
+    }
+    double a = first(second(1, 66 * 96 + 5, 333333), third(1, 2) ) + 8;
 
 }

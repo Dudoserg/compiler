@@ -343,18 +343,18 @@ public class TreeNext {
     }
 
 //    private int parameter_counting;
+    // Использую стек, т.к. в параметрах уже вызываемой функции для которой ведется расчет,
+    //  может встретиться так же вызываемая функция, и уже для нее надо с нуля считать параметры.
     List<Integer> parameter_counting = new ArrayList<>();
     public void start_parameter_counting() {
         parameter_counting.add(0);
     }
-
     public void plus_parameter_counting() {
         parameter_counting.set(
                 parameter_counting.size() - 1,
                 parameter_counting.get(parameter_counting.size() - 1) + 1
         );
     }
-
     public void end_parameter_counting() throws Exception {
         Integer lastParameter_counting = this.parameter_counting.get(this.parameter_counting.size() - 1);
         this.parameter_counting.remove(this.parameter_counting.size() - 1);
@@ -366,7 +366,7 @@ public class TreeNext {
         if (node_callFunc.nodeBase instanceof _NextNode_Func){
             _NextNode_Func nodeBase = (_NextNode_Func) node_callFunc.nodeBase;
             if (nodeBase.countParam != lastParameter_counting)
-                throw new Ex_Signature( ((_NextNode_Func)this.find_last.nodeBase).countParam,
+                throw new Ex_Signature( nodeBase.countParam,
                         lastParameter_counting);
         }else
             throw new Exception("jsd9625asjcv20q2ks[pdnv6s");
@@ -451,7 +451,7 @@ public class TreeNext {
     }
 
     public void newBlack() throws IOException {
-        // next вправо
+        /*// next вправо
         NextNode nextRight = new NextNode();
         nextRight.nodeBase = new _NextNode_Next();
         // next влево
@@ -463,14 +463,29 @@ public class TreeNext {
 
         this.current = nextLeft;
 //        this.draw(current);
-        System.out.print("");
+        System.out.print("");*/
+    }
+
+    List<NextNode> stack_startLevel = new ArrayList<>();
+    public void startLevel() {
+        NextNode rightNextNode = new NextNode();
+        rightNextNode.nodeBase = new _NextNode_Next();
+        current.setRight(rightNextNode);
+        current = rightNextNode;
+        this.stack_startLevel.add(rightNextNode);
+
+        NextNode leftNextNode = new NextNode();
+        leftNextNode.nodeBase = new _NextNode_StartLevel();
+        current.setLeft(leftNextNode);
+        current = leftNextNode;
     }
 
     public void endLevel() {
+        current = stack_startLevel.get(stack_startLevel.size() - 1);
+        stack_startLevel.remove(stack_startLevel.size() - 1);
     }
 
-    public void startLevel() {
-    }
+
 
     public void endDecl() {
         this.flag_Decl = false;
