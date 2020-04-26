@@ -4,6 +4,7 @@ import main.Lab2.LexTypeTERMINAL;
 import main.Lab3.Semantic;
 import main.Lab3.exceptions.Ex_Dublicate;
 import main.Lab3.exceptions.Ex_NotFound;
+import main.Lab3.exceptions.Ex_Signature;
 import main.Lab4.TreeNext.Relations.*;
 import main.Lab4.Triads;
 
@@ -18,7 +19,7 @@ public class TreeNext {
     boolean devMode;
     private NextNode savedVariable;
     private NextNode find_last;
-    private NextNode node_callFunc;
+    private List<NextNode> stack_node_callFunc = new ArrayList<>(0);
 
     public TreeNext(Semantic semantic, Triads triads, boolean devMode) {
         this.semantic = semantic;
@@ -337,16 +338,39 @@ public class TreeNext {
     }
 
     public void callFunc() {
-        node_callFunc = this.find_last;
+        NextNode node_callFunc = this.find_last;
+        this.stack_node_callFunc.add(node_callFunc);
     }
 
+//    private int parameter_counting;
+    List<Integer> parameter_counting = new ArrayList<>();
     public void start_parameter_counting() {
-    }
-
-    public void end_parameter_counting() {
+        parameter_counting.add(0);
     }
 
     public void plus_parameter_counting() {
+        parameter_counting.set(
+                parameter_counting.size() - 1,
+                parameter_counting.get(parameter_counting.size() - 1) + 1
+        );
+    }
+
+    public void end_parameter_counting() throws Exception {
+        Integer lastParameter_counting = this.parameter_counting.get(this.parameter_counting.size() - 1);
+        this.parameter_counting.remove(this.parameter_counting.size() - 1);
+
+        NextNode node_callFunc = stack_node_callFunc.get(stack_node_callFunc.size() - 1 );
+        stack_node_callFunc.remove(stack_node_callFunc.size() - 1 );
+
+        // TODO проверяем количество параметров у вызываемой функции
+        if (node_callFunc.nodeBase instanceof _NextNode_Func){
+            _NextNode_Func nodeBase = (_NextNode_Func) node_callFunc.nodeBase;
+            if (nodeBase.countParam != lastParameter_counting)
+                throw new Ex_Signature( ((_NextNode_Func)this.find_last.nodeBase).countParam,
+                        lastParameter_counting);
+        }else
+            throw new Exception("jsd9625asjcv20q2ks[pdnv6s");
+        System.out.print("");
     }
 
     public void match() {
@@ -418,7 +442,12 @@ public class TreeNext {
         } while (true);
     }
 
-    public void plusParam() {
+    // объявление функции, считаем количество параметров
+    public void plusParam() throws Exception {
+        if (this.k.nodeBase instanceof _NextNode_Func)
+            ((_NextNode_Func) this.k.nodeBase).countParam++;
+        else
+            throw new Exception("7812389-a");
     }
 
     public void newBlack() throws IOException {
@@ -624,16 +653,16 @@ public class TreeNext {
         List<NextNode> tmp_list = new ArrayList<>();
         int index;
         // вытаскиваем из стека параметры который кладем в стек при трансляции, и вызываемую фуцнкцию
-        for(index = this.stackPushParam.size() - 1 ; index>= 0; index--){
+        for (index = this.stackPushParam.size() - 1; index >= 0; index--) {
             // если дошли до вызываемой функции
-            if(this.stackPushParam.get(index).nodeBase instanceof _NextNode_Func){
+            if (this.stackPushParam.get(index).nodeBase instanceof _NextNode_Func) {
                 funcNode = this.stackPushParam.get(index);
                 break;
-            }else
+            } else
                 tmp_list.add(this.stackPushParam.get(index));
         }
         // удаляем элементы из стека
-        for(int i = this.stackPushParam.size() - 1; i>= index; i-- )
+        for (int i = this.stackPushParam.size() - 1; i >= index; i--)
             this.stackPushParam.remove(i);
         // ВЫЗОВ ФУНКЦИИ
         NextNode funcCallNode = new NextNode();

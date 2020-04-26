@@ -35,6 +35,6 @@ int heh(int n, int n2, int n3){
 }
 
 int privet2(){
-    double a = kek(heh(1, 66 * 96 + 5,333333), 2) + 8;
+    double a = kek(heh(1, 66 * 96 + 5, 333333), 2222) + 8;
 
 }
