@@ -1,20 +1,17 @@
-//int x = 228 * 1488 + 1337;
-int first(int n, int two){
-    int xxx;
+double w = 136;
+
+int kek(int n){
+
 }
 
-int second(int n, int n2, int n3){
-    //int x213 = 0;
+int heh(){
+
 }
 
-int third(int n, int n2){
-}
-
-
-
-int privet2(){
-    int asdf = 123 - 5;
-    //double a = first(second(1, 66 * 96 + 5, 333333), third(1, 2) ) + 8;
-    int afterIf = asdf * 88 + 6;
-    return 228 * afterIf + afterIf;
+int privet2(int c){
+    double a = 2;
+    if(c == 3){
+       heh();
+    }else
+       kek(123 + 66);
 }

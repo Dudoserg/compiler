@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Stack;
 
 
 @AllArgsConstructor
@@ -246,7 +247,10 @@ public class NextNode {
             this.right.print(writer, current);
     }
 
-    public List<String> createTriads(List<String> listTriads) throws Exception {
+    private static Stack<NextNode_Triad> stack_IF = new Stack<>();
+    private static Stack<NextNode_Triad> stack_GOTO = new Stack<>();
+
+    public List<NextNode_Triad> createTriads(List<NextNode_Triad> listTriads) throws Exception {
         String str = "";
         if (nodeBase instanceof _NextNode_Next) {
             _NextNode_Next nodeBase = (_NextNode_Next) this.nodeBase;
@@ -321,26 +325,56 @@ public class NextNode {
         } else if (nodeBase instanceof _NextNode_If) {
             _NextNode_If nodeBase = (_NextNode_If) this.nodeBase;
 
+            if (left != null) this.left.createTriads(listTriads);
+
+            String first = "(" + (listTriads.size() + 1) + ")";
+            String second = "??";
+            final NextNode_Triad triad_IF = addTriad("if", first, second, listTriads);
+            NextNode.stack_IF.add(triad_IF);
+
+            if (right != null) this.right.createTriads(listTriads);
+
+
         } else if (nodeBase instanceof _NextNode_Else) {
             _NextNode_Else nodeBase = (_NextNode_Else) this.nodeBase;
 
+            // иф истина
+            if (left != null) this.left.createTriads(listTriads);
+            // GOTO
+            final NextNode_Triad triad_GOTO = addTriad("goto", null, null, listTriads);
+            NextNode.stack_GOTO.add(triad_GOTO);
+            // иф ложь
+            if (right != null) this.right.createTriads(listTriads);
+            // NOP
+            addTriad("NOP", null, null, listTriads);
+            final NextNode_Triad popIf = stack_IF.pop();
+            final NextNode_Triad popGOTO = stack_GOTO.pop();
+            popIf.second = "(" + String.valueOf(listTriads.size() - 1) + ")";
+            popGOTO.second = "(" + String.valueOf(listTriads.size() - 1) + ")";
+
         } else if (nodeBase instanceof _NextNode_Great) {
             _NextNode_Great nodeBase = (_NextNode_Great) this.nodeBase;
+            createMathOperation_Triads(this, listTriads);
 
         } else if (nodeBase instanceof _NextNode_Great_Equal) {
             _NextNode_Great_Equal nodeBase = (_NextNode_Great_Equal) this.nodeBase;
+            createMathOperation_Triads(this, listTriads);
 
         } else if (nodeBase instanceof _NextNode_Less) {
             _NextNode_Less nodeBase = (_NextNode_Less) this.nodeBase;
+            createMathOperation_Triads(this, listTriads);
 
         } else if (nodeBase instanceof _NextNode_Less_Equal) {
             _NextNode_Less_Equal nodeBase = (_NextNode_Less_Equal) this.nodeBase;
+            createMathOperation_Triads(this, listTriads);
 
         } else if (nodeBase instanceof _NextNode_Equal) {
             _NextNode_Equal nodeBase = (_NextNode_Equal) this.nodeBase;
+            createMathOperation_Triads(this, listTriads);
 
         } else if (nodeBase instanceof _NextNode_Not_Equal) {
             _NextNode_Not_Equal nodeBase = (_NextNode_Not_Equal) this.nodeBase;
+            createMathOperation_Triads(this, listTriads);
 
         } else if (nodeBase instanceof _NextNode_Return) {
             _NextNode_Return nodeBase = (_NextNode_Return) this.nodeBase;
@@ -362,9 +396,21 @@ public class NextNode {
         } else if (nodeBase instanceof _NextNode_Push_Param) {
             _NextNode_Push_Param nodeBase = (_NextNode_Push_Param) this.nodeBase;
 
-        } else if (nodeBase instanceof _NextNode_Call) {
-            _NextNode_Call nodeBase = (_NextNode_Call) this.nodeBase;
+            if (right != null) this.right.createTriads(listTriads);
 
+            String first = "??";
+            if (right.nodeBase.triad_number >= 0)
+                first = "(" + right.nodeBase.triad_number.toString() + ")";
+            else
+                first = right.nodeBase.triad_lexem;
+
+            addTriad("push", first, null, listTriads);
+
+        } else if (nodeBase instanceof _NextNode_Call) {
+            _NextNode_Call callNodeBase = (_NextNode_Call) this.nodeBase;
+            _NextNode_Func funcNodeBase = (_NextNode_Func) callNodeBase.func.nodeBase;
+            if (left != null) this.left.createTriads(listTriads);
+            addTriad("call", funcNodeBase.lexem, null, listTriads);
         } else {
             throw new Exception("us8188-xjjk " + nodeBase.getClass().getName());
         }
@@ -373,7 +419,7 @@ public class NextNode {
         return listTriads;
     }
 
-    private void createMathOperation_Triads(NextNode nextNode, List<String> list) throws Exception {
+    private void createMathOperation_Triads(NextNode nextNode, List<NextNode_Triad> list) throws Exception {
 
         if (nextNode.left != null) nextNode.left.createTriads(list);
         if (nextNode.right != null) nextNode.right.createTriads(list);
@@ -399,6 +445,18 @@ public class NextNode {
             addTriad("/", first, second, list);
         } else if (nextNode.nodeBase instanceof _NextNode_Star) {
             addTriad("*", first, second, list);
+        } else if (nextNode.nodeBase instanceof _NextNode_Great) {
+            addTriad(">", first, second, list);
+        } else if (nextNode.nodeBase instanceof _NextNode_Great_Equal) {
+            addTriad(">=", first, second, list);
+        } else if (nextNode.nodeBase instanceof _NextNode_Less) {
+            addTriad("<", first, second, list);
+        } else if (nextNode.nodeBase instanceof _NextNode_Less_Equal) {
+            addTriad("<=", first, second, list);
+        } else if (nextNode.nodeBase instanceof _NextNode_Equal) {
+            addTriad("==", first, second, list);
+        } else if (nextNode.nodeBase instanceof _NextNode_Not_Equal) {
+            addTriad("!=", first, second, list);
         } else
             throw new Exception("asdf7320jsj");
 
@@ -409,20 +467,9 @@ public class NextNode {
 //        if(nextNode.nodeBase instanceof _Nex)
     }
 
-    private void addTriad(String operation, String first, String second, List<String> list) {
-        if (operation == null || operation.isEmpty())
-            operation = "";
-        else
-            operation = "    " + operation;
-        if (second == null || second.isEmpty())
-            second = "";
-        else
-            second = "    " + second;
-        if (first == null || first.isEmpty())
-            first = "";
-        else
-            first = "    " + first;
-        String str = (list.size()) + ")" + operation + first + second;
-        list.add(str);
+    private NextNode_Triad addTriad(String operation, String first, String second, List<NextNode_Triad> list) {
+        final NextNode_Triad nextNode_triad = new NextNode_Triad(operation, first, second, list.size());
+        list.add(nextNode_triad);
+        return nextNode_triad;
     }
 }

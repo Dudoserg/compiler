@@ -815,7 +815,7 @@ public class TreeNext {
         nodePushParam.nodeBase = nodeBase;
 
         NextNode fromStack = this.getFromStack(-1);
-        nodePushParam.left = fromStack;
+        nodePushParam.right = fromStack;
 
 //        if (fromStack.nodeBase instanceof _NextNode_Int) {
 ////            nodeBase.whatIsPush = fromStack;
@@ -908,11 +908,35 @@ public class TreeNext {
 
 
     public String createTriads() throws Exception {
-        List<String> listTriads = new ArrayList<>();
+        List<NextNode_Triad> listTriads = new ArrayList<>();
 
         listTriads = root.createTriads(listTriads);
 
-        final String collect = listTriads.stream().collect(Collectors.joining("\n"));
+
+
+        final String collect = listTriads.stream()
+                .map(nextNode_triad -> {
+                    String operation = nextNode_triad.operation;
+                    String second = nextNode_triad.second;
+                    String first = nextNode_triad.first;
+                    Integer size = nextNode_triad.index;
+
+                    if (operation == null || operation.isEmpty())
+                        operation = "";
+                    else
+                        operation = "    " + operation;
+                    if (second == null || second.isEmpty())
+                        second = "";
+                    else
+                        second = "    " + second;
+                    if (first == null || first.isEmpty())
+                        first = "";
+                    else
+                        first = "    " + first;
+                    String str = (size) + ")" + operation + first + second;
+                    return str;
+                })
+                .collect(Collectors.joining("\n"));
 
         return collect;
     }
