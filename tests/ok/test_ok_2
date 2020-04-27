@@ -3,7 +3,7 @@ int heh(int a){
 
 }
 int privet2(int c){
-    if(c == 3){
+    if(c){
        heh(c);
     }else
         ;

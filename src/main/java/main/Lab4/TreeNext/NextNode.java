@@ -25,6 +25,12 @@ public class NextNode {
         this.id = counter++;
     }
 
+    public boolean isHasChild() {
+        if (left == null && right == null)
+            return false;
+        return true;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -89,7 +95,14 @@ public class NextNode {
             else
                 writer.write("v" + this.id + "" + "\n");
             writer.write("v" + this.id + "[label=\"" + "=" + "\"]" + "\n");
-        } else if (nodeBase instanceof _NextNode_Div) {
+        } else if (nodeBase instanceof _NextNode_Cast) {
+            _NextNode_Cast nodeBase = (_NextNode_Cast) this.nodeBase;
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "" + "\n");
+            writer.write("v" + this.id + "[label=\"" + nodeBase.castTo_lexTypeTERMINAL.toString() + "\"]" + "\n");
+        }else if (nodeBase instanceof _NextNode_Div) {
             if (this == current)
                 writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
             else
@@ -294,7 +307,12 @@ public class NextNode {
             addTriad("=", first, second, listTriads);
 
 
-        } else if (nodeBase instanceof _NextNode_Plus) {
+        } else if (nodeBase instanceof _NextNode_Cast) {
+            _NextNode_Cast nodeBase = (_NextNode_Cast) this.nodeBase;
+            if (left != null) this.left.createTriads(listTriads);
+            if (right != null) this.right.createTriads(listTriads);
+
+        }else if (nodeBase instanceof _NextNode_Plus) {
             _NextNode_Plus nodeBase = (_NextNode_Plus) this.nodeBase;
             createMathOperation_Triads(this, listTriads);
 
@@ -325,7 +343,24 @@ public class NextNode {
         } else if (nodeBase instanceof _NextNode_If) {
             _NextNode_If nodeBase = (_NextNode_If) this.nodeBase;
 
-            if (left != null) this.left.createTriads(listTriads);
+            if (left != null) {
+//                if (! left.isHasChild()) // Если у условия нет потомков, т.е. там только один объект
+//                if (left.nodeBase instanceof _NextNode_Call) {
+//                    final _NextNode_Call callNodeBase = (_NextNode_Call) left.nodeBase;
+//                    final _NextNode_Func funcNodeBase = (_NextNode_Func) callNodeBase.func.nodeBase;
+//                    addTriad("+", "0", funcNodeBase.lexem, listTriads);
+//                }
+                if (left.nodeBase instanceof _NextNode_ID) {
+                    addTriad("+", "0", ((_NextNode_ID) left.nodeBase).lexem, listTriads);
+                }
+                if (left.nodeBase instanceof _NextNode_Int) {
+                    addTriad("+", "0", ((_NextNode_Int) left.nodeBase).lexem, listTriads);
+                }
+                if (left.nodeBase instanceof _NextNode_Double) {
+                    addTriad("+", "0", ((_NextNode_Double) left.nodeBase).lexem, listTriads);
+                }
+                this.left.createTriads(listTriads);
+            }
 
             String first = "(" + (listTriads.size() + 1) + ")";
             String second = "??";
@@ -411,6 +446,7 @@ public class NextNode {
             _NextNode_Func funcNodeBase = (_NextNode_Func) callNodeBase.func.nodeBase;
             if (left != null) this.left.createTriads(listTriads);
             addTriad("call", funcNodeBase.lexem, null, listTriads);
+            callNodeBase.triad_number = listTriads.size() - 1;
         } else {
             throw new Exception("us8188-xjjk " + nodeBase.getClass().getName());
         }

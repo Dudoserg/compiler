@@ -10,7 +10,7 @@ int privet2(int c){
         ;;heh(c);;;
         ;;;heh( 5 + 3 * 5 + heh(c) * 9 * (2 - 1));;
 
-        if(c == 3){
+        if(c){
               ;;heh(c);;;
               ;;;heh( 5 + 3 * 5 + 9 * (2 - 1));;
              ; ;heh(c + 3);;

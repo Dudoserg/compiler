@@ -12,6 +12,7 @@ import main.Lab4.Triads;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -177,17 +178,77 @@ public class TreeNext {
         final _NextNode_Div nodeBase = new _NextNode_Div();
         devVertex.nodeBase = nodeBase;
 
-        final NextNode left_fromStack = getFromStack(-2);
-        devVertex.setLeft(left_fromStack);
+        NextNode left_fromStack = getFromStack(-2);
         LexTypeTERMINAL left_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(left_fromStack);
 
-        final NextNode right_fromStack = getFromStack(-1);
-        devVertex.setRight(right_fromStack);
+        NextNode right_fromStack = getFromStack(-1);
         LexTypeTERMINAL right_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(right_fromStack);
 
-        nodeBase.lexTypeTERMINAL = calculateResultLexTypeTerminal(left_lexTypeTERMINAL, right_lexTypeTERMINAL);
+        final ArrayList<Object> listObjects = calculateCast("div", left_fromStack, right_fromStack);
+        nodeBase.lexTypeTERMINAL = (LexTypeTERMINAL) listObjects.get(0);
+        left_fromStack = (NextNode) listObjects.get(1);
+        right_fromStack = (NextNode) listObjects.get(2);
+
+        devVertex.setLeft(left_fromStack);
+        devVertex.setRight(right_fromStack);
+
+//        nodeBase.lexTypeTERMINAL = calculateResultLexTypeTerminal(left_lexTypeTERMINAL, right_lexTypeTERMINAL);
 
         this.stack.add(devVertex);
+    }
+
+    private ArrayList<Object> calculateCast(String sign, NextNode left_fromStack, NextNode right_fromStack) throws Exception {
+        LexTypeTERMINAL left_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(left_fromStack);
+        LexTypeTERMINAL right_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(right_fromStack);
+
+
+        LexTypeTERMINAL result_lexTypeTERMINAL = null;// если один из оперант дабл, то результат дабл
+        // double double
+        if (left_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE && right_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE) {
+            // результат дабл
+            result_lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
+        }
+        // int double ПРИВОДИМ ЛЕВУЮ К ДАБЛУ
+        else if ((left_lexTypeTERMINAL == LexTypeTERMINAL._INT || left_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10) &&
+                right_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE) {
+            result_lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
+
+            NextNode castNode = new NextNode();
+            castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._DOUBLE);
+            castNode.setLeft(left_fromStack);
+            left_fromStack = castNode;
+        }
+        //  double int ПРИВОДИМ ПРАВУЮ К ДАБЛУ
+        else if (left_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE &&
+                (right_lexTypeTERMINAL == LexTypeTERMINAL._INT || right_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10)) {
+            result_lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
+
+            NextNode castNode = new NextNode();
+            castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._DOUBLE);
+            castNode.setLeft(right_fromStack);
+            right_fromStack = castNode;
+        }
+        //  int int
+        else if ((left_lexTypeTERMINAL == LexTypeTERMINAL._INT || left_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10) &&
+                (right_lexTypeTERMINAL == LexTypeTERMINAL._INT || right_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10)) {
+            // результат дабл
+            if ("div".equals(sign)) {
+                result_lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
+            } else {
+                System.out.println("not found this sign");
+                throw new Exception("not found this sign");
+            }
+
+        }
+        //  double double
+        else if (left_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE &&
+                right_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE) {
+            // результат дабл
+            result_lexTypeTERMINAL = LexTypeTERMINAL._INT;
+        } else {
+            throw new Exception("1a14qw820146cd38207d53426hj");
+        }
+        return new ArrayList<Object>(Arrays.asList(result_lexTypeTERMINAL, left_fromStack, right_fromStack));
     }
 
     public void generStar() throws Exception {
@@ -227,6 +288,7 @@ public class TreeNext {
     }
 
     // вычисляем результат операции над двумя операндами определенных типов
+    @Deprecated
     private LexTypeTERMINAL calculateResultLexTypeTerminal(LexTypeTERMINAL left_lexTypeTERMINAL, LexTypeTERMINAL right_lexTypeTERMINAL)
             throws Exception {
         LexTypeTERMINAL result_lexTypeTERMINAL = null;// если один из оперант дабл, то результат дабл
@@ -234,16 +296,20 @@ public class TreeNext {
             // результат дабл
             result_lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
         }
-        if ((left_lexTypeTERMINAL == LexTypeTERMINAL._INT || left_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10 ) &&
+        if ((left_lexTypeTERMINAL == LexTypeTERMINAL._INT || left_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10) &&
                 right_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE) {
             // результат дабл
             result_lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
         } else if (left_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE &&
-                (right_lexTypeTERMINAL == LexTypeTERMINAL._INT || right_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10 )) {
+                (right_lexTypeTERMINAL == LexTypeTERMINAL._INT || right_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10)) {
             // результат дабл
             result_lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
-        } else if ((left_lexTypeTERMINAL == LexTypeTERMINAL._INT || left_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10 ) &&
-                (right_lexTypeTERMINAL == LexTypeTERMINAL._INT || right_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10 )) {
+        } else if ((left_lexTypeTERMINAL == LexTypeTERMINAL._INT || left_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10) &&
+                (right_lexTypeTERMINAL == LexTypeTERMINAL._INT || right_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10)) {
+            // результат дабл
+            result_lexTypeTERMINAL = LexTypeTERMINAL._INT;
+        } else if (left_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE &&
+                right_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE) {
             // результат дабл
             result_lexTypeTERMINAL = LexTypeTERMINAL._INT;
         } else {
@@ -271,7 +337,7 @@ public class TreeNext {
             NextNode callFunc = left_nodeBase.func;
             final _NextNode_Func callFunc_nodeBase = (_NextNode_Func) callFunc.nodeBase;
             lexTypeTERMINAL = callFunc_nodeBase.lexTypeTERMINAL;
-        }else if (fromStack.nodeBase instanceof _NextNode_Func) {
+        } else if (fromStack.nodeBase instanceof _NextNode_Func) {
             final _NextNode_Func left_nodeBase = (_NextNode_Func) fromStack.nodeBase;
             lexTypeTERMINAL = left_nodeBase.lexTypeTERMINAL;
         } else if (fromStack.nodeBase instanceof _NextNode_Plus) {
@@ -291,7 +357,6 @@ public class TreeNext {
         }
         return lexTypeTERMINAL;
     }
-
 
 
     public void triad_push(LexTypeTERMINAL next, String lexem) throws Exception {
@@ -410,8 +475,8 @@ public class TreeNext {
         NextNode id = new NextNode();
         id.nodeBase = new _NextNode_ID(dataType, lexem, declareVariable);
 
-        if (dataType == LexTypeTERMINAL._INT ){
-        } else  if (dataType == LexTypeTERMINAL._DOUBLE ){
+        if (dataType == LexTypeTERMINAL._INT) {
+        } else if (dataType == LexTypeTERMINAL._DOUBLE) {
         } else throw new Exception("shj918fsj2jjfogyval");
 
         this.stack.add(id);
@@ -911,7 +976,6 @@ public class TreeNext {
         List<NextNode_Triad> listTriads = new ArrayList<>();
 
         listTriads = root.createTriads(listTriads);
-
 
 
         final String collect = listTriads.stream()

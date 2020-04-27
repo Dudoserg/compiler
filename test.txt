@@ -1,17 +1,1 @@
-double w = 136;
-
-int kek(int n){
-
-}
-
-int heh(){
-
-}
-
-int privet2(int c){
-    double a = 2;
-    if(c == 3){
-       heh();
-    }else
-       kek(123 + 66);
-}
+double x = (1 / 2) / (3 * 4);
