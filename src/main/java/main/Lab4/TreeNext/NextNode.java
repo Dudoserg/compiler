@@ -66,6 +66,14 @@ public class NextNode {
             else
                 writer.write("v" + this.id + "[style=filled, fillcolor=red]" + "\n");
             writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_FuncEnd) {
+            _NextNode_FuncEnd nodeBaseFuncEnd = (_NextNode_FuncEnd) this.nodeBase;
+            final _NextNode_Func nodeBaseFunc = (_NextNode_Func) nodeBaseFuncEnd.func.nodeBase;
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "[style=filled, fillcolor=red]" + "\n");
+            writer.write("v" + this.id + "[label=\"" + "END " + nodeBaseFunc.lexem + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_DeclareVariable) {
             _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) this.nodeBase;
             if (this == current)
@@ -98,6 +106,12 @@ public class NextNode {
             else
                 writer.write("v" + this.id + "[style=filled, fillcolor=\"#ccebe8\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + "+" + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_Minus) {
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "[style=filled, fillcolor=\"#ccebe8\"]" + "\n");
+            writer.write("v" + this.id + "[label=\"" + "-" + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_Int) {
 
             _NextNode_Int nodeBase = (_NextNode_Int) this.nodeBase;
@@ -142,7 +156,10 @@ public class NextNode {
             writer.write("v" + this.id + "[style=filled, fillcolor=\"#00d4d4\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + "RETURN" + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_StartLevel) {
-            writer.write("v" + this.id + "[style=filled, fillcolor=\"#000000\"]" + "\n");
+            if (this == current)
+                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+            else
+                writer.write("v" + this.id + "[style=filled, fillcolor=\"#000000\"]" + "\n");
             writer.write("v" + this.id + "[xlabel=\"" + "level" + "\"]" + "\n");
 //            writer.write("v" + this.id + "[label=\"" + "RETURN" + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_Push_Param) {
@@ -165,7 +182,7 @@ public class NextNode {
 //                writer.write("v" + this.id + "[xlabel=\"" + "CALL" + "\"]" + "\n");
 //            } else
 //                throw new Exception("asd078fa0s");
-            writer.write("v" + this.id + "[style=filled, fillcolor=\"#de7d0d\"]" + "\n");
+            writer.write("v" + this.id + "[style=filled, fillcolor=\"#fff15c\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + "push" + "\"]" + "\n");
 
         } else if (nodeBase instanceof _NextNode_Call) {
@@ -198,21 +215,21 @@ public class NextNode {
         List<String> rankSame = new ArrayList<>();
 
         if (this.left != null) {
-            writer.write("v" + this.id + " -- " + "v" + left.id + "\n");
+            writer.write("v" + this.id + " -- " + "v" + left.id + "[color=\"red\"]" + "\n");
             rankSame.add("v" + left.id);
         } else {
             writer.write("v" + this.id + "notVisibleL" + "[style=invis]" + "\n");
-            writer.write("v" + this.id + " -- " + "v" + this.id + "notVisibleL" + isLeftRightNull + "\n");
+            writer.write("v" + this.id + " -- " + "v" + this.id + "notVisibleL" + isLeftRightNull + "[style=invis]" + "\n");
             rankSame.add("v" + this.id + "notVisibleL");
         }
         rankSame.add("v" + this.id + "center");
 
         if (right != null) {
-            writer.write("v" + this.id + " -- " + "v" + right.id + "\n");
+            writer.write("v" + this.id + " -- " + "v" + right.id + "[color=\"blue\"]" + "\n");
             rankSame.add("v" + right.id);
         } else {
             writer.write("v" + this.id + "notVisibleR" + "[style=invis]" + "\n");
-            writer.write("v" + this.id + " -- " + "v" + this.id + "notVisibleR" + isLeftRightNull + "\n");
+            writer.write("v" + this.id + " -- " + "v" + this.id + "notVisibleR" + isLeftRightNull + "[style=invis]" + "\n");
             rankSame.add("v" + this.id + "notVisibleR");
         }
 
@@ -227,5 +244,185 @@ public class NextNode {
 
         if (right != null)
             this.right.print(writer, current);
+    }
+
+    public List<String> createTriads(List<String> listTriads) throws Exception {
+        String str = "";
+        if (nodeBase instanceof _NextNode_Next) {
+            _NextNode_Next nodeBase = (_NextNode_Next) this.nodeBase;
+
+            if (left != null) this.left.createTriads(listTriads);
+            if (right != null) this.right.createTriads(listTriads);
+
+        } else if (nodeBase instanceof _NextNode_Func) {
+            _NextNode_Func nodeBase = (_NextNode_Func) this.nodeBase;
+
+            addTriad("proc", nodeBase.lexem, null, listTriads);
+            addTriad("prolog", null, null, listTriads);
+            if (left != null)
+                this.left.createTriads(listTriads);
+
+        } else if (nodeBase instanceof _NextNode_FuncEnd) {
+            _NextNode_FuncEnd nodeBase = (_NextNode_FuncEnd) this.nodeBase;
+
+            addTriad("epilog", null, null, listTriads);
+            addTriad("ret", null, null, listTriads);
+            addTriad("endp", null, null, listTriads);
+
+        } else if (nodeBase instanceof _NextNode_DeclareVariable) {
+            _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) this.nodeBase;
+
+        } else if (nodeBase instanceof _NextNode_Assign) {
+            _NextNode_Assign nodeBase = (_NextNode_Assign) this.nodeBase;
+
+            if (left != null) this.left.createTriads(listTriads);
+            if (right != null) this.right.createTriads(listTriads);
+
+            final _NextNode_ID leftNodeBase = (_NextNode_ID) left.nodeBase;
+
+            String first = leftNodeBase.lexem;
+            String second = "??";
+            if (right.nodeBase.triad_number >= 0)
+                second = "(" + right.nodeBase.triad_number.toString() + ")";
+            else
+                second = right.nodeBase.triad_lexem;
+
+            addTriad("=", first, second, listTriads);
+
+
+        } else if (nodeBase instanceof _NextNode_Plus) {
+            _NextNode_Plus nodeBase = (_NextNode_Plus) this.nodeBase;
+            createMathOperation_Triads(this, listTriads);
+
+        } else if (nodeBase instanceof _NextNode_Minus) {
+            _NextNode_Minus nodeBase = (_NextNode_Minus) this.nodeBase;
+            createMathOperation_Triads(this, listTriads);
+
+        } else if (nodeBase instanceof _NextNode_Div) {
+            _NextNode_Div nodeBase = (_NextNode_Div) this.nodeBase;
+            createMathOperation_Triads(this, listTriads);
+
+        } else if (nodeBase instanceof _NextNode_Star) {
+            _NextNode_Star nodeBase = (_NextNode_Star) this.nodeBase;
+            createMathOperation_Triads(this, listTriads);
+
+        } else if (nodeBase instanceof _NextNode_Int) {
+            _NextNode_Int nodeBase = (_NextNode_Int) this.nodeBase;
+            nodeBase.triad_lexem = nodeBase.lexem;
+
+        } else if (nodeBase instanceof _NextNode_Double) {
+            _NextNode_Double nodeBase = (_NextNode_Double) this.nodeBase;
+            nodeBase.triad_lexem = nodeBase.lexem;
+
+        } else if (nodeBase instanceof _NextNode_ID) {
+            _NextNode_ID nodeBase = (_NextNode_ID) this.nodeBase;
+            nodeBase.triad_lexem = nodeBase.lexem;
+
+        } else if (nodeBase instanceof _NextNode_If) {
+            _NextNode_If nodeBase = (_NextNode_If) this.nodeBase;
+
+        } else if (nodeBase instanceof _NextNode_Else) {
+            _NextNode_Else nodeBase = (_NextNode_Else) this.nodeBase;
+
+        } else if (nodeBase instanceof _NextNode_Great) {
+            _NextNode_Great nodeBase = (_NextNode_Great) this.nodeBase;
+
+        } else if (nodeBase instanceof _NextNode_Great_Equal) {
+            _NextNode_Great_Equal nodeBase = (_NextNode_Great_Equal) this.nodeBase;
+
+        } else if (nodeBase instanceof _NextNode_Less) {
+            _NextNode_Less nodeBase = (_NextNode_Less) this.nodeBase;
+
+        } else if (nodeBase instanceof _NextNode_Less_Equal) {
+            _NextNode_Less_Equal nodeBase = (_NextNode_Less_Equal) this.nodeBase;
+
+        } else if (nodeBase instanceof _NextNode_Equal) {
+            _NextNode_Equal nodeBase = (_NextNode_Equal) this.nodeBase;
+
+        } else if (nodeBase instanceof _NextNode_Not_Equal) {
+            _NextNode_Not_Equal nodeBase = (_NextNode_Not_Equal) this.nodeBase;
+
+        } else if (nodeBase instanceof _NextNode_Return) {
+            _NextNode_Return nodeBase = (_NextNode_Return) this.nodeBase;
+
+            if (right != null) this.right.createTriads(listTriads);
+
+            String first = "??";
+            if (right.nodeBase.triad_number >= 0)
+                first = "(" + right.nodeBase.triad_number.toString() + ")";
+            else
+                first = right.nodeBase.triad_lexem;
+            addTriad("push_for_return", first, null, listTriads);
+
+        } else if (nodeBase instanceof _NextNode_StartLevel) {
+            _NextNode_StartLevel nodeBase = (_NextNode_StartLevel) this.nodeBase;
+            if (left != null) this.left.createTriads(listTriads);
+            if (right != null) this.right.createTriads(listTriads);
+
+        } else if (nodeBase instanceof _NextNode_Push_Param) {
+            _NextNode_Push_Param nodeBase = (_NextNode_Push_Param) this.nodeBase;
+
+        } else if (nodeBase instanceof _NextNode_Call) {
+            _NextNode_Call nodeBase = (_NextNode_Call) this.nodeBase;
+
+        } else {
+            throw new Exception("us8188-xjjk " + nodeBase.getClass().getName());
+        }
+
+
+        return listTriads;
+    }
+
+    private void createMathOperation_Triads(NextNode nextNode, List<String> list) throws Exception {
+
+        if (nextNode.left != null) nextNode.left.createTriads(list);
+        if (nextNode.right != null) nextNode.right.createTriads(list);
+
+        String first = "";
+        if (nextNode.left.nodeBase.triad_number >= 0)
+            first = "(" + nextNode.left.nodeBase.triad_number.toString() + ")";
+        else
+            first = nextNode.left.nodeBase.triad_lexem;
+
+        String second = "";
+        if (nextNode.right.nodeBase.triad_number >= 0)
+            second = "(" + nextNode.right.nodeBase.triad_number.toString() + ")";
+        else
+            second = nextNode.right.nodeBase.triad_lexem;
+
+
+        if (nextNode.nodeBase instanceof _NextNode_Plus) {
+            addTriad("+", first, second, list);
+        } else if (nextNode.nodeBase instanceof _NextNode_Minus) {
+            addTriad("-", first, second, list);
+        } else if (nextNode.nodeBase instanceof _NextNode_Div) {
+            addTriad("/", first, second, list);
+        } else if (nextNode.nodeBase instanceof _NextNode_Star) {
+            addTriad("*", first, second, list);
+        } else
+            throw new Exception("asdf7320jsj");
+
+        nodeBase.triad_number = list.size() - 1;
+    }
+
+    private void isConst_or_isVar(NextNode nextNode) {
+//        if(nextNode.nodeBase instanceof _Nex)
+    }
+
+    private void addTriad(String operation, String first, String second, List<String> list) {
+        if (operation == null || operation.isEmpty())
+            operation = "";
+        else
+            operation = "    " + operation;
+        if (second == null || second.isEmpty())
+            second = "";
+        else
+            second = "    " + second;
+        if (first == null || first.isEmpty())
+            first = "";
+        else
+            first = "    " + first;
+        String str = (list.size()) + ")" + operation + first + second;
+        list.add(str);
     }
 }

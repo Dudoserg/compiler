@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 
 public class Semantic {
-    public boolean isSemantic = false;
+    public boolean isSemantic = true;
     private boolean devMode;
 
     private boolean flag_Decl;

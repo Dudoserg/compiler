@@ -332,6 +332,10 @@ public class LLK {
                             this.triads.triad_call();
                             break;
                         }
+                        case "next_call": {
+                            this.treeNext.next_call();
+                            break;
+                        }
                         case "triad_return": {
                             this.triads.triad_return();
                             this.treeNext.triad_return();
@@ -400,6 +404,7 @@ public class LLK {
                             break;
                         }
                         case "gener_minus": {
+                            this.treeNext.generMinus();
                             this.triads.gener_minus();
                             break;
                         }
@@ -461,9 +466,20 @@ public class LLK {
         if (devMode)
             treeNext.draw(null);
 
-        if (devMode && triads.isTriads)
-            if (!triadsStr.equals(lolkek))
-                throw new Exception("!triadsS197tr.equals(\"lolkek\")");
+
+        System.out.println("\n\n----------------------------------------------------------------------------------\n");
+        final String treeNext_triadsStr = treeNext.createTriads();
+        System.out.println(treeNext_triadsStr);
+
+        if( !treeNext_triadsStr.equals(triadsStr))
+            throw new Exception("новые и старые триады не равны");
+
+
+        if (devMode && this.triads.isTriads) {
+            if (!triadsStr.equals(lolkek)) {
+                //throw new Exception("!triadsS197tr.equals(\"lolkek\")");
+            }
+        }
         return true;
     }
 

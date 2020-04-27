@@ -1,7 +1,6 @@
 package main.Lab4.TreeNext;
 
 import main.Lab2.LexTypeTERMINAL;
-import main.Lab3.Node;
 import main.Lab3.Semantic;
 import main.Lab3.exceptions.Ex_Dublicate;
 import main.Lab3.exceptions.Ex_Dublicate_Func;
@@ -14,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TreeNext {
     Semantic semantic;
@@ -47,8 +47,7 @@ public class TreeNext {
         NextNode nextVertex = new NextNode();
         nextVertex.nodeBase = new _NextNode_Next();
 
-   
-        
+
         // вершина - функция
         NextNode funcVertex = new NextNode();
         _NextNode_Func funcNodeBase = new _NextNode_Func(lexemToStr, dataType);
@@ -75,11 +74,10 @@ public class TreeNext {
         this.current = firstNextVertex;
 
 
-
     }
 
     private boolean checkDublicateFunc(NextNode funcVertex) throws Exception {
-        if (! (funcVertex.nodeBase instanceof  _NextNode_Func) )
+        if (!(funcVertex.nodeBase instanceof _NextNode_Func))
             throw new Exception("checkDublicateFunc, вы проверяете не функцию!");
 
         _NextNode_Func nodeBase = (_NextNode_Func) funcVertex.nodeBase;
@@ -87,7 +85,7 @@ public class TreeNext {
         NextNode checkingNext = current;
         do {
 
-            if(checkingNext == null)
+            if (checkingNext == null)
                 return false;
             NextNode checking = checkingNext.left;
             if (checking == null) {
@@ -155,35 +153,146 @@ public class TreeNext {
         this.current = newNextVertex;
     }
 
-    public void generDiv() {
-        NextNode devVertex = new NextNode();
-        devVertex.nodeBase = new _NextNode_Div();
+    public void generMinus() throws Exception {
+        NextNode minusVertex = new NextNode();
+        final _NextNode_Minus nodeBase = new _NextNode_Minus();
+        minusVertex.nodeBase = nodeBase;
 
-        devVertex.setLeft(this.getFromStack(-2));
-        devVertex.setRight(this.getFromStack(-1));
+        final NextNode left_fromStack = getFromStack(-2);
+        minusVertex.setLeft(left_fromStack);
+        LexTypeTERMINAL left_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(left_fromStack);
+
+        final NextNode right_fromStack = getFromStack(-1);
+        minusVertex.setRight(right_fromStack);
+        LexTypeTERMINAL right_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(right_fromStack);
+
+        nodeBase.lexTypeTERMINAL = calculateResultLexTypeTerminal(left_lexTypeTERMINAL, right_lexTypeTERMINAL);
+
+        this.stack.add(minusVertex);
+    }
+
+
+    public void generDiv() throws Exception {
+        NextNode devVertex = new NextNode();
+        final _NextNode_Div nodeBase = new _NextNode_Div();
+        devVertex.nodeBase = nodeBase;
+
+        final NextNode left_fromStack = getFromStack(-2);
+        devVertex.setLeft(left_fromStack);
+        LexTypeTERMINAL left_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(left_fromStack);
+
+        final NextNode right_fromStack = getFromStack(-1);
+        devVertex.setRight(right_fromStack);
+        LexTypeTERMINAL right_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(right_fromStack);
+
+        nodeBase.lexTypeTERMINAL = calculateResultLexTypeTerminal(left_lexTypeTERMINAL, right_lexTypeTERMINAL);
 
         this.stack.add(devVertex);
     }
 
-    public void generStar() {
+    public void generStar() throws Exception {
         NextNode starVertex = new NextNode();
-        starVertex.nodeBase = new _NextNode_Star();
+        final _NextNode_Star nodeBase = new _NextNode_Star();
+        starVertex.nodeBase = nodeBase;
 
-        starVertex.setLeft(this.getFromStack(-2));
-        starVertex.setRight(this.getFromStack(-1));
+        final NextNode left_fromStack = getFromStack(-2);
+        starVertex.setLeft(left_fromStack);
+        LexTypeTERMINAL left_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(left_fromStack);
+
+        final NextNode right_fromStack = getFromStack(-1);
+        starVertex.setRight(right_fromStack);
+        LexTypeTERMINAL right_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(right_fromStack);
+
+        nodeBase.lexTypeTERMINAL = calculateResultLexTypeTerminal(left_lexTypeTERMINAL, right_lexTypeTERMINAL);
 
         this.stack.add(starVertex);
     }
 
-    public void generPlus() {
+    public void generPlus() throws Exception {
         NextNode plusVertex = new NextNode();
-        plusVertex.nodeBase = new _NextNode_Plus();
+        final _NextNode_Plus nodeBase = new _NextNode_Plus();
+        plusVertex.nodeBase = nodeBase;
 
-        plusVertex.setLeft(this.getFromStack(-2));
-        plusVertex.setRight(this.getFromStack(-1));
+        final NextNode left_fromStack = getFromStack(-2);
+        plusVertex.setLeft(left_fromStack);
+        LexTypeTERMINAL left_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(left_fromStack);
+
+        final NextNode right_fromStack = getFromStack(-1);
+        plusVertex.setRight(right_fromStack);
+        LexTypeTERMINAL right_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(right_fromStack);
+
+        nodeBase.lexTypeTERMINAL = calculateResultLexTypeTerminal(left_lexTypeTERMINAL, right_lexTypeTERMINAL);
 
         this.stack.add(plusVertex);
     }
+
+    // вычисляем результат операции над двумя операндами определенных типов
+    private LexTypeTERMINAL calculateResultLexTypeTerminal(LexTypeTERMINAL left_lexTypeTERMINAL, LexTypeTERMINAL right_lexTypeTERMINAL)
+            throws Exception {
+        LexTypeTERMINAL result_lexTypeTERMINAL = null;// если один из оперант дабл, то результат дабл
+        if (left_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE && right_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE) {
+            // результат дабл
+            result_lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
+        }
+        if ((left_lexTypeTERMINAL == LexTypeTERMINAL._INT || left_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10 ) &&
+                right_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE) {
+            // результат дабл
+            result_lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
+        } else if (left_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE &&
+                (right_lexTypeTERMINAL == LexTypeTERMINAL._INT || right_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10 )) {
+            // результат дабл
+            result_lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
+        } else if ((left_lexTypeTERMINAL == LexTypeTERMINAL._INT || left_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10 ) &&
+                (right_lexTypeTERMINAL == LexTypeTERMINAL._INT || right_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10 )) {
+            // результат дабл
+            result_lexTypeTERMINAL = LexTypeTERMINAL._INT;
+        } else {
+            throw new Exception("12820463820742546hj");
+        }
+        return result_lexTypeTERMINAL;
+    }
+
+    // получаем тип операнды из вершины
+    private LexTypeTERMINAL getLexTypeTerminal_inMathOper(NextNode fromStack) throws Exception {
+        LexTypeTERMINAL lexTypeTERMINAL = null;
+        if (fromStack.nodeBase instanceof _NextNode_Int) {
+            final _NextNode_Int left_nodeBase = (_NextNode_Int) fromStack.nodeBase;
+            lexTypeTERMINAL = left_nodeBase.lexTypeTERMINAL;
+        } else if (fromStack.nodeBase instanceof _NextNode_Double) {
+            final _NextNode_Double left_nodeBase = (_NextNode_Double) fromStack.nodeBase;
+            lexTypeTERMINAL = left_nodeBase.lexTypeTERMINAL;
+        } else if (fromStack.nodeBase instanceof _NextNode_ID) {
+            final _NextNode_ID nodeBase = (_NextNode_ID) fromStack.nodeBase;
+            final NextNode declNode = nodeBase.nextNode;
+            final _NextNode_DeclareVariable decl_nodeBase = (_NextNode_DeclareVariable) declNode.nodeBase;
+            lexTypeTERMINAL = decl_nodeBase.lexTypeTERMINAL;
+        } else if (fromStack.nodeBase instanceof _NextNode_Call) {
+            final _NextNode_Call left_nodeBase = (_NextNode_Call) fromStack.nodeBase;
+            NextNode callFunc = left_nodeBase.func;
+            final _NextNode_Func callFunc_nodeBase = (_NextNode_Func) callFunc.nodeBase;
+            lexTypeTERMINAL = callFunc_nodeBase.lexTypeTERMINAL;
+        }else if (fromStack.nodeBase instanceof _NextNode_Func) {
+            final _NextNode_Func left_nodeBase = (_NextNode_Func) fromStack.nodeBase;
+            lexTypeTERMINAL = left_nodeBase.lexTypeTERMINAL;
+        } else if (fromStack.nodeBase instanceof _NextNode_Plus) {
+            final _NextNode_Plus left_nodeBase = (_NextNode_Plus) fromStack.nodeBase;
+            lexTypeTERMINAL = left_nodeBase.lexTypeTERMINAL;
+        } else if (fromStack.nodeBase instanceof _NextNode_Minus) {
+            final _NextNode_Minus left_nodeBase = (_NextNode_Minus) fromStack.nodeBase;
+            lexTypeTERMINAL = left_nodeBase.lexTypeTERMINAL;
+        } else if (fromStack.nodeBase instanceof _NextNode_Div) {
+            final _NextNode_Div left_nodeBase = (_NextNode_Div) fromStack.nodeBase;
+            lexTypeTERMINAL = left_nodeBase.lexTypeTERMINAL;
+        } else if (fromStack.nodeBase instanceof _NextNode_Star) {
+            final _NextNode_Star left_nodeBase = (_NextNode_Star) fromStack.nodeBase;
+            lexTypeTERMINAL = left_nodeBase.lexTypeTERMINAL;
+        } else {
+            throw new Exception("SAhjf78013031z';sw");
+        }
+        return lexTypeTERMINAL;
+    }
+
+
 
     public void triad_push(LexTypeTERMINAL next, String lexem) throws Exception {
         if (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._TYPE_INT_8 ||
@@ -299,8 +408,12 @@ public class TreeNext {
 
         // кладем переменную в стек;
         NextNode id = new NextNode();
-        id.nodeBase =
-                new _NextNode_ID(dataType, lexem, declareVariable);
+        id.nodeBase = new _NextNode_ID(dataType, lexem, declareVariable);
+
+        if (dataType == LexTypeTERMINAL._INT ){
+        } else  if (dataType == LexTypeTERMINAL._DOUBLE ){
+        } else throw new Exception("shj918fsj2jjfogyval");
+
         this.stack.add(id);
         //this.draw(current);
         System.out.print("");
@@ -395,33 +508,36 @@ public class TreeNext {
         this.stack_node_callFunc.add(node_callFunc);
     }
 
-//    private int parameter_counting;
+    //    private int parameter_counting;
     // Использую стек, т.к. в параметрах уже вызываемой функции для которой ведется расчет,
     //  может встретиться так же вызываемая функция, и уже для нее надо с нуля считать параметры.
     List<Integer> parameter_counting = new ArrayList<>();
+
     public void start_parameter_counting() {
         parameter_counting.add(0);
     }
+
     public void plus_parameter_counting() {
         parameter_counting.set(
                 parameter_counting.size() - 1,
                 parameter_counting.get(parameter_counting.size() - 1) + 1
         );
     }
+
     public void end_parameter_counting() throws Exception {
         Integer lastParameter_counting = this.parameter_counting.get(this.parameter_counting.size() - 1);
         this.parameter_counting.remove(this.parameter_counting.size() - 1);
 
-        NextNode node_callFunc = stack_node_callFunc.get(stack_node_callFunc.size() - 1 );
-        stack_node_callFunc.remove(stack_node_callFunc.size() - 1 );
+        NextNode node_callFunc = stack_node_callFunc.get(stack_node_callFunc.size() - 1);
+        stack_node_callFunc.remove(stack_node_callFunc.size() - 1);
 
         // TODO проверяем количество параметров у вызываемой функции
-        if (node_callFunc.nodeBase instanceof _NextNode_Func){
+        if (node_callFunc.nodeBase instanceof _NextNode_Func) {
             _NextNode_Func nodeBase = (_NextNode_Func) node_callFunc.nodeBase;
             if (nodeBase.countParam != lastParameter_counting)
-                throw new Ex_Signature( nodeBase.countParam,
+                throw new Ex_Signature(nodeBase.countParam,
                         lastParameter_counting);
-        }else
+        } else
             throw new Exception("jsd9625asjcv20q2ks[pdnv6s");
         System.out.print("");
     }
@@ -523,7 +639,8 @@ public class TreeNext {
     }
 
     List<NextNode> stack_startLevel = new ArrayList<>();
-    public void startLevel() {
+
+    public void startLevel() throws Exception {
         NextNode rightNextNode = new NextNode();
         rightNextNode.nodeBase = new _NextNode_Next();
         current.setRight(rightNextNode);
@@ -540,7 +657,6 @@ public class TreeNext {
         current = stack_startLevel.get(stack_startLevel.size() - 1);
         stack_startLevel.remove(stack_startLevel.size() - 1);
     }
-
 
 
     public void endDecl() {
@@ -679,7 +795,15 @@ public class TreeNext {
         System.out.print("");
     }
 
-    public void endFunc() {
+    public void endFunc() throws Exception {
+        NextNode nextNode = new NextNode();
+        nextNode.nodeBase = new _NextNode_Next();
+        this.current.setRight(nextNode);
+
+        NextNode endNode = new NextNode();
+        endNode.nodeBase = new _NextNode_FuncEnd(k);
+        nextNode.setLeft(endNode);
+
         this.current = k.parent;
     }
 
@@ -765,8 +889,31 @@ public class TreeNext {
         }
 
         this.stack.add(funcCallNode);
-
         System.out.print("");
 
+    }
+
+    // просто вызываем функцию, никуда ее не присваивая, надо ее достать из стека
+    public void next_call() {
+        NextNode fromStack = this.getFromStack(-1);
+
+        NextNode nextNode = new NextNode();
+        nextNode.nodeBase = new _NextNode_Next();
+
+        current.setRight(nextNode);
+        current = nextNode;
+
+        nextNode.setLeft(fromStack);
+    }
+
+
+    public String createTriads() throws Exception {
+        List<String> listTriads = new ArrayList<>();
+
+        listTriads = root.createTriads(listTriads);
+
+        final String collect = listTriads.stream().collect(Collectors.joining("\n"));
+
+        return collect;
     }
 }

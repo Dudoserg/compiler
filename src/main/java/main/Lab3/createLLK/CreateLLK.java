@@ -744,7 +744,11 @@ public class CreateLLK {
 
         //  <W7>  }
         this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._W7), Elem.createEpsilon(LexTypeTERMINAL._BRACE_CLOSE));
+        //  <W7>  _RETURN
         this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._W7), Elem.createEpsilon(LexTypeTERMINAL._RETURN));
 
+
+        //  <W7>  id
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._W7), Elem.createEpsilon(LexTypeTERMINAL._ID));
     }
 }

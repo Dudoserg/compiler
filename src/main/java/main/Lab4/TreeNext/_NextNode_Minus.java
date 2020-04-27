@@ -8,7 +8,6 @@ import main.Lab2.LexTypeTERMINAL;
 @Getter
 @Setter
 @NoArgsConstructor
-public class _NextNode_Star extends _NextNodeBase{
+public class _NextNode_Minus extends _NextNodeBase{
     LexTypeTERMINAL lexTypeTERMINAL;
-
 }
