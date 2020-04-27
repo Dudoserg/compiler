@@ -139,14 +139,19 @@ public class TreeNext {
 //        this.current = newNextVertex;
     }
 
-    public void generAssign() throws IOException {
+    public void generAssign() throws Exception {
         NextNode newNextVertex = new NextNode();
         newNextVertex.nodeBase = new _NextNode_Next();
 
         NextNode assignVertex = new NextNode();
         assignVertex.nodeBase = new _NextNode_Assign();
-        assignVertex.setLeft(this.getFromStack(-2));
-        assignVertex.setRight(this.getFromStack(-1));
+
+        NextNode left_fromStack = this.getFromStack(-2);
+        assignVertex.setLeft(left_fromStack);
+
+        NextNode right_fromStack = this.getFromStack(-1);
+        right_fromStack = castToLeft(left_fromStack, right_fromStack);
+        assignVertex.setRight(right_fromStack);
 
         newNextVertex.setLeft(assignVertex);
 
@@ -154,47 +159,41 @@ public class TreeNext {
         this.current = newNextVertex;
     }
 
-    public void generMinus() throws Exception {
-        NextNode minusVertex = new NextNode();
-        final _NextNode_Minus nodeBase = new _NextNode_Minus();
-        minusVertex.nodeBase = nodeBase;
-
-        final NextNode left_fromStack = getFromStack(-2);
-        minusVertex.setLeft(left_fromStack);
+    private NextNode castToLeft(final NextNode left_fromStack, NextNode right_fromStack) throws Exception {
         LexTypeTERMINAL left_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(left_fromStack);
-
-        final NextNode right_fromStack = getFromStack(-1);
-        minusVertex.setRight(right_fromStack);
         LexTypeTERMINAL right_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(right_fromStack);
 
-        nodeBase.lexTypeTERMINAL = calculateResultLexTypeTerminal(left_lexTypeTERMINAL, right_lexTypeTERMINAL);
+        // double double
+        if (left_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE && right_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE) {
+        }
+        // int double ПРИВОДИМ Правую К ИНТУ
+        else if ((left_lexTypeTERMINAL == LexTypeTERMINAL._INT || left_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10) &&
+                right_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE) {
 
-        this.stack.add(minusVertex);
-    }
-
-
-    public void generDiv() throws Exception {
-        NextNode devVertex = new NextNode();
-        final _NextNode_Div nodeBase = new _NextNode_Div();
-        devVertex.nodeBase = nodeBase;
-
-        NextNode left_fromStack = getFromStack(-2);
-        LexTypeTERMINAL left_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(left_fromStack);
-
-        NextNode right_fromStack = getFromStack(-1);
-        LexTypeTERMINAL right_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(right_fromStack);
-
-        final ArrayList<Object> listObjects = calculateCast("div", left_fromStack, right_fromStack);
-        nodeBase.lexTypeTERMINAL = (LexTypeTERMINAL) listObjects.get(0);
-        left_fromStack = (NextNode) listObjects.get(1);
-        right_fromStack = (NextNode) listObjects.get(2);
-
-        devVertex.setLeft(left_fromStack);
-        devVertex.setRight(right_fromStack);
-
-//        nodeBase.lexTypeTERMINAL = calculateResultLexTypeTerminal(left_lexTypeTERMINAL, right_lexTypeTERMINAL);
-
-        this.stack.add(devVertex);
+            NextNode castNode = new NextNode();
+            castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._INT);
+            castNode.setRight(right_fromStack);
+            right_fromStack = castNode;
+        }
+        //  double int ПРИВОДИМ ПРАВУЮ К ДАБЛУ
+        else if (left_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE &&
+                (right_lexTypeTERMINAL == LexTypeTERMINAL._INT || right_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10)) {
+            NextNode castNode = new NextNode();
+            castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._DOUBLE);
+            castNode.setRight(right_fromStack);
+            right_fromStack = castNode;
+        }
+        //  int int
+        else if ((left_lexTypeTERMINAL == LexTypeTERMINAL._INT || left_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10) &&
+                (right_lexTypeTERMINAL == LexTypeTERMINAL._INT || right_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10)) {
+        }
+        //  double double
+        else if (left_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE &&
+                right_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE) {
+        } else {
+            throw new Exception("17ds89+4w4c6hj");
+        }
+        return right_fromStack;
     }
 
     private ArrayList<Object> calculateCast(String sign, NextNode left_fromStack, NextNode right_fromStack) throws Exception {
@@ -215,7 +214,7 @@ public class TreeNext {
 
             NextNode castNode = new NextNode();
             castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._DOUBLE);
-            castNode.setLeft(left_fromStack);
+            castNode.setRight(left_fromStack);
             left_fromStack = castNode;
         }
         //  double int ПРИВОДИМ ПРАВУЮ К ДАБЛУ
@@ -225,7 +224,7 @@ public class TreeNext {
 
             NextNode castNode = new NextNode();
             castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._DOUBLE);
-            castNode.setLeft(right_fromStack);
+            castNode.setRight(right_fromStack);
             right_fromStack = castNode;
         }
         //  int int
@@ -234,9 +233,15 @@ public class TreeNext {
             // результат дабл
             if ("div".equals(sign)) {
                 result_lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
+            } else if ("start".equals(sign)) {
+                result_lexTypeTERMINAL = LexTypeTERMINAL._INT;
+            } else if ("plus".equals(sign)) {
+                result_lexTypeTERMINAL = LexTypeTERMINAL._INT;
+            } else if ("minus".equals(sign)) {
+                result_lexTypeTERMINAL = LexTypeTERMINAL._INT;
             } else {
-                System.out.println("not found this sign");
-                throw new Exception("not found this sign");
+                System.out.println("not found this sign : " + sign);
+                throw new Exception("not found this sign : " + sign);
             }
 
         }
@@ -251,20 +256,68 @@ public class TreeNext {
         return new ArrayList<Object>(Arrays.asList(result_lexTypeTERMINAL, left_fromStack, right_fromStack));
     }
 
+    public void generMinus() throws Exception {
+        NextNode minusVertex = new NextNode();
+        final _NextNode_Minus nodeBase = new _NextNode_Minus();
+        minusVertex.nodeBase = nodeBase;
+
+        NextNode left_fromStack = getFromStack(-2);
+        LexTypeTERMINAL left_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(left_fromStack);
+
+        NextNode right_fromStack = getFromStack(-1);
+        LexTypeTERMINAL right_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(right_fromStack);
+
+        final ArrayList<Object> listObjects = calculateCast("minus", left_fromStack, right_fromStack);
+        nodeBase.lexTypeTERMINAL = (LexTypeTERMINAL) listObjects.get(0);
+        left_fromStack = (NextNode) listObjects.get(1);
+        right_fromStack = (NextNode) listObjects.get(2);
+
+        minusVertex.setLeft(left_fromStack);
+        minusVertex.setRight(right_fromStack);
+
+        this.stack.add(minusVertex);
+    }
+
+    public void generDiv() throws Exception {
+        NextNode divVertex = new NextNode();
+        final _NextNode_Div nodeBase = new _NextNode_Div();
+        divVertex.nodeBase = nodeBase;
+
+        NextNode left_fromStack = getFromStack(-2);
+        LexTypeTERMINAL left_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(left_fromStack);
+
+        NextNode right_fromStack = getFromStack(-1);
+        LexTypeTERMINAL right_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(right_fromStack);
+
+        final ArrayList<Object> listObjects = calculateCast("div", left_fromStack, right_fromStack);
+        nodeBase.lexTypeTERMINAL = (LexTypeTERMINAL) listObjects.get(0);
+        left_fromStack = (NextNode) listObjects.get(1);
+        right_fromStack = (NextNode) listObjects.get(2);
+
+        divVertex.setLeft(left_fromStack);
+        divVertex.setRight(right_fromStack);
+
+        this.stack.add(divVertex);
+    }
+
     public void generStar() throws Exception {
         NextNode starVertex = new NextNode();
         final _NextNode_Star nodeBase = new _NextNode_Star();
         starVertex.nodeBase = nodeBase;
 
-        final NextNode left_fromStack = getFromStack(-2);
-        starVertex.setLeft(left_fromStack);
+        NextNode left_fromStack = getFromStack(-2);
         LexTypeTERMINAL left_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(left_fromStack);
 
-        final NextNode right_fromStack = getFromStack(-1);
-        starVertex.setRight(right_fromStack);
+        NextNode right_fromStack = getFromStack(-1);
         LexTypeTERMINAL right_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(right_fromStack);
 
-        nodeBase.lexTypeTERMINAL = calculateResultLexTypeTerminal(left_lexTypeTERMINAL, right_lexTypeTERMINAL);
+        final ArrayList<Object> listObjects = calculateCast("start", left_fromStack, right_fromStack);
+        nodeBase.lexTypeTERMINAL = (LexTypeTERMINAL) listObjects.get(0);
+        left_fromStack = (NextNode) listObjects.get(1);
+        right_fromStack = (NextNode) listObjects.get(2);
+
+        starVertex.setLeft(left_fromStack);
+        starVertex.setRight(right_fromStack);
 
         this.stack.add(starVertex);
     }
@@ -274,15 +327,19 @@ public class TreeNext {
         final _NextNode_Plus nodeBase = new _NextNode_Plus();
         plusVertex.nodeBase = nodeBase;
 
-        final NextNode left_fromStack = getFromStack(-2);
-        plusVertex.setLeft(left_fromStack);
+        NextNode left_fromStack = getFromStack(-2);
         LexTypeTERMINAL left_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(left_fromStack);
 
-        final NextNode right_fromStack = getFromStack(-1);
-        plusVertex.setRight(right_fromStack);
+        NextNode right_fromStack = getFromStack(-1);
         LexTypeTERMINAL right_lexTypeTERMINAL = getLexTypeTerminal_inMathOper(right_fromStack);
 
-        nodeBase.lexTypeTERMINAL = calculateResultLexTypeTerminal(left_lexTypeTERMINAL, right_lexTypeTERMINAL);
+        final ArrayList<Object> listObjects = calculateCast("plus", left_fromStack, right_fromStack);
+        nodeBase.lexTypeTERMINAL = (LexTypeTERMINAL) listObjects.get(0);
+        left_fromStack = (NextNode) listObjects.get(1);
+        right_fromStack = (NextNode) listObjects.get(2);
+
+        plusVertex.setLeft(left_fromStack);
+        plusVertex.setRight(right_fromStack);
 
         this.stack.add(plusVertex);
     }
@@ -319,7 +376,7 @@ public class TreeNext {
     }
 
     // получаем тип операнды из вершины
-    private LexTypeTERMINAL getLexTypeTerminal_inMathOper(NextNode fromStack) throws Exception {
+    static LexTypeTERMINAL getLexTypeTerminal_inMathOper(NextNode fromStack) throws Exception {
         LexTypeTERMINAL lexTypeTERMINAL = null;
         if (fromStack.nodeBase instanceof _NextNode_Int) {
             final _NextNode_Int left_nodeBase = (_NextNode_Int) fromStack.nodeBase;
@@ -850,7 +907,12 @@ public class TreeNext {
         NextNode returnNode = new NextNode();
         returnNode.nodeBase = new _NextNode_Return();
 
-        returnNode.setRight(this.getFromStack(-1));
+        // вершина функция
+        NextNode left_ = k;
+        // операнд который возвращаем
+        NextNode right_fromStack = this.getFromStack(-1);
+        right_fromStack = castToLeft(left_, right_fromStack);
+        returnNode.setRight(right_fromStack);
 
         nextNode.setLeft(returnNode);
 

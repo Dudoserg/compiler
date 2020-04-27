@@ -48,4 +48,13 @@ public enum LexTypeTERMINAL {
     public String getString() {
         return string;
     }
+
+    public String getMin(){
+        if( this.equals(_DOUBLE))
+            return "doub";
+        else if( this.equals(_INT) || this.equals(_TYPE_INT_8) || this.equals(_TYPE_INT_10) || this.equals(_TYPE_INT_16))
+            return "int";
+        else
+            return "xz";
+    }
 }

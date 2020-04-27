@@ -1,6 +1,7 @@
 package main.Lab4.TreeNext;
 
 import lombok.AllArgsConstructor;
+import main.Lab2.LexTypeTERMINAL;
 import main.Lab4.TreeNext.Relations.*;
 
 import java.io.FileWriter;
@@ -73,6 +74,7 @@ public class NextNode {
             else
                 writer.write("v" + this.id + "[style=filled, fillcolor=red]" + "\n");
             writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
+            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_FuncEnd) {
             _NextNode_FuncEnd nodeBaseFuncEnd = (_NextNode_FuncEnd) this.nodeBase;
             final _NextNode_Func nodeBaseFunc = (_NextNode_Func) nodeBaseFuncEnd.func.nodeBase;
@@ -88,6 +90,7 @@ public class NextNode {
             else
                 writer.write("v" + this.id + "[style=filled, fillcolor=\"#ebcccc\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
+            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_Assign) {
             _NextNode_Assign nodeBase = (_NextNode_Assign) this.nodeBase;
             if (this == current)
@@ -101,39 +104,54 @@ public class NextNode {
                 writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
             else
                 writer.write("v" + this.id + "" + "\n");
+
+            writer.write("v" + this.id + "[style=filled,  fillcolor=\"#88db8b\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + nodeBase.castTo_lexTypeTERMINAL.toString() + "\"]" + "\n");
-        }else if (nodeBase instanceof _NextNode_Div) {
+            writer.write("v" + this.id + "[xlabel=\"" + "CAST" + "\"]" + "\n");
+        } else if (nodeBase instanceof _NextNode_Div) {
+            _NextNode_Div nodeBase = (_NextNode_Div) this.nodeBase;
             if (this == current)
                 writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
             else
                 writer.write("v" + this.id + "[style=filled, fillcolor=\"#ccebe8\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + "/" + "\"]" + "\n");
+            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_Star) {
+            _NextNode_Star nodeBase = (_NextNode_Star) this.nodeBase;
+
             if (this == current)
                 writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
             else
                 writer.write("v" + this.id + "[style=filled, fillcolor=\"#ccebe8\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + "*" + "\"]" + "\n");
+            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
+
         } else if (nodeBase instanceof _NextNode_Plus) {
+            _NextNode_Plus nodeBase = (_NextNode_Plus) this.nodeBase;
             if (this == current)
                 writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
             else
                 writer.write("v" + this.id + "[style=filled, fillcolor=\"#ccebe8\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + "+" + "\"]" + "\n");
+            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_Minus) {
+            _NextNode_Minus nodeBase = (_NextNode_Minus) this.nodeBase;
+
             if (this == current)
                 writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
             else
                 writer.write("v" + this.id + "[style=filled, fillcolor=\"#ccebe8\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + "-" + "\"]" + "\n");
-        } else if (nodeBase instanceof _NextNode_Int) {
+            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
 
+        } else if (nodeBase instanceof _NextNode_Int) {
             _NextNode_Int nodeBase = (_NextNode_Int) this.nodeBase;
             if (this == current)
                 writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
             else
                 writer.write("v" + this.id + "[style=filled, fillcolor=\"#e1e8bc\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
+            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_Double) {
             _NextNode_Double nodeBase = (_NextNode_Double) this.nodeBase;
             if (this == current)
@@ -141,6 +159,7 @@ public class NextNode {
             else
                 writer.write("v" + this.id + "[style=filled, fillcolor=\"#e1e8bc\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
+            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_ID) {
             _NextNode_ID nodeBase = (_NextNode_ID) this.nodeBase;
             if (this == current)
@@ -148,6 +167,7 @@ public class NextNode {
             else
                 writer.write("v" + this.id + "[style=filled, fillcolor=\"#9991e3\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
+            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
         } else if (nodeBase instanceof _NextNode_If) {
             writer.write("v" + this.id + "[style=filled, fillcolor=\"#00c200\"]" + "\n");
             writer.write("v" + this.id + "[label=\"" + "IF" + "\"]" + "\n");
@@ -311,8 +331,42 @@ public class NextNode {
             _NextNode_Cast nodeBase = (_NextNode_Cast) this.nodeBase;
             if (left != null) this.left.createTriads(listTriads);
             if (right != null) this.right.createTriads(listTriads);
+            String cast_to = "";
 
-        }else if (nodeBase instanceof _NextNode_Plus) {
+            // у потомка получаем исходный тип из которого приводим
+            String cast_from = "";
+            final LexTypeTERMINAL right_lexType = TreeNext.getLexTypeTerminal_inMathOper(right);
+            if (right_lexType == LexTypeTERMINAL._DOUBLE)
+                cast_from = "double";
+            else if (right_lexType == LexTypeTERMINAL._INT || right_lexType == LexTypeTERMINAL._TYPE_INT_8 ||
+                    right_lexType == LexTypeTERMINAL._TYPE_INT_10 || right_lexType == LexTypeTERMINAL._TYPE_INT_16)
+                cast_from = "int";
+            else
+                throw new Exception("Not found cast_from type!");
+
+            // у текущйвй вершины получаем тип к чему приводим
+            if (nodeBase.castTo_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE)
+                cast_to = "double";
+            else if (nodeBase.castTo_lexTypeTERMINAL == LexTypeTERMINAL._INT ||
+                    nodeBase.castTo_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_8 ||
+                            nodeBase.castTo_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10 ||
+                    nodeBase.castTo_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_16)
+                cast_to = "int";
+            else
+                throw new Exception("Not found cast_to type!");
+
+            // получаем номер триады потомка
+            String first = "??";
+            if (right.nodeBase.triad_number >= 0)
+                first = "(" + right.nodeBase.triad_number.toString() + ")";
+            else
+                first = right.nodeBase.triad_lexem;
+
+            addTriad(cast_from + " -> " + cast_to, first, null, listTriads);
+
+            nodeBase.triad_number = listTriads.size() - 1;
+
+        } else if (nodeBase instanceof _NextNode_Plus) {
             _NextNode_Plus nodeBase = (_NextNode_Plus) this.nodeBase;
             createMathOperation_Triads(this, listTriads);
 
