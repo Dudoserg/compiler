@@ -1,9 +1,9 @@
-double kek(int x){
+double kek(double x){
     {
         {
-            return 1 + 2;
+            return 1 + 2 / 5;
 
         }
     }
 }
-int x =  1 + kek( 5 / 6);
+int x =  1 + kek( 5 + 6);

@@ -409,7 +409,10 @@ public class TreeNext {
         } else if (fromStack.nodeBase instanceof _NextNode_Star) {
             final _NextNode_Star left_nodeBase = (_NextNode_Star) fromStack.nodeBase;
             lexTypeTERMINAL = left_nodeBase.lexTypeTERMINAL;
-        } else {
+        }  else if (fromStack.nodeBase instanceof _NextNode_DeclareVariable) {
+            final _NextNode_DeclareVariable left_nodeBase = (_NextNode_DeclareVariable) fromStack.nodeBase;
+            lexTypeTERMINAL = left_nodeBase.lexTypeTERMINAL;
+        }else {
             throw new Exception("SAhjf78013031z';sw");
         }
         return lexTypeTERMINAL;
@@ -941,28 +944,44 @@ public class TreeNext {
         _NextNode_Push_Param nodeBase = new _NextNode_Push_Param();
         nodePushParam.nodeBase = nodeBase;
 
-        NextNode fromStack = this.getFromStack(-1);
-        nodePushParam.right = fromStack;
+        NextNode right_FromStack = this.getFromStack(-1);
+        // TODO get param of function by index
+        // -1 т.к. прибавляем раньше вызова  метода triad_push_param
+        final Integer indexOfParam = parameter_counting.get(parameter_counting.size() - 1) - 1;
 
-//        if (fromStack.nodeBase instanceof _NextNode_Int) {
-////            nodeBase.whatIsPush = fromStack;
-//            nodePushParam.left = fromStack;
-//        } else if (fromStack.nodeBase instanceof _NextNode_Double) {
-////            nodeBase.whatIsPush = fromStack;
-//            nodePushParam.left = fromStack;
-//        } else if (fromStack.nodeBase instanceof _NextNode_ID) {
-////            nodeBase.whatIsPush = fromStack;
-//            nodePushParam.left = fromStack;
-//        } else if (fromStack.nodeBase instanceof _NextNode_Call) {
-////            nodeBase.whatIsPush = fromStack;
-//            nodePushParam.left = fromStack;
+        final NextNode paramNode = getParamOfFunc(k, indexOfParam);
+
+        // Кастим передаваемый параметр к типу который принимает функция
+        right_FromStack = castToLeft(paramNode, right_FromStack);
+
+        nodePushParam.right = right_FromStack;
+
+//        if (right_FromStack.nodeBase instanceof _NextNode_Int) {
+////            nodeBase.whatIsPush = right_FromStack;
+//            nodePushParam.left = right_FromStack;
+//        } else if (right_FromStack.nodeBase instanceof _NextNode_Double) {
+////            nodeBase.whatIsPush = right_FromStack;
+//            nodePushParam.left = right_FromStack;
+//        } else if (right_FromStack.nodeBase instanceof _NextNode_ID) {
+////            nodeBase.whatIsPush = right_FromStack;
+//            nodePushParam.left = right_FromStack;
+//        } else if (right_FromStack.nodeBase instanceof _NextNode_Call) {
+////            nodeBase.whatIsPush = right_FromStack;
+//            nodePushParam.left = right_FromStack;
 //        }else {
 //            throw new Exception("TreeNext triad_push_param");
 //        }
         this.stackPushParam.add(nodePushParam);
 
-
         System.out.print("");
+    }
+
+    private NextNode getParamOfFunc(NextNode func, int indexParam) {
+        NextNode currentParamParent = func.left.right;
+        for (int i = 0; i < indexParam; i++) {
+            currentParamParent = currentParamParent.right;
+        }
+        return currentParamParent.left;
     }
 
     public void triad_remember_call(String lexemToStr) {
