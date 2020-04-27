@@ -11,12 +11,10 @@ int third(int n, int n2){
 int x = 228 * 1488 + 1337;
 
 int privet2(){
-    {
-        if( x ){
+    if( x ){
 
-        } else{
-            return 0;
-        }
+    } else{
+        return 0;
     }
     int asdf = 123 - 5;
     double a = first(second(1, 66 / 96 + 5, 333333), third(1, 2) ) + 8;

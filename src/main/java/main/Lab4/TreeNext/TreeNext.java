@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class TreeNext {
@@ -678,7 +679,7 @@ public class TreeNext {
     public void checkDubl(String lexemToStr) {
         System.out.print("");
     }
-
+    public Stack<NextNode> stack_findLast = new Stack<>();
     public NextNode find(String lexemToStr) throws Exception {
 
         NextNode node;
@@ -697,6 +698,7 @@ public class TreeNext {
                     node = node.parent;
                     if (node == null) {
                         find_last = node;
+                        stack_findLast.add(find_last);
                         throw new Ex_NotFound(lexemToStr);
                     }
                     if (node != nodeOld && node.nodeBase instanceof _NextNode_Next)
@@ -709,12 +711,14 @@ public class TreeNext {
                 _NextNode_DeclareVariable tmp = (_NextNode_DeclareVariable) left.nodeBase;
                 if (tmp.lexem.equals(lexemToStr)) {
                     find_last = left;
+                    stack_findLast.add(find_last);
                     return left;
                 }
             } else if ((left.nodeBase instanceof _NextNode_Func)) {
                 _NextNode_Func tmp = (_NextNode_Func) left.nodeBase;
                 if (tmp.lexem.equals(lexemToStr)) {
                     find_last = left;
+                    stack_findLast.add(find_last);
                     return left;
                 }
             }
@@ -726,6 +730,7 @@ public class TreeNext {
                     node = node.parent;
                     if (node == null) {
                         find_last = node;
+                        stack_findLast.add(find_last);
                         throw new Ex_NotFound(lexemToStr);
                     }
                     if (node != nodeOld && node.nodeBase instanceof _NextNode_Next)
@@ -949,7 +954,7 @@ public class TreeNext {
         // -1 т.к. прибавляем раньше вызова  метода triad_push_param
         final Integer indexOfParam = parameter_counting.get(parameter_counting.size() - 1) - 1;
 
-        final NextNode paramNode = getParamOfFunc(k, indexOfParam);
+        final NextNode paramNode = getParamOfFunc(stack_findLast.peek(), indexOfParam);
 
         // Кастим передаваемый параметр к типу который принимает функция
         right_FromStack = castToLeft(paramNode, right_FromStack);
@@ -1035,6 +1040,8 @@ public class TreeNext {
         }
 
         this.stack.add(funcCallNode);
+
+        final NextNode pop = stack_findLast.pop();
         System.out.print("");
 
     }

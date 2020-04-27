@@ -5,6 +5,7 @@ import main.Lab2.LexTypeTERMINAL;
 import main.Lab4.TreeNext.Relations.*;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -57,6 +58,18 @@ public class NextNode {
     public void setRight(NextNode right) {
         this.right = right;
         right.parent = this;
+    }
+
+    private void set_Label(FileWriter writer, String vertexName, String label) throws IOException {
+        writer.write(vertexName + this.id + "[label=\"" + label + "\"]" + "\n");
+    }
+
+    private void set_Color(FileWriter writer, String vertexName, String color, NextNode current)
+            throws IOException {
+        if (this == current)
+            writer.write(vertexName + this.id + "[style=filled, fillcolor=yellow]" + "\n");
+        else
+            writer.write(vertexName + this.id + "[style=filled, fillcolor=" + color + "]" + "\n");
     }
 
     public void print(FileWriter writer, NextNode current) throws Exception {
@@ -349,7 +362,7 @@ public class NextNode {
                 cast_to = "double";
             else if (nodeBase.castTo_lexTypeTERMINAL == LexTypeTERMINAL._INT ||
                     nodeBase.castTo_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_8 ||
-                            nodeBase.castTo_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10 ||
+                    nodeBase.castTo_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10 ||
                     nodeBase.castTo_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_16)
                 cast_to = "int";
             else
