@@ -4,9 +4,11 @@ int first(int n, double two){
 
 int second(double n, int n2, int n3){
     int x213 = 0;
+    return x213;
 }
 
 int third(int n, int n2){
+    return 0;
 }
 
 int x = 228 * 1488 + 1337;
@@ -17,6 +19,7 @@ int privet2(){
             int kkd = 2;
             if( kkd == 2){
                 int asdf = 12 * 99;
+                 return asdf;
             } else{
                 return kkd;
             }
@@ -27,5 +30,4 @@ int privet2(){
     int asdf = 123 - 5;
     double a = first(second(1, 66 / 96 + 5, 333333), third(1, 2) ) + 8;
     int afterIf = asdf * 88 + 6;
-    return 228 * afterIf + afterIf;
 }

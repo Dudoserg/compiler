@@ -943,7 +943,7 @@ public class TreeNext {
         final NextNode startBody_ofFunc = findStartBody_OfFunc(k);
         final boolean is_AllBranchReturnValue = isAllBranchReturnValue(startBody_ofFunc);
 
-        if(!is_AllBranchReturnValue)
+        if (!is_AllBranchReturnValue)
             throw new Ex_MissingReturn(k);
 
     }
@@ -1100,20 +1100,24 @@ public class TreeNext {
     }
 
     private boolean isAllBranchReturnValue(NextNode nextNode) throws Exception {
+        boolean isDraw = false;
         boolean flag = false;
-        draw(nextNode);
+        if(isDraw) draw(nextNode);
         if (nextNode.nodeBase instanceof _NextNode_If) {
             final NextNode elseNode = nextNode.right;
             final NextNode true_side = elseNode.left;
             final NextNode false_side = elseNode.right;
             boolean true_side_flag = isAllBranchReturnValue(true_side);
+            if(isDraw) draw(nextNode);
             boolean false_side_flag;
             // Если часть else есть, то проверяем ее
-            if (false_side.isHasChild())
+            if (false_side.isHasChild()) {
                 false_side_flag = isAllBranchReturnValue(false_side);
-            else
+                if(isDraw) draw(nextNode);
+            } else {
                 // иначе говориим что часть возвращает значение(  хотя ее как таковой и нет)
                 false_side_flag = true;
+            }
             return true_side_flag & false_side_flag;
         } else if (nextNode.nodeBase instanceof _NextNode_StartLevel) {
 //            boolean left_side_flag = false;
@@ -1122,28 +1126,42 @@ public class TreeNext {
 //                left_side_flag = isAllBranchReturnValue(nextNode.left);
             if (nextNode.right != null)
                 right_side_flag = isAllBranchReturnValue(nextNode.right);
-            return  right_side_flag;
+            if(isDraw) draw(nextNode);
+            return right_side_flag;
         } else if (nextNode.nodeBase instanceof _NextNode_Return) {
             return true;
-        } else{
-            boolean left_side_flag = true;
-            boolean right_side_flag = true;
+        } else {
+            boolean left_side_flag = false;
+            boolean right_side_flag = false;
             if (nextNode.left != null)
                 left_side_flag = isAllBranchReturnValue(nextNode.left);
+            if(isDraw) draw(nextNode);
             if (nextNode.right != null)
                 right_side_flag = isAllBranchReturnValue(nextNode.right);
-            return left_side_flag & right_side_flag;
+            if(isDraw) draw(nextNode);
+            boolean result = true;
+            if (nextNode.left == null && nextNode.right == null)
+                result = false;
+            if (nextNode.left == null && nextNode.right != null)
+                result = right_side_flag;
+            if (nextNode.left != null && nextNode.right == null)
+                result = left_side_flag;
+            if (nextNode.left != null && nextNode.right != null)
+                result = left_side_flag || right_side_flag;
+
+            return result;
         }
     }
 
-    private NextNode findStartParams_OfFunc(NextNode func){
+    private NextNode findStartParams_OfFunc(NextNode func) {
         return func.left;
     }
-    private NextNode findStartBody_OfFunc(NextNode func){
+
+    private NextNode findStartBody_OfFunc(NextNode func) {
         NextNode tmp = func.left;
-        do{
+        do {
             tmp = tmp.right;
-        }while (! (tmp.left.nodeBase instanceof  _NextNode_StartLevel));
+        } while (!(tmp.left.nodeBase instanceof _NextNode_StartLevel));
         return tmp.left;
     }
 }

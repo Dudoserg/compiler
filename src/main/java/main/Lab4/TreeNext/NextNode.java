@@ -151,28 +151,28 @@ public class NextNode {
             set_Label(writer, "v", nodeBase.lexem);
             set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_If) {
-            set_Color(writer, "v", "#00c200");
+            set_Color(writer, "v", "#00c200", current);
             set_Label(writer, "v", "IF");
         } else if (nodeBase instanceof _NextNode_Else) {
-            set_Color(writer, "v", "#00c200");
+            set_Color(writer, "v", "#00c200", current);
             set_Label(writer, "v", "ELSE");
         } else if (nodeBase instanceof _NextNode_Great) {
-            set_Color(writer, "v", "white");
+            set_Color(writer, "v", "white", current);
             set_Label(writer, "v", ">");
         } else if (nodeBase instanceof _NextNode_Great_Equal) {
-            set_Color(writer, "v", "white");
+            set_Color(writer, "v", "white", current);
             set_Label(writer, "v", ">=");
         } else if (nodeBase instanceof _NextNode_Less) {
-            set_Color(writer, "v", "white");
+            set_Color(writer, "v", "white", current);
             set_Label(writer, "v", "<");
         } else if (nodeBase instanceof _NextNode_Less_Equal) {
-            set_Color(writer, "v", "white");
+            set_Color(writer, "v", "white", current);
             set_Label(writer, "v", "<=");
         } else if (nodeBase instanceof _NextNode_Equal) {
-            set_Color(writer, "v", "white");
+            set_Color(writer, "v", "white", current);
             set_Label(writer, "v", "==");
         } else if (nodeBase instanceof _NextNode_Not_Equal) {
-            set_Color(writer, "v", "white");
+            set_Color(writer, "v", "white", current);
             set_Label(writer, "v", "!=");
         } else if (nodeBase instanceof _NextNode_Return) {
             set_Color(writer, "v", "#00d4d4", current);
