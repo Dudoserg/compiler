@@ -20,7 +20,6 @@ public class Test {
         } else {
             return 23;
         }
-
     }
 
     private int func3() {

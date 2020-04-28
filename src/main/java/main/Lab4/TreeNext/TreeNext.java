@@ -457,11 +457,29 @@ public class TreeNext {
 
     long lastDrawTime = 0;
 
+    public void draw(NextNode start, NextNode current) throws IOException {
+        try (FileWriter writer = new FileWriter("result_tree_next.gv", false)) {
+            writer.write("graph binary {\n" +
+                    "\tdpi=\"75\";\n" + " splines=\"line\"  \n");
+            start.print(writer, current);
+            writer.write("\n}\n");
+            writer.flush();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // рисуем
+        if (System.getProperty("os.name").equals("Linux"))
+            Runtime.getRuntime().exec("dot result_tree_next.gv -Tpng -o result_tree_next.jpg");
+        else
+            Runtime.getRuntime().exec("cmd /c dot result_tree_next.gv -Tpng -o result_tree_next.jpg");
+
+    }
+
     public void draw(NextNode current) throws Exception {
-        // если рисуем чаще 2 секунд, то не рисуем)
-//        if( System.currentTimeMillis() - lastDrawTime < 1000)
-//            return;
-        // составляем файл
+
         try (FileWriter writer = new FileWriter("result_tree_next.gv", false)) {
             // запись всей строки
             String text = "Hello Gold!";
@@ -678,6 +696,12 @@ public class TreeNext {
     }
 
     public Stack<NextNode> stack_findLast = new Stack<>();
+    public Stack<NextNode> stack_findLastFunc = new Stack<>();
+    public void add_stack_findLast(NextNode node){
+        if(node.nodeBase instanceof _NextNode_Func)
+            stack_findLastFunc.add(node);
+        stack_findLast.add(node);
+    }
 
     public NextNode find(String lexemToStr) throws Exception {
 
@@ -697,7 +721,7 @@ public class TreeNext {
                     node = node.parent;
                     if (node == null) {
                         find_last = node;
-                        stack_findLast.add(find_last);
+                        add_stack_findLast(find_last);
                         throw new Ex_NotFound(lexemToStr);
                     }
                     if (node != nodeOld && node.nodeBase instanceof _NextNode_Next)
@@ -710,14 +734,14 @@ public class TreeNext {
                 _NextNode_DeclareVariable tmp = (_NextNode_DeclareVariable) left.nodeBase;
                 if (tmp.lexem.equals(lexemToStr)) {
                     find_last = left;
-                    stack_findLast.add(find_last);
+                    add_stack_findLast(find_last);
                     return left;
                 }
             } else if ((left.nodeBase instanceof _NextNode_Func)) {
                 _NextNode_Func tmp = (_NextNode_Func) left.nodeBase;
                 if (tmp.lexem.equals(lexemToStr)) {
                     find_last = left;
-                    stack_findLast.add(find_last);
+                    add_stack_findLast(find_last);
                     return left;
                 }
             }
@@ -729,7 +753,7 @@ public class TreeNext {
                     node = node.parent;
                     if (node == null) {
                         find_last = node;
-                        stack_findLast.add(find_last);
+                        add_stack_findLast(find_last);
                         throw new Ex_NotFound(lexemToStr);
                     }
                     if (node != nodeOld && node.nodeBase instanceof _NextNode_Next)
@@ -960,7 +984,7 @@ public class TreeNext {
         // -1 т.к. прибавляем раньше вызова  метода triad_push_param
         final Integer indexOfParam = parameter_counting.get(parameter_counting.size() - 1) - 1;
 
-        final NextNode paramNode = getParamOfFunc(stack_findLast.peek(), indexOfParam);
+        final NextNode paramNode = getParamOfFunc(stack_findLastFunc.peek(), indexOfParam);
 
         // Кастим передаваемый параметр к типу который принимает функция
         right_FromStack = castToLeft(paramNode, right_FromStack);
@@ -987,7 +1011,7 @@ public class TreeNext {
         System.out.print("");
     }
 
-    private NextNode getParamOfFunc(NextNode func, int indexParam) {
+    private NextNode getParamOfFunc(NextNode func, int indexParam) throws Exception {
         NextNode currentParamParent = func.left.right;
         for (int i = 0; i < indexParam; i++) {
             currentParamParent = currentParamParent.right;
@@ -1099,21 +1123,32 @@ public class TreeNext {
         return collect;
     }
 
+    int isAllBranchReturnValue_count = 0;
+    boolean isDraw = false;
+
     private boolean isAllBranchReturnValue(NextNode nextNode) throws Exception {
-        boolean isDraw = false;
+
+        isAllBranchReturnValue_count++;
+        System.out.println(isAllBranchReturnValue_count);
+        if (isAllBranchReturnValue_count == 16)
+            System.out.println();
+        if (isAllBranchReturnValue_count == 54) {
+            System.out.println();
+            //isDraw = true;
+        }
         boolean flag = false;
-        if(isDraw) draw(nextNode);
+        if (isDraw) draw(k, nextNode);
         if (nextNode.nodeBase instanceof _NextNode_If) {
             final NextNode elseNode = nextNode.right;
             final NextNode true_side = elseNode.left;
             final NextNode false_side = elseNode.right;
             boolean true_side_flag = isAllBranchReturnValue(true_side);
-            if(isDraw) draw(nextNode);
+            if (isDraw) draw(k, nextNode);
             boolean false_side_flag;
             // Если часть else есть, то проверяем ее
             if (false_side.isHasChild()) {
                 false_side_flag = isAllBranchReturnValue(false_side);
-                if(isDraw) draw(nextNode);
+                if (isDraw) draw(k, nextNode);
             } else {
                 // иначе говориим что часть возвращает значение(  хотя ее как таковой и нет)
                 false_side_flag = true;
@@ -1126,7 +1161,7 @@ public class TreeNext {
 //                left_side_flag = isAllBranchReturnValue(nextNode.left);
             if (nextNode.right != null)
                 right_side_flag = isAllBranchReturnValue(nextNode.right);
-            if(isDraw) draw(nextNode);
+            if (isDraw) draw(k, nextNode);
             return right_side_flag;
         } else if (nextNode.nodeBase instanceof _NextNode_Return) {
             return true;
@@ -1135,10 +1170,14 @@ public class TreeNext {
             boolean right_side_flag = false;
             if (nextNode.left != null)
                 left_side_flag = isAllBranchReturnValue(nextNode.left);
-            if(isDraw) draw(nextNode);
+            if (isDraw) draw(k, nextNode);
+
+            if (left_side_flag == true && nextNode.right != null)
+                throw new Ex_Uncreachable_code(k, nextNode);
+
             if (nextNode.right != null)
                 right_side_flag = isAllBranchReturnValue(nextNode.right);
-            if(isDraw) draw(nextNode);
+            if (isDraw) draw(k, nextNode);
             boolean result = true;
             if (nextNode.left == null && nextNode.right == null)
                 result = false;

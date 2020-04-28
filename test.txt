@@ -1,33 +1,84 @@
-int first(int n, double two){
-    return 0;
+double xx = 137 + 256 / 321 * 866;
+double yy = xx + 68 * xx / 1;
+int fuct(int a)
+{
+	if (a > 1)
+	{
+		return a * fuct(a - 1);
+	}
+	else
+		return 1;
 }
 
-int second(double n, int n2, int n3){
-    int x213 = 0;
-    return x213;
+int globali = 1 + 2 * 9;
+int globaln = 0;
+double globalpoverty = 0;
+double globalx = 0;
+
+int cycle() {
+	if (globali < 2 * globaln - 1) {
+		globali = globali + 1;
+		globalpoverty = globalpoverty * globalx;
+		cycle();
+	}
+	return 0;
 }
 
-int third(int n, int n2){
-    return 0;
+double pover(double x, int n)
+{
+	double poverty = 1;
+	globalpoverty = 1;
+	globaln = n;
+	globali = 0;
+	globalx = x;
+
+	cycle();
+	poverty = globalpoverty;
+
+	return poverty;
 }
 
-int x = 228 * 1488 + 1337;
+int sgn(int n)
+{
+	int k = 0;
+	k = n % 2;
+	if (k == 0)
+	{
+		return 0 - 1;
+	}
+	else
+		return 1;
+}
 
-int privet2(){
-    {
-        if( x ){
-            int kkd = 2;
-            if( kkd == 2){
-                int asdf = 12 * 99;
-                 return asdf;
-            } else{
-                return kkd;
-            }
-        } else{
-            return 0;
-        }
-    }
-    int asdf = 123 - 5;
-    double a = first(second(1, 66 / 96 + 5, 333333), third(1, 2) ) + 8;
-    int afterIf = asdf * 88 + 6;
+int countafterpoint = 3;
+
+double globalsum = 0;
+
+int cycle2(int n, double x) {
+	if (n <= countafterpoint) {
+		globalsum = globalsum + (sgn(n)*pover(x, n)) / fuct(2 * n - 1);
+		cycle2(n + 1, x);
+	}
+	return 0;
+}
+
+double expended(double x)
+{
+	double summ = 0;
+    countafterpoint = countafterpoint + 1;
+
+	cycle2(1, x);
+
+	summ = globalsum;
+	return summ;
+}
+
+int main()
+{
+  double x = 0;
+  double y = 0;
+  x = 314159 / 400000;
+  y = expended(x);
+  return x;
+
 }
