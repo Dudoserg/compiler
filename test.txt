@@ -1,4 +1,5 @@
 int first(int n, double two){
+    return 0;
 }
 
 int second(double n, int n2, int n3){
@@ -13,7 +14,12 @@ int x = 228 * 1488 + 1337;
 int privet2(){
     {
         if( x ){
-
+            int kkd = 2;
+            if( kkd == 2){
+                int asdf = 12 * 99;
+            } else{
+                return kkd;
+            }
         } else{
             return 0;
         }

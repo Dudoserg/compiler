@@ -21,7 +21,7 @@ public class NextNode {
     public NextNode left;
     public NextNode right;
 
-    _NextNodeBase nodeBase;
+    public _NextNodeBase nodeBase;
 
     public NextNode() {
         this.id = counter++;
@@ -64,151 +64,122 @@ public class NextNode {
         writer.write(vertexName + this.id + "[label=\"" + label + "\"]" + "\n");
     }
 
+    private void set_Xlabel(FileWriter writer, String vertexName, String Xlabel) throws IOException {
+        writer.write("v" + this.id + "[xlabel=\"" + Xlabel + "\"]" + "\n");
+    }
+
     private void set_Color(FileWriter writer, String vertexName, String color, NextNode current)
             throws IOException {
         if (this == current)
             writer.write(vertexName + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-        else
+        else {
+            if (color.charAt(0) == '#')
+                color = "\"" + color + "\"";
             writer.write(vertexName + this.id + "[style=filled, fillcolor=" + color + "]" + "\n");
+        }
+    }
+
+    private void set_Color(FileWriter writer, String vertexName, String color)
+            throws IOException {
+        if (color.charAt(0) == '#')
+            color = "\"" + color + "\"";
+        writer.write(vertexName + this.id + "[style=filled, fillcolor=" + color + "]" + "\n");
     }
 
     public void print(FileWriter writer, NextNode current) throws Exception {
         String str = "";
         if (nodeBase instanceof _NextNode_Next) {
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "[style=filled, fillcolor=grey]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + "next" + "\"]" + "\n");
+            set_Color(writer, "v", "grey", current);
+            set_Label(writer, "v", "next");
         } else if (nodeBase instanceof _NextNode_Func) {
             _NextNode_Func nodeBase = (_NextNode_Func) this.nodeBase;
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "[style=filled, fillcolor=red]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
-            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
+            set_Color(writer, "v", "red", current);
+            set_Label(writer, "v", nodeBase.lexem);
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_FuncEnd) {
             _NextNode_FuncEnd nodeBaseFuncEnd = (_NextNode_FuncEnd) this.nodeBase;
             final _NextNode_Func nodeBaseFunc = (_NextNode_Func) nodeBaseFuncEnd.func.nodeBase;
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "[style=filled, fillcolor=red]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + "END " + nodeBaseFunc.lexem + "\"]" + "\n");
+            set_Color(writer, "v", "red", current);
+            set_Label(writer, "v", "END " + nodeBaseFunc.lexem);
         } else if (nodeBase instanceof _NextNode_DeclareVariable) {
             _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) this.nodeBase;
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "[style=filled, fillcolor=\"#ebcccc\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
-            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
+            set_Color(writer, "v", "#ebcccc", current);
+            set_Label(writer, "v", nodeBase.lexem);
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_Assign) {
             _NextNode_Assign nodeBase = (_NextNode_Assign) this.nodeBase;
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "" + "\n");
-            writer.write("v" + this.id + "[label=\"" + "=" + "\"]" + "\n");
+            set_Color(writer, "v", "white", current);
+            set_Label(writer, "v", "=");
         } else if (nodeBase instanceof _NextNode_Cast) {
             _NextNode_Cast nodeBase = (_NextNode_Cast) this.nodeBase;
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "" + "\n");
-
-            writer.write("v" + this.id + "[style=filled,  fillcolor=\"#88db8b\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + nodeBase.castTo_lexTypeTERMINAL.toString() + "\"]" + "\n");
-            writer.write("v" + this.id + "[xlabel=\"" + "CAST" + "\"]" + "\n");
+            set_Color(writer, "v", "#88db8b", current);
+            set_Label(writer, "v", nodeBase.castTo_lexTypeTERMINAL.toString());
+            set_Xlabel(writer, "v", "CAST");
         } else if (nodeBase instanceof _NextNode_Div) {
             _NextNode_Div nodeBase = (_NextNode_Div) this.nodeBase;
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "[style=filled, fillcolor=\"#ccebe8\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + "/" + "\"]" + "\n");
-            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
+            set_Color(writer, "v", "#ccebe8", current);
+            set_Label(writer, "v", "/");
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_Star) {
             _NextNode_Star nodeBase = (_NextNode_Star) this.nodeBase;
-
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "[style=filled, fillcolor=\"#ccebe8\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + "*" + "\"]" + "\n");
-            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
-
+            set_Color(writer, "v", "#ccebe8", current);
+            set_Label(writer, "v", "*");
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_Plus) {
             _NextNode_Plus nodeBase = (_NextNode_Plus) this.nodeBase;
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "[style=filled, fillcolor=\"#ccebe8\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + "+" + "\"]" + "\n");
-            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
+            set_Color(writer, "v", "#ccebe8", current);
+            set_Label(writer, "v", "+");
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_Minus) {
             _NextNode_Minus nodeBase = (_NextNode_Minus) this.nodeBase;
-
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "[style=filled, fillcolor=\"#ccebe8\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + "-" + "\"]" + "\n");
-            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
-
+            set_Color(writer, "v", "#ccebe8", current);
+            set_Label(writer, "v", "-");
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_Int) {
             _NextNode_Int nodeBase = (_NextNode_Int) this.nodeBase;
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "[style=filled, fillcolor=\"#e1e8bc\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
-            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
+            set_Color(writer, "v", "#e1e8bc", current);
+            set_Label(writer, "v", nodeBase.lexem);
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_Double) {
             _NextNode_Double nodeBase = (_NextNode_Double) this.nodeBase;
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "[style=filled, fillcolor=\"#e1e8bc\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
-            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
+            set_Color(writer, "v", "#e1e8bc", current);
+            set_Label(writer, "v", nodeBase.lexem);
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_ID) {
             _NextNode_ID nodeBase = (_NextNode_ID) this.nodeBase;
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "[style=filled, fillcolor=\"#9991e3\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + nodeBase.lexem + "\"]" + "\n");
-            writer.write("v" + this.id + "[xlabel=\"" + nodeBase.lexTypeTERMINAL.getMin() + "\"]" + "\n");
+            set_Color(writer, "v", "#9991e3", current);
+            set_Label(writer, "v", nodeBase.lexem);
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_If) {
-            writer.write("v" + this.id + "[style=filled, fillcolor=\"#00c200\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + "IF" + "\"]" + "\n");
+            set_Color(writer, "v", "#00c200");
+            set_Label(writer, "v", "IF");
         } else if (nodeBase instanceof _NextNode_Else) {
-            writer.write("v" + this.id + "[style=filled, fillcolor=\"#00c200\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + "ELSE" + "\"]" + "\n");
+            set_Color(writer, "v", "#00c200");
+            set_Label(writer, "v", "ELSE");
         } else if (nodeBase instanceof _NextNode_Great) {
-            writer.write("v" + this.id + "[label=\"" + ">" + "\"]" + "\n");
+            set_Color(writer, "v", "white");
+            set_Label(writer, "v", ">");
         } else if (nodeBase instanceof _NextNode_Great_Equal) {
-            writer.write("v" + this.id + "[label=\"" + ">=" + "\"]" + "\n");
+            set_Color(writer, "v", "white");
+            set_Label(writer, "v", ">=");
         } else if (nodeBase instanceof _NextNode_Less) {
-            writer.write("v" + this.id + "[label=\"" + "<" + "\"]" + "\n");
+            set_Color(writer, "v", "white");
+            set_Label(writer, "v", "<");
         } else if (nodeBase instanceof _NextNode_Less_Equal) {
-            writer.write("v" + this.id + "[label=\"" + "<=" + "\"]" + "\n");
+            set_Color(writer, "v", "white");
+            set_Label(writer, "v", "<=");
         } else if (nodeBase instanceof _NextNode_Equal) {
-            writer.write("v" + this.id + "[label=\"" + "==" + "\"]" + "\n");
+            set_Color(writer, "v", "white");
+            set_Label(writer, "v", "==");
         } else if (nodeBase instanceof _NextNode_Not_Equal) {
-            writer.write("v" + this.id + "[label=\"" + "!=" + "\"]" + "\n");
+            set_Color(writer, "v", "white");
+            set_Label(writer, "v", "!=");
         } else if (nodeBase instanceof _NextNode_Return) {
-            writer.write("v" + this.id + "[style=filled, fillcolor=\"#00d4d4\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + "RETURN" + "\"]" + "\n");
+            set_Color(writer, "v", "#00d4d4", current);
+            set_Label(writer, "v", "RETURN");
         } else if (nodeBase instanceof _NextNode_StartLevel) {
-            if (this == current)
-                writer.write("v" + this.id + "[style=filled, fillcolor=yellow]" + "\n");
-            else
-                writer.write("v" + this.id + "[style=filled, fillcolor=\"#000000\"]" + "\n");
-            writer.write("v" + this.id + "[xlabel=\"" + "level" + "\"]" + "\n");
-//            writer.write("v" + this.id + "[label=\"" + "RETURN" + "\"]" + "\n");
+            set_Color(writer, "v", "#000000", current);
+            set_Xlabel(writer, "v", "level");
         } else if (nodeBase instanceof _NextNode_Push_Param) {
             _NextNode_Push_Param nodeBase = (_NextNode_Push_Param) this.nodeBase;
             String tmp_str = "";
@@ -229,16 +200,15 @@ public class NextNode {
 //                writer.write("v" + this.id + "[xlabel=\"" + "CALL" + "\"]" + "\n");
 //            } else
 //                throw new Exception("asd078fa0s");
-            writer.write("v" + this.id + "[style=filled, fillcolor=\"#fff15c\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + "push" + "\"]" + "\n");
-
+            set_Color(writer, "v", "#fff15c", current);
+            set_Label(writer, "v", "push");
         } else if (nodeBase instanceof _NextNode_Call) {
             _NextNode_Call nodeBase = (_NextNode_Call) this.nodeBase;
             String tmp_lexem = ((_NextNode_Func) (nodeBase.func.nodeBase)).lexem;
 
-            writer.write("v" + this.id + "[style=filled, fillcolor=\"#de7d0d\"]" + "\n");
-            writer.write("v" + this.id + "[label=\"" + tmp_lexem + "\"]" + "\n");
-            writer.write("v" + this.id + "[xlabel=\"" + "CALL" + "\"]" + "\n");
+            set_Color(writer, "v", "#de7d0d", current);
+            set_Label(writer, "v", tmp_lexem);
+            set_Xlabel(writer, "v", "CALL");
         } else {
             throw new Exception("ASD1ASDASD " + nodeBase.getClass().getName());
         }

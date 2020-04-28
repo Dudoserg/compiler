@@ -2,10 +2,7 @@ package main.Lab4.TreeNext;
 
 import main.Lab2.LexTypeTERMINAL;
 import main.Lab3.Semantic;
-import main.Lab3.exceptions.Ex_Dublicate;
-import main.Lab3.exceptions.Ex_Dublicate_Func;
-import main.Lab3.exceptions.Ex_NotFound;
-import main.Lab3.exceptions.Ex_Signature;
+import main.Lab3.exceptions.*;
 import main.Lab4.TreeNext.Relations.*;
 import main.Lab4.Triads;
 
@@ -410,10 +407,10 @@ public class TreeNext {
         } else if (fromStack.nodeBase instanceof _NextNode_Star) {
             final _NextNode_Star left_nodeBase = (_NextNode_Star) fromStack.nodeBase;
             lexTypeTERMINAL = left_nodeBase.lexTypeTERMINAL;
-        }  else if (fromStack.nodeBase instanceof _NextNode_DeclareVariable) {
+        } else if (fromStack.nodeBase instanceof _NextNode_DeclareVariable) {
             final _NextNode_DeclareVariable left_nodeBase = (_NextNode_DeclareVariable) fromStack.nodeBase;
             lexTypeTERMINAL = left_nodeBase.lexTypeTERMINAL;
-        }else {
+        } else {
             throw new Exception("SAhjf78013031z';sw");
         }
         return lexTypeTERMINAL;
@@ -679,7 +676,9 @@ public class TreeNext {
     public void checkDubl(String lexemToStr) {
         System.out.print("");
     }
+
     public Stack<NextNode> stack_findLast = new Stack<>();
+
     public NextNode find(String lexemToStr) throws Exception {
 
         NextNode node;
@@ -940,6 +939,13 @@ public class TreeNext {
         nextNode.setLeft(endNode);
 
         this.current = k.parent;
+
+        final NextNode startBody_ofFunc = findStartBody_OfFunc(k);
+        final boolean is_AllBranchReturnValue = isAllBranchReturnValue(startBody_ofFunc);
+
+        if(!is_AllBranchReturnValue)
+            throw new Ex_MissingReturn(k);
+
     }
 
     List<NextNode> stackPushParam = new ArrayList<>();
@@ -1091,5 +1097,53 @@ public class TreeNext {
                 .collect(Collectors.joining("\n"));
 
         return collect;
+    }
+
+    private boolean isAllBranchReturnValue(NextNode nextNode) throws Exception {
+        boolean flag = false;
+        draw(nextNode);
+        if (nextNode.nodeBase instanceof _NextNode_If) {
+            final NextNode elseNode = nextNode.right;
+            final NextNode true_side = elseNode.left;
+            final NextNode false_side = elseNode.right;
+            boolean true_side_flag = isAllBranchReturnValue(true_side);
+            boolean false_side_flag;
+            // Если часть else есть, то проверяем ее
+            if (false_side.isHasChild())
+                false_side_flag = isAllBranchReturnValue(false_side);
+            else
+                // иначе говориим что часть возвращает значение(  хотя ее как таковой и нет)
+                false_side_flag = true;
+            return true_side_flag & false_side_flag;
+        } else if (nextNode.nodeBase instanceof _NextNode_StartLevel) {
+//            boolean left_side_flag = false;
+            boolean right_side_flag = false;
+//            if (nextNode.left != null)
+//                left_side_flag = isAllBranchReturnValue(nextNode.left);
+            if (nextNode.right != null)
+                right_side_flag = isAllBranchReturnValue(nextNode.right);
+            return  right_side_flag;
+        } else if (nextNode.nodeBase instanceof _NextNode_Return) {
+            return true;
+        } else{
+            boolean left_side_flag = true;
+            boolean right_side_flag = true;
+            if (nextNode.left != null)
+                left_side_flag = isAllBranchReturnValue(nextNode.left);
+            if (nextNode.right != null)
+                right_side_flag = isAllBranchReturnValue(nextNode.right);
+            return left_side_flag & right_side_flag;
+        }
+    }
+
+    private NextNode findStartParams_OfFunc(NextNode func){
+        return func.left;
+    }
+    private NextNode findStartBody_OfFunc(NextNode func){
+        NextNode tmp = func.left;
+        do{
+            tmp = tmp.right;
+        }while (! (tmp.left.nodeBase instanceof  _NextNode_StartLevel));
+        return tmp.left;
     }
 }
