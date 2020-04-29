@@ -8,8 +8,10 @@ import main.SavePoint;
 public class Ex_Uncreachable_code extends Exception {
     public SavePoint savePoint;
     public Ex_Uncreachable_code(NextNode func, NextNode nextNode) {
+
         super("Присутствуют недостижимые участки кода " +
-                ((_NextNode_Func)func.nodeBase).lexem.toString());
+                ((_NextNode_Func)func.nodeBase).lexem.toString() + "\n" +
+               "недостижимый код находится после символа : " + nextNode.nodeBase.savePoint.getPrintStr() + "\n");
         savePoint = LLK.savePointCurrent;
     }
 }

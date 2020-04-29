@@ -1,17 +1,21 @@
 int privet1(int a1, int b1){
     int a, d;
+    return 0;
 }
 
 int privet2(int a, int b){
     int c = 3, d;
+    return 0;
 }
 
 int privet3(int a, int b){
     int c, d = 3;
+    return 0;
 }
 
 int privet4(int a, int b){
     int c = 3, d = 3;
+    return 0;
 }
 
 //
@@ -20,6 +24,7 @@ int privet5(int a, int b){
     int c2 = 3, d2;
     int c3, d3 = 3;
     int c4 = 3, d4 = 3;
+    return 0;
 }
 
 int privet6(int a, int b){
@@ -27,16 +32,19 @@ int privet6(int a, int b){
     int c2, d2;
     int c3, d3 = 3;
     int c4 = 3, d4 = 3;
+    return 0;
 }
 int privet7(int a, int b){
      int c1, d1 = 3;
      int c2, d2;
      int c3 = 3, d3;
      int c4 = 3, d4 = 3;
+     return 0;
 }
 int privet8(int a, int b){
      int c1 = 3, d1 = 3;
      int c2, d2 = 3;
      int c3, d3;
      int c4 = 3, d4;
+     return 0;
  }

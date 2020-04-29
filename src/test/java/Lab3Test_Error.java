@@ -112,7 +112,7 @@ public class Lab3Test_Error {
         try {
             boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error/semantic" + "/test_error_10");
         }catch (Ex_Signature ex){
-            Assert.assertEquals(ex.savePoint.lines + 1, 5);
+            Assert.assertEquals(ex.savePoint.lines + 1, 6);
             throw ex;
         }
     }
@@ -132,7 +132,7 @@ public class Lab3Test_Error {
         try {
             boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error/semantic" + "/test_error_12");
         }catch (Ex_Signature ex){
-            Assert.assertEquals(ex.savePoint.lines + 1, 5);
+            Assert.assertEquals(ex.savePoint.lines + 1, 6);
             throw ex;
         }
     }
@@ -142,7 +142,7 @@ public class Lab3Test_Error {
         try {
             boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error/semantic" + "/test_error_13");
         }catch (Ex_Signature ex){
-            Assert.assertEquals(ex.savePoint.lines + 1, 4);
+            Assert.assertEquals(ex.savePoint.lines + 1, 5);
             throw ex;
         }
     }
@@ -203,7 +203,7 @@ public class Lab3Test_Error {
         try {
             boolean isOk = LLK.start(System.getProperty("user.dir") + "/tests" + "/error/grammar" + "/test_error_5g");
         }catch (Ex_Exception ex){
-            Assert.assertEquals(ex.savePoint.lines + 1, 5);
+            Assert.assertEquals(ex.savePoint.lines + 1, 6);
             throw ex;
         }
     }

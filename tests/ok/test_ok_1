@@ -1,11 +1,11 @@
 double w = 136;
 
 int kek(int n){
-
+    return 0;
 }
 
 int heh(){
-
+    return 0;
 }
 
 int privet2(int c){
@@ -14,4 +14,6 @@ int privet2(int c){
        heh();
     }else
        kek(123);
+
+    return 0;
 }

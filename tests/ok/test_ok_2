@@ -1,10 +1,11 @@
 double cq = 136;
 int heh(int a){
-
+    return 0;
 }
 int privet2(int c){
     if(c){
        heh(c);
     }else
         ;
+    return 0;
 }

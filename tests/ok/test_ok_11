@@ -1,8 +1,8 @@
 double heh(int a){
-
+    return 0;
 }
 double kek(int a){
-
+    return 0;
 }
 
 int privet2(int c){
@@ -24,4 +24,5 @@ int privet2(int c){
        {{}kek(heh(c));{}}
        heh(c);{;;;}
     }
+    return 0;
 }

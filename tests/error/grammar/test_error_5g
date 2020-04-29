@@ -1,4 +1,5 @@
 int heh(int b){
+return 0;
 }
 int privet2(int c){
     if(heh(55) == heh(12)){
@@ -10,4 +11,5 @@ int privet2(int c){
     }else{
         ;
     }
+    return 0;
 }

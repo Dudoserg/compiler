@@ -4,11 +4,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import main.Lab2.LexTypeTERMINAL;
+import main.SavePoint;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
-public class _NextNode_Star extends _NextNodeBase{
-    LexTypeTERMINAL lexTypeTERMINAL;
 
+public class _NextNode_Star extends _NextNodeBase{
+    public LexTypeTERMINAL lexTypeTERMINAL;
+    public List<NextNode> A_1 = new ArrayList<>();
+    public List<NextNode> A_2 = new ArrayList<>();
+
+    public _NextNode_Star(SavePoint savePoint) {
+        super(savePoint);
+    }
 }

@@ -1,6 +1,6 @@
 double a = 136 + 88;            // +
 int heh(int b){
-
+    return 0;
 }
 int privet2(int c){
     if(c == heh(12);){             // ;
@@ -8,4 +8,6 @@ int privet2(int c){
     }else{
        kek();
     }
+    return 0;
+
 }

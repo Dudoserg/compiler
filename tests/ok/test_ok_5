@@ -1,6 +1,6 @@
 double w = 136 + 88;            // +
 int heh(int a){
-
+    return 0;
 }
 int privet2(int c){
     if(c == heh(123)){
@@ -8,4 +8,5 @@ int privet2(int c){
     }else{
        heh(c);
     }
+    return 0;
 }

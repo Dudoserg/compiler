@@ -1,6 +1,7 @@
 package main.Lab4.TreeNext;
 
 import main.Lab2.LexTypeTERMINAL;
+import main.Lab3.LLK;
 import main.Lab3.Semantic;
 import main.Lab3.exceptions.*;
 import main.Lab4.TreeNext.Relations.*;
@@ -32,7 +33,7 @@ public class TreeNext {
 
     {
         root = new NextNode();
-        root.nodeBase = new _NextNode_Next();
+        root.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
     }
 
     NextNode current = root;
@@ -44,12 +45,12 @@ public class TreeNext {
     public void startFunc(String lexemToStr) throws Exception {
         // новоя вершина - next
         NextNode nextVertex = new NextNode();
-        nextVertex.nodeBase = new _NextNode_Next();
+        nextVertex.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
 
 
         // вершина - функция
         NextNode funcVertex = new NextNode();
-        _NextNode_Func funcNodeBase = new _NextNode_Func(lexemToStr, dataType);
+        _NextNode_Func funcNodeBase = new _NextNode_Func(lexemToStr, dataType, LLK.savePointCurrent);
         funcVertex.nodeBase = funcNodeBase;
         k = funcVertex;
 
@@ -62,7 +63,7 @@ public class TreeNext {
 
         // первый некст в функции
         NextNode firstNextVertex = new NextNode();
-        firstNextVertex.nodeBase = new _NextNode_Next();
+        firstNextVertex.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
 
         funcVertex.setLeft(firstNextVertex);
 
@@ -139,10 +140,10 @@ public class TreeNext {
 
     public void generAssign() throws Exception {
         NextNode newNextVertex = new NextNode();
-        newNextVertex.nodeBase = new _NextNode_Next();
+        newNextVertex.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
 
         NextNode assignVertex = new NextNode();
-        assignVertex.nodeBase = new _NextNode_Assign();
+        assignVertex.nodeBase = new _NextNode_Assign(LLK.savePointCurrent);
 
         NextNode left_fromStack = this.getFromStack(-2);
         assignVertex.setLeft(left_fromStack);
@@ -169,7 +170,7 @@ public class TreeNext {
                 right_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE) {
 
             NextNode castNode = new NextNode();
-            castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._INT);
+            castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._INT, LLK.savePointCurrent);
             castNode.setRight(right_fromStack);
             right_fromStack = castNode;
         }
@@ -177,7 +178,7 @@ public class TreeNext {
         else if (left_lexTypeTERMINAL == LexTypeTERMINAL._DOUBLE &&
                 (right_lexTypeTERMINAL == LexTypeTERMINAL._INT || right_lexTypeTERMINAL == LexTypeTERMINAL._TYPE_INT_10)) {
             NextNode castNode = new NextNode();
-            castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._DOUBLE);
+            castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._DOUBLE, LLK.savePointCurrent);
             castNode.setRight(right_fromStack);
             right_fromStack = castNode;
         }
@@ -211,7 +212,7 @@ public class TreeNext {
             result_lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
 
             NextNode castNode = new NextNode();
-            castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._DOUBLE);
+            castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._DOUBLE, LLK.savePointCurrent);
             castNode.setRight(left_fromStack);
             left_fromStack = castNode;
         }
@@ -221,7 +222,7 @@ public class TreeNext {
             result_lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
 
             NextNode castNode = new NextNode();
-            castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._DOUBLE);
+            castNode.nodeBase = new _NextNode_Cast(LexTypeTERMINAL._DOUBLE, LLK.savePointCurrent);
             castNode.setRight(right_fromStack);
             right_fromStack = castNode;
         }
@@ -256,7 +257,7 @@ public class TreeNext {
 
     public void generMinus() throws Exception {
         NextNode minusVertex = new NextNode();
-        final _NextNode_Minus nodeBase = new _NextNode_Minus();
+        final _NextNode_Minus nodeBase = new _NextNode_Minus(LLK.savePointCurrent);
         minusVertex.nodeBase = nodeBase;
 
         NextNode left_fromStack = getFromStack(-2);
@@ -278,7 +279,7 @@ public class TreeNext {
 
     public void generDiv() throws Exception {
         NextNode divVertex = new NextNode();
-        final _NextNode_Div nodeBase = new _NextNode_Div();
+        final _NextNode_Div nodeBase = new _NextNode_Div(LLK.savePointCurrent);
         divVertex.nodeBase = nodeBase;
 
         NextNode left_fromStack = getFromStack(-2);
@@ -300,7 +301,7 @@ public class TreeNext {
 
     public void generStar() throws Exception {
         NextNode starVertex = new NextNode();
-        final _NextNode_Star nodeBase = new _NextNode_Star();
+        final _NextNode_Star nodeBase = new _NextNode_Star(LLK.savePointCurrent);
         starVertex.nodeBase = nodeBase;
 
         NextNode left_fromStack = getFromStack(-2);
@@ -322,7 +323,7 @@ public class TreeNext {
 
     public void generPlus() throws Exception {
         NextNode plusVertex = new NextNode();
-        final _NextNode_Plus nodeBase = new _NextNode_Plus();
+        final _NextNode_Plus nodeBase = new _NextNode_Plus(LLK.savePointCurrent);
         plusVertex.nodeBase = nodeBase;
 
         NextNode left_fromStack = getFromStack(-2);
@@ -421,13 +422,13 @@ public class TreeNext {
         if (next == LexTypeTERMINAL._INT || next == LexTypeTERMINAL._TYPE_INT_8 ||
                 next == LexTypeTERMINAL._TYPE_INT_10 || next == LexTypeTERMINAL._TYPE_INT_16) {
             NextNode intVertex = new NextNode();
-            intVertex.nodeBase = new _NextNode_Int(next, lexem);
+            intVertex.nodeBase = new _NextNode_Int(next, lexem, LLK.savePointCurrent);
             this.stack.add(intVertex);
         }
 
         if (next == LexTypeTERMINAL._DOUBLE) {
             NextNode intVertex = new NextNode();
-            intVertex.nodeBase = new _NextNode_Double(next, lexem);
+            intVertex.nodeBase = new _NextNode_Double(next, lexem, LLK.savePointCurrent);
             this.stack.add(intVertex);
         }
 
@@ -438,7 +439,7 @@ public class TreeNext {
         // переменная, ищем ее тип
         if (next == LexTypeTERMINAL._ID) {
             NextNode intVertex = new NextNode();
-            intVertex.nodeBase = new _NextNode_ID(next, lexem, this.find_last);
+            intVertex.nodeBase = new _NextNode_ID(next, lexem, this.find_last, LLK.savePointCurrent);
             this.stack.add(intVertex);
         }
     }
@@ -457,8 +458,9 @@ public class TreeNext {
 
     long lastDrawTime = 0;
 
-    public void draw(NextNode start, NextNode current) throws IOException {
-        try (FileWriter writer = new FileWriter("result_tree_next.gv", false)) {
+    public void draw(NextNode start, NextNode current, String fileName) throws IOException {
+        fileName = "деревья\\" + fileName;
+        try (FileWriter writer = new FileWriter(fileName + ".gv", false)) {
             writer.write("graph binary {\n" +
                     "\tdpi=\"75\";\n" + " splines=\"line\"  \n");
             start.print(writer, current);
@@ -471,16 +473,18 @@ public class TreeNext {
         }
 
         // рисуем
-        if (System.getProperty("os.name").equals("Linux"))
-            Runtime.getRuntime().exec("dot result_tree_next.gv -Tpng -o result_tree_next.jpg");
-        else
-            Runtime.getRuntime().exec("cmd /c dot result_tree_next.gv -Tpng -o result_tree_next.jpg");
+        if (System.getProperty("os.name").equals("Linux")) {
+            Runtime.getRuntime().exec("dot " + fileName + ".gv -Tpng -o " + fileName + ".jpg");
+
+        } else {
+            Runtime.getRuntime().exec("cmd /c dot " + fileName + ".gv -Tpng -o " + fileName + ".jpg");
+        }
 
     }
 
-    public void draw(NextNode current) throws Exception {
-
-        try (FileWriter writer = new FileWriter("result_tree_next.gv", false)) {
+    public void draw(NextNode current, String fileName) throws Exception {
+        fileName = "деревья\\" + fileName;
+        try (FileWriter writer = new FileWriter(fileName + ".gv", false)) {
             // запись всей строки
             String text = "Hello Gold!";
             writer.write("graph binary {\n" +
@@ -499,10 +503,10 @@ public class TreeNext {
 
         // рисуем
         if (System.getProperty("os.name").equals("Linux")) {
-            Runtime.getRuntime().exec("dot result_tree_next.gv -Tpng -o result_tree_next.jpg");
+            Runtime.getRuntime().exec("dot " + fileName + ".gv -Tpng -o " + fileName + ".jpg");
 
         } else {
-            Runtime.getRuntime().exec("cmd /c dot result_tree_next.gv -Tpng -o result_tree_next.jpg");
+            Runtime.getRuntime().exec("cmd /c dot " + fileName + ".gv -Tpng -o " + fileName + ".jpg");
         }
         lastDrawTime = System.currentTimeMillis();
 
@@ -521,7 +525,7 @@ public class TreeNext {
     public void setIdent(String lexem) throws Exception {
         // занести идентификатор в таблицу с типом dataType;
         NextNode declareVariable = new NextNode();
-        _NextNode_DeclareVariable nodeBase = new _NextNode_DeclareVariable();
+        _NextNode_DeclareVariable nodeBase = new _NextNode_DeclareVariable(LLK.savePointCurrent);
         declareVariable.nodeBase = nodeBase;
 
         if (dataType == LexTypeTERMINAL._DOUBLE || dataType == LexTypeTERMINAL._INT) {
@@ -539,7 +543,7 @@ public class TreeNext {
         this.savedVariable = declareVariable;
 
         NextNode nodeNext = new NextNode();
-        nodeNext.nodeBase = new _NextNode_Next();
+        nodeNext.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
         nodeNext.setLeft(declareVariable);
 
         current.setRight(nodeNext);
@@ -549,7 +553,7 @@ public class TreeNext {
 
         // кладем переменную в стек;
         NextNode id = new NextNode();
-        id.nodeBase = new _NextNode_ID(dataType, lexem, declareVariable);
+        id.nodeBase = new _NextNode_ID(dataType, lexem, declareVariable, LLK.savePointCurrent);
 
         if (dataType == LexTypeTERMINAL._INT) {
         } else if (dataType == LexTypeTERMINAL._DOUBLE) {
@@ -658,11 +662,20 @@ public class TreeNext {
         parameter_counting.add(0);
     }
 
-    public void plus_parameter_counting() {
+    public void plus_parameter_counting() throws Exception {
         parameter_counting.set(
                 parameter_counting.size() - 1,
                 parameter_counting.get(parameter_counting.size() - 1) + 1
         );
+        final NextNode peek = stack_findLastFunc.peek();
+        if (peek.nodeBase instanceof _NextNode_Func) {
+            int countParam = ((_NextNode_Func) peek.nodeBase).countParam;
+            int countCurrent = parameter_counting.get(parameter_counting.size() - 1);
+            if (countCurrent > countParam)
+                throw new Ex_Signature(countParam, countCurrent);
+        } else {
+            throw new Exception("Тут должна быть только функция123");
+        }
     }
 
     public void end_parameter_counting() throws Exception {
@@ -697,8 +710,9 @@ public class TreeNext {
 
     public Stack<NextNode> stack_findLast = new Stack<>();
     public Stack<NextNode> stack_findLastFunc = new Stack<>();
-    public void add_stack_findLast(NextNode node){
-        if(node.nodeBase instanceof _NextNode_Func)
+
+    public void add_stack_findLast(NextNode node) {
+        if (node.nodeBase instanceof _NextNode_Func)
             stack_findLastFunc.add(node);
         stack_findLast.add(node);
     }
@@ -720,8 +734,8 @@ public class TreeNext {
                     nodeOld = node;
                     node = node.parent;
                     if (node == null) {
-                        find_last = node;
-                        add_stack_findLast(find_last);
+                        //find_last = node;
+                        //add_stack_findLast(find_last);
                         throw new Ex_NotFound(lexemToStr);
                     }
                     if (node != nodeOld && node.nodeBase instanceof _NextNode_Next)
@@ -795,13 +809,13 @@ public class TreeNext {
 
     public void startLevel() throws Exception {
         NextNode rightNextNode = new NextNode();
-        rightNextNode.nodeBase = new _NextNode_Next();
+        rightNextNode.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
         current.setRight(rightNextNode);
         current = rightNextNode;
         this.stack_startLevel.add(rightNextNode);
 
         NextNode leftNextNode = new NextNode();
-        leftNextNode.nodeBase = new _NextNode_StartLevel();
+        leftNextNode.nodeBase = new _NextNode_StartLevel(LLK.savePointCurrent);
         current.setLeft(leftNextNode);
         current = leftNextNode;
     }
@@ -820,16 +834,16 @@ public class TreeNext {
 
     public void triad_gener_if() throws IOException {
         NextNode nextNode = new NextNode();
-        nextNode.nodeBase = new _NextNode_Next();
+        nextNode.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
 
         NextNode nodeIf = new NextNode();
-        nodeIf.nodeBase = new _NextNode_If();
+        nodeIf.nodeBase = new _NextNode_If(LLK.savePointCurrent);
 
         nextNode.setLeft(nodeIf);
         listIf.add(nodeIf);
 
         NextNode nodeElse = new NextNode();
-        nodeElse.nodeBase = new _NextNode_Else();
+        nodeElse.nodeBase = new _NextNode_Else(LLK.savePointCurrent);
 
         nodeIf.setRight(nodeElse);
 
@@ -842,7 +856,7 @@ public class TreeNext {
 
 
         NextNode elseLeftNext = new NextNode();
-        elseLeftNext.nodeBase = new _NextNode_Next();
+        elseLeftNext.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
 
         nodeElse.setLeft(elseLeftNext);
         this.current = elseLeftNext;
@@ -857,7 +871,7 @@ public class TreeNext {
         NextNode nodeElse = nodeIF.right;
 
         NextNode rightElseNext = new NextNode();
-        rightElseNext.nodeBase = new _NextNode_Next();
+        rightElseNext.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
 
         nodeElse.setRight(rightElseNext);
 
@@ -878,7 +892,7 @@ public class TreeNext {
 
     public void gener_equal() {
         NextNode greatVertex = new NextNode();
-        greatVertex.nodeBase = new _NextNode_Equal();
+        greatVertex.nodeBase = new _NextNode_Equal(LLK.savePointCurrent);
         greatVertex.setLeft(this.getFromStack(-2));
         greatVertex.setRight(this.getFromStack(-1));
         this.stack.add(greatVertex);
@@ -886,7 +900,7 @@ public class TreeNext {
 
     public void gener_not_equal() {
         NextNode greatVertex = new NextNode();
-        greatVertex.nodeBase = new _NextNode_Not_Equal();
+        greatVertex.nodeBase = new _NextNode_Not_Equal(LLK.savePointCurrent);
         greatVertex.setLeft(this.getFromStack(-2));
         greatVertex.setRight(this.getFromStack(-1));
         this.stack.add(greatVertex);
@@ -894,7 +908,7 @@ public class TreeNext {
 
     public void gener_great() {
         NextNode greatVertex = new NextNode();
-        greatVertex.nodeBase = new _NextNode_Great();
+        greatVertex.nodeBase = new _NextNode_Great(LLK.savePointCurrent);
         greatVertex.setLeft(this.getFromStack(-2));
         greatVertex.setRight(this.getFromStack(-1));
         this.stack.add(greatVertex);
@@ -902,7 +916,7 @@ public class TreeNext {
 
     public void gener_great_equal() {
         NextNode greatVertex = new NextNode();
-        greatVertex.nodeBase = new _NextNode_Great_Equal();
+        greatVertex.nodeBase = new _NextNode_Great_Equal(LLK.savePointCurrent);
         greatVertex.setLeft(this.getFromStack(-2));
         greatVertex.setRight(this.getFromStack(-1));
         this.stack.add(greatVertex);
@@ -910,7 +924,7 @@ public class TreeNext {
 
     public void gener_less() {
         NextNode greatVertex = new NextNode();
-        greatVertex.nodeBase = new _NextNode_Less();
+        greatVertex.nodeBase = new _NextNode_Less(LLK.savePointCurrent);
         greatVertex.setLeft(this.getFromStack(-2));
         greatVertex.setRight(this.getFromStack(-1));
         this.stack.add(greatVertex);
@@ -918,7 +932,7 @@ public class TreeNext {
 
     public void gener_less_equal() {
         NextNode greatVertex = new NextNode();
-        greatVertex.nodeBase = new _NextNode_Less_Equal();
+        greatVertex.nodeBase = new _NextNode_Less_Equal(LLK.savePointCurrent);
         greatVertex.setLeft(this.getFromStack(-2));
         greatVertex.setRight(this.getFromStack(-1));
         this.stack.add(greatVertex);
@@ -933,10 +947,10 @@ public class TreeNext {
 
     public void triad_return() throws Exception {
         NextNode nextNode = new NextNode();
-        nextNode.nodeBase = new _NextNode_Next();
+        nextNode.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
 
         NextNode returnNode = new NextNode();
-        returnNode.nodeBase = new _NextNode_Return();
+        returnNode.nodeBase = new _NextNode_Return(LLK.savePointCurrent);
 
         // вершина функция
         NextNode left_ = k;
@@ -955,11 +969,11 @@ public class TreeNext {
 
     public void endFunc() throws Exception {
         NextNode nextNode = new NextNode();
-        nextNode.nodeBase = new _NextNode_Next();
+        nextNode.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
         this.current.setRight(nextNode);
 
         NextNode endNode = new NextNode();
-        endNode.nodeBase = new _NextNode_FuncEnd(k);
+        endNode.nodeBase = new _NextNode_FuncEnd(k, LLK.savePointCurrent);
         nextNode.setLeft(endNode);
 
         this.current = k.parent;
@@ -976,7 +990,7 @@ public class TreeNext {
 
     public void triad_push_param() throws Exception {
         NextNode nodePushParam = new NextNode();
-        _NextNode_Push_Param nodeBase = new _NextNode_Push_Param();
+        _NextNode_Push_Param nodeBase = new _NextNode_Push_Param(LLK.savePointCurrent);
         nodePushParam.nodeBase = nodeBase;
 
         NextNode right_FromStack = this.getFromStack(-1);
@@ -985,7 +999,8 @@ public class TreeNext {
         final Integer indexOfParam = parameter_counting.get(parameter_counting.size() - 1) - 1;
 
         final NextNode paramNode = getParamOfFunc(stack_findLastFunc.peek(), indexOfParam);
-
+        if (!(paramNode.nodeBase instanceof _NextNode_DeclareVariable))
+            throw new Ex_Signature(228, 228);
         // Кастим передаваемый параметр к типу который принимает функция
         right_FromStack = castToLeft(paramNode, right_FromStack);
 
@@ -1042,20 +1057,20 @@ public class TreeNext {
             this.stackPushParam.remove(i);
         // ВЫЗОВ ФУНКЦИИ
         NextNode funcCallNode = new NextNode();
-        _NextNode_Call nodebase = new _NextNode_Call();
+        _NextNode_Call nodebase = new _NextNode_Call(LLK.savePointCurrent);
         funcCallNode.nodeBase = nodebase;
         // какую функцию вызываем
         nodebase.func = funcNode;
 
         /// ПУШИМ ПАРАМЕТРЫ В СТЕК ДЛЯ ВЫЗОВА ФУНКЦИИ
         NextNode nextNode = new NextNode();
-        nextNode.nodeBase = new _NextNode_Next();
+        nextNode.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
         funcCallNode.setLeft(nextNode);
 
         NextNode last = nextNode;
         for (int i = tmp_list.size() - 1; i >= 0; i--) {
             NextNode tmp = new NextNode();
-            tmp.nodeBase = new _NextNode_Next();
+            tmp.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
 //
 //            NextNode nodePushParam = new NextNode();
 //            _NextNode_Push_Param push_param = new _NextNode_Push_Param();
@@ -1081,7 +1096,7 @@ public class TreeNext {
         NextNode fromStack = this.getFromStack(-1);
 
         NextNode nextNode = new NextNode();
-        nextNode.nodeBase = new _NextNode_Next();
+        nextNode.nodeBase = new _NextNode_Next(LLK.savePointCurrent);
 
         current.setRight(nextNode);
         current = nextNode;
@@ -1137,18 +1152,18 @@ public class TreeNext {
             //isDraw = true;
         }
         boolean flag = false;
-        if (isDraw) draw(k, nextNode);
+        if (isDraw) draw(k, nextNode, "test");
         if (nextNode.nodeBase instanceof _NextNode_If) {
             final NextNode elseNode = nextNode.right;
             final NextNode true_side = elseNode.left;
             final NextNode false_side = elseNode.right;
             boolean true_side_flag = isAllBranchReturnValue(true_side);
-            if (isDraw) draw(k, nextNode);
+            if (isDraw) draw(k, nextNode, "test");
             boolean false_side_flag;
             // Если часть else есть, то проверяем ее
             if (false_side.isHasChild()) {
                 false_side_flag = isAllBranchReturnValue(false_side);
-                if (isDraw) draw(k, nextNode);
+                if (isDraw) draw(k, nextNode, "test");
             } else {
                 // иначе говориим что часть возвращает значение(  хотя ее как таковой и нет)
                 false_side_flag = true;
@@ -1161,7 +1176,7 @@ public class TreeNext {
 //                left_side_flag = isAllBranchReturnValue(nextNode.left);
             if (nextNode.right != null)
                 right_side_flag = isAllBranchReturnValue(nextNode.right);
-            if (isDraw) draw(k, nextNode);
+            if (isDraw) draw(k, nextNode, "test");
             return right_side_flag;
         } else if (nextNode.nodeBase instanceof _NextNode_Return) {
             return true;
@@ -1170,14 +1185,16 @@ public class TreeNext {
             boolean right_side_flag = false;
             if (nextNode.left != null)
                 left_side_flag = isAllBranchReturnValue(nextNode.left);
-            if (isDraw) draw(k, nextNode);
+            if (isDraw) draw(k, nextNode, "test");
 
-            if (left_side_flag == true && nextNode.right != null)
+            if (left_side_flag == true && nextNode.right != null) {
+//                NextNode kek = getNodeWithType(nextNode,new _NextNode_Return);
                 throw new Ex_Uncreachable_code(k, nextNode);
+            }
 
             if (nextNode.right != null)
                 right_side_flag = isAllBranchReturnValue(nextNode.right);
-            if (isDraw) draw(k, nextNode);
+            if (isDraw) draw(k, nextNode, "test");
             boolean result = true;
             if (nextNode.left == null && nextNode.right == null)
                 result = false;
@@ -1192,6 +1209,14 @@ public class TreeNext {
         }
     }
 
+//    private NextNode getNodeWithType(NextNode nextNode, _NextNodeBase nextNodeBase) {
+////        if(nextNode instanceof nextNodeBase.getClass(). )
+//        if( nextNode.right != null)
+//            return getNodeWithType(nextNode.right, nextNodeBase);
+//        if( nextNode.left != null)
+//            return getNodeWithType(nextNode.left, nextNodeBase);
+//    }
+
     private NextNode findStartParams_OfFunc(NextNode func) {
         return func.left;
     }
@@ -1202,5 +1227,240 @@ public class TreeNext {
             tmp = tmp.right;
         } while (!(tmp.left.nodeBase instanceof _NextNode_StartLevel));
         return tmp.left;
+    }
+
+    public void optimization() throws Exception {
+        optimization_agrigate(this.root);
+    }
+
+    private void optimization_all_сommutativity(NextNode startNode) {
+
+    }
+
+    NextNode startNodeOptimization = null;
+
+    private NextNode optimization_agrigate_createStar(List<NextNode> a1){
+        NextNode startNextNode = new NextNode();
+        NextNode last = startNextNode;
+        final _NextNode_Star nextNode_star = new _NextNode_Star(LLK.savePointCurrent);
+        nextNode_star.lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
+        last.nodeBase = nextNode_star;
+
+        if(a1.size() <= 0)
+            return null;
+        last.left = a1.get(0);
+
+        for (int i = 1; i < a1.size() - 1; i++) {
+            NextNode tmpStartNextNode = new NextNode();
+            final _NextNode_Star tmp_nextNode_star = new _NextNode_Star(LLK.savePointCurrent);
+            // TODO тут не должен быть дабл
+            tmp_nextNode_star.lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
+            tmpStartNextNode.nodeBase = tmp_nextNode_star;
+            tmpStartNextNode.left = a1.get(i);
+            last.right = tmpStartNextNode;
+            last = tmpStartNextNode;
+        }
+        last.right = a1.get(a1.size() - 1);
+        return startNextNode;
+    }
+
+    private NextNode optimization_agrigate(NextNode startNode) throws Exception {
+        //this.draw(startNode, startNode, "test");
+        if (startNode.isStar() || startNode.isDiv()) {
+            startNodeOptimization = startNode;
+            boolean isCanOptimize = optimization_agrigate_do_it(startNode);
+
+            final List<NextNode> a1 = startNode.get_A1();
+            NextNode firstStar = optimization_agrigate_createStar(a1);
+
+            final List<NextNode> a2 = startNode.get_A2();
+            NextNode secondStar = optimization_agrigate_createStar(a2);
+
+            if(a1.size() < 2 || a2.size() < 2)
+                return null;
+
+            NextNode divNextNode = new NextNode();
+            final _NextNode_Div nextNode_div = new _NextNode_Div(LLK.savePointCurrent);
+            nextNode_div.lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
+            divNextNode.nodeBase = nextNode_div;
+
+            divNextNode.left = firstStar;
+            divNextNode.right = secondStar;
+
+            if(startNode == startNode.parent.right){
+                startNode.parent.setRight(divNextNode);
+            }
+            if(startNode == startNode.parent.left){
+                startNode.parent.setLeft(divNextNode);
+            }
+//            return divNextNode;
+        }
+        else {
+            if (startNode.left != null) {
+                optimization_agrigate(startNode.left);
+            }
+            if (startNode.right != null) {
+                optimization_agrigate(startNode.right);
+            }
+        }
+        return null;
+    }
+
+    int gavno = 0;
+
+    boolean flag_draw_optimization_agrigate_do_it = false;
+    private boolean optimization_agrigate_do_it(NextNode startNode) throws Exception {
+        if(flag_draw_optimization_agrigate_do_it) this.draw(startNodeOptimization, startNode, "test");
+        System.out.println("gavno " + ++gavno);
+
+        if (startNode.left != null)
+            optimization_agrigate_do_it(startNode.left);
+        if(flag_draw_optimization_agrigate_do_it) this.draw(startNodeOptimization, startNode, "test");
+        System.out.println("gavno " + ++gavno);
+
+        if (startNode.right != null)
+            optimization_agrigate_do_it(startNode.right);
+        if(flag_draw_optimization_agrigate_do_it) this.draw(startNodeOptimization, startNode, "test");
+        System.out.println("gavno " + ++gavno);
+
+        if (gavno == 32)
+            System.out.println();
+
+        if (startNode.nodeBase instanceof _NextNode_Div) {
+            final _NextNode_Div nodeBase = (_NextNode_Div) startNode.nodeBase;
+            // левый потомок
+            {
+                if (isOperand(startNode.left)) {
+                    nodeBase.A_1.add(startNode.left);
+                } else if (startNode.left.isDiv() || startNode.left.isStar()) {
+                    final List<NextNode> left_A_1 = startNode.left.get_A1();
+                    final List<NextNode> left_A_2 = startNode.left.get_A2();
+                    // у левого потомка берем А1 и кладем в А1 ( тут ничего местами не меняем )
+                    nodeBase.A_1.addAll(left_A_1);
+                    nodeBase.A_2.addAll(left_A_2);
+                } else {
+                    final List<NextNode> a_1 = nodeBase.getA_1();
+                    a_1.add(startNode.left);
+                }
+            }
+            // правый потомок
+            {
+                if (isOperand(startNode.right)) {
+                    nodeBase.A_2.add(startNode.right);
+                } else if (startNode.right.isDiv() || startNode.right.isStar()) {
+                    final List<NextNode> right_A_1 = startNode.right.get_A1();
+                    final List<NextNode> right_A_2 = startNode.right.get_A2();
+                    // у левого потомка берем А1 и кладем в А2 ( МЕНЯЕМ МЕСТАМИ А1 А2 )
+                    nodeBase.A_1.addAll(right_A_2);
+                    nodeBase.A_2.addAll(right_A_1);
+                } else {
+                    final List<NextNode> a_2 = nodeBase.getA_2();
+                    a_2.add(startNode.left);
+                }
+            }
+        }
+        // ******
+        else if (startNode.nodeBase instanceof _NextNode_Star) {
+            final _NextNode_Star nodeBase = (_NextNode_Star) startNode.nodeBase;
+            // левый потомок
+            {
+                if (isOperand(startNode.left)) {
+                    nodeBase.A_1.add(startNode.left);
+                } else if (startNode.left.isDiv() || startNode.left.isStar()) {
+                    final List<NextNode> left_A_1 = startNode.left.get_A1();
+                    final List<NextNode> left_A_2 = startNode.left.get_A2();
+                    // у левого потомка берем А1 и кладем в А1 ( тут ничего местами не меняем )
+                    nodeBase.A_1.addAll(left_A_1);
+                    nodeBase.A_2.addAll(left_A_2);
+                } else {
+                    // тут всякий треш типа вызова функции плюс минус
+                    final List<NextNode> a_1 = nodeBase.getA_1();
+                    a_1.add(startNode.left);
+                }
+            }
+            // правый потомок
+            {
+                if (isOperand(startNode.right)) {
+                    nodeBase.A_1.add(startNode.right);
+                } else if (startNode.right.isDiv() || startNode.right.isStar()) {
+                    final List<NextNode> right_A_1 = startNode.right.get_A1();
+                    final List<NextNode> right_A_2 = startNode.right.get_A2();
+                    // у левого потомка берем А1 и кладем в А1 ( тут ничего местами не меняем )
+                    nodeBase.A_1.addAll(right_A_1);
+                    nodeBase.A_2.addAll(right_A_2);
+                } else {
+                    final List<NextNode> a_1 = nodeBase.getA_1();
+                    a_1.add(startNode.right);
+                }
+            }
+        } else if (isOperand(startNode)) {
+            System.out.println();
+        }
+        // все остальные операции, т.е. + - и другие)00
+        else if (isOperand(startNode)) {
+            startNode.get_A1();
+            // тут надо пробовать перестроить дерево
+        }
+
+
+//        if(startNode.nodeBase instanceof _NextNode_Star){
+//            final _NextNode_Star nodeBase = (_NextNode_Star) startNode.nodeBase;
+//        }
+//        if (startNode.left != null) {
+//
+//            if (startNode.left.nodeBase instanceof _NextNode_Star  ){
+//
+//            }else if (startNode.left.nodeBase instanceof _NextNode_Div ){
+//
+//            }else if(isOperand(startNode.left)){
+//                // Если слева операнд
+//                if( startNode.nodeBase instanceof _NextNode_Div){
+//                    // Если сейчас операция деление
+//                    final _NextNode_Div nodeBase = (_NextNode_Div) startNode.nodeBase;
+//                    // делимое влево, делитель вправо
+//                    nodeBase.A_1.add(startNode.left);
+//                    nodeBase.A_2.add(startNode.right);
+//                }
+//                else if( startNode.nodeBase instanceof _NextNode_Star){
+//                    // Если сейчас операция умножение
+//                    final _NextNode_Star nodeBase = (_NextNode_Star) startNode.nodeBase;
+//                    // оба операнда в А1
+//                    nodeBase.A_1.add(startNode.left);
+//                    nodeBase.A_1.add(startNode.left);
+//                }
+//            }
+//        }
+//        if (startNode.nodeBase instanceof _NextNode_Star) {
+//            boolean left = optimization_agrigate_do_it(startNode.left);
+//            boolean right = optimization_agrigate_do_it(startNode.right);
+//            return left & right;
+//        }
+//        if (startNode.nodeBase instanceof _NextNode_Div) {
+//            boolean left = optimization_agrigate_do_it(startNode.left);
+//            boolean right = optimization_agrigate_do_it(startNode.right);
+//            return left & right;
+//        }
+//        if (isOperand(startNode))
+//            return true;
+
+        return false;
+    }
+
+    private boolean isNodeMathOperation(NextNode node) {
+        if (node.nodeBase instanceof _NextNode_Plus ||
+                node.nodeBase instanceof _NextNode_Minus ||
+                node.nodeBase instanceof _NextNode_Star ||
+                node.nodeBase instanceof _NextNode_Div)
+            return true;
+        return false;
+    }
+
+    private boolean isOperand(NextNode node) {
+        if (node.nodeBase instanceof _NextNode_ID ||
+                node.nodeBase instanceof _NextNode_Int ||
+                node.nodeBase instanceof _NextNode_Double ||
+                node.nodeBase instanceof _NextNode_Call)
+            return true;
+        return false;
     }
 }

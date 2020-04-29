@@ -463,16 +463,28 @@ public class LLK {
         }
         triadsStr = this.triads.printTriads();
 
-        if (devMode)
-            treeNext.draw(null);
+        {
+            if (devMode)
+                treeNext.draw(null,"before");
+            System.out.println("\n\n------------------------------------");
+            System.out.println("before optimization----------------------------------------------\n");
+            final String treeNext_triadsStr_before = treeNext.createTriads();
+            System.out.println(treeNext_triadsStr_before);
 
 
-        System.out.println("\n\n----------------------------------------------------------------------------------\n");
-        final String treeNext_triadsStr = treeNext.createTriads();
-        System.out.println(treeNext_triadsStr);
+            treeNext.optimization();
+            System.out.println("\n\n");
+            System.out.println("\n\n------------------------------------");
+            System.out.println("after optimization----------------------------------------------\n");
+            if (devMode)
+                treeNext.draw(null,"after");
+            final String treeNext_triadsStr_after = treeNext.createTriads();
+            System.out.println(treeNext_triadsStr_after);
 
-        if( !treeNext_triadsStr.equals(triadsStr))
-            throw new Exception("новые и старые триады не равны");
+        }
+
+//        if( !treeNext_triadsStr.equals(triadsStr))
+//            throw new Exception("новые и старые триады не равны");
 
 
         if (devMode && this.triads.isTriads) {

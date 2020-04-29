@@ -33,4 +33,9 @@ public class SavePoint {
         //System.out.println("position = " + position);
         System.out.print("символ = " + startPosition + "\n");
     }
+    public String getPrintStr() {
+        String line = "строка = " + (lines + 1) + "\t";
+        String symbol = "символ = " + startPosition + "\n";
+        return line + "\t" + symbol + "\t";
+    }
 }

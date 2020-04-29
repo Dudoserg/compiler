@@ -104,7 +104,7 @@ public class NextNode {
         } else if (nodeBase instanceof _NextNode_DeclareVariable) {
             _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) this.nodeBase;
             set_Color(writer, "v", "#ebcccc", current);
-            set_Label(writer, "v", nodeBase.lexem);
+            set_Label(writer, "v", "decl. " + nodeBase.lexem);
             set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_Assign) {
             _NextNode_Assign nodeBase = (_NextNode_Assign) this.nodeBase;
@@ -544,5 +544,38 @@ public class NextNode {
         final NextNode_Triad nextNode_triad = new NextNode_Triad(operation, first, second, list.size());
         list.add(nextNode_triad);
         return nextNode_triad;
+    }
+
+
+    public List<NextNode> get_A1(){
+        if(this.nodeBase instanceof _NextNode_Star){
+            return ((_NextNode_Star) this.nodeBase).A_1;
+        } else if(this.nodeBase instanceof _NextNode_Div){
+            return ((_NextNode_Div) this.nodeBase).A_1;
+        }else if(this.nodeBase instanceof _NextNode_Plus){
+            return ((_NextNode_Plus) this.nodeBase).A_1;
+        }else if(this.nodeBase instanceof _NextNode_Minus){
+            return ((_NextNode_Minus) this.nodeBase).A_1;
+        }
+        else return null;
+    }
+    public List<NextNode> get_A2(){
+        if(this.nodeBase instanceof _NextNode_Star){
+            return ((_NextNode_Star) this.nodeBase).A_2;
+        } else if(this.nodeBase instanceof _NextNode_Div){
+            return ((_NextNode_Div) this.nodeBase).A_2;
+        }else if(this.nodeBase instanceof _NextNode_Plus){
+            return ((_NextNode_Plus) this.nodeBase).A_2;
+        }else if(this.nodeBase instanceof _NextNode_Minus){
+            return ((_NextNode_Minus) this.nodeBase).A_2;
+        }
+        else return null;
+    }
+
+    public boolean isStar(){
+        return this.nodeBase instanceof _NextNode_Star;
+    }
+    public boolean isDiv(){
+        return this.nodeBase instanceof _NextNode_Div;
     }
 }

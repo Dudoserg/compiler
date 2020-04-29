@@ -1,8 +1,8 @@
 int heh(int a){
-
+    return 0;
 }
 int kek(int a){
-
+    return 0;
 }
 int privet2(int c){
     if(c == 3){
@@ -17,4 +17,5 @@ int privet2(int c){
        {{}kek(c);{}}
        heh(c);{;;;}
     }
+    return 0;
 }
