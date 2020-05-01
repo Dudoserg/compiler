@@ -6,7 +6,7 @@ int a, b, c, d, e, f , g;
 int t, h,  k;
 //int first = b * c / (f * k / h) / d * t;
 double dbl  = 18;
-int second = dbl * (37 / c / t) * a;
+int second = d / (37 * (12 * 4 / 5) / t) ;
 //int two = (e / ((a / b) * (c * (d + d)))) * (f / g);
 
 

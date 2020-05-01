@@ -1,5 +1,6 @@
 package main.Lab4.TreeNext.MathOperation;
 
+import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
 import main.Lab2.LexTypeTERMINAL;
@@ -30,5 +31,25 @@ public class _NextNode_Plus extends _NextNodeBase implements Interface_MathOpera
     @Override
     public LexTypeTERMINAL getType() {
         return lexTypeTERMINAL;
+    }
+
+    @Override
+    public String calculate(Integer first, Integer second) {
+        return String.valueOf(first + second);
+    }
+
+    @Override
+    public String calculate(Integer first, Double second) {
+        return String.valueOf(first + second);
+    }
+
+    @Override
+    public String calculate(Double first, Integer second) {
+        return String.valueOf(first + second);
+    }
+
+    @Override
+    public String calculate(Double first, Double second) {
+        return String.valueOf(first + second);
     }
 }

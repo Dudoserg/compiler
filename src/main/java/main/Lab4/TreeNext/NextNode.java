@@ -2,6 +2,8 @@ package main.Lab4.TreeNext;
 
 import lombok.AllArgsConstructor;
 import main.Lab2.LexTypeTERMINAL;
+import main.Lab4.TreeNext.Const._NextNode_Double;
+import main.Lab4.TreeNext.Const._NextNode_Int;
 import main.Lab4.TreeNext.MathOperation._NextNode_Div;
 import main.Lab4.TreeNext.MathOperation._NextNode_Minus;
 import main.Lab4.TreeNext.MathOperation._NextNode_Plus;
@@ -544,35 +546,35 @@ public class NextNode {
     }
 
 
-    public List<NextNode> get_A1(){
-        if(this.nodeBase instanceof _NextNode_Star){
+    public List<NextNode> get_A1() {
+        if (this.nodeBase instanceof _NextNode_Star) {
             return ((_NextNode_Star) this.nodeBase).A_1;
-        } else if(this.nodeBase instanceof _NextNode_Div){
+        } else if (this.nodeBase instanceof _NextNode_Div) {
             return ((_NextNode_Div) this.nodeBase).A_1;
-        }else if(this.nodeBase instanceof _NextNode_Plus){
+        } else if (this.nodeBase instanceof _NextNode_Plus) {
             return ((_NextNode_Plus) this.nodeBase).A_1;
-        }else if(this.nodeBase instanceof _NextNode_Minus){
+        } else if (this.nodeBase instanceof _NextNode_Minus) {
             return ((_NextNode_Minus) this.nodeBase).A_1;
-        }
-        else return null;
-    }
-    public List<NextNode> get_A2(){
-        if(this.nodeBase instanceof _NextNode_Star){
-            return ((_NextNode_Star) this.nodeBase).A_2;
-        } else if(this.nodeBase instanceof _NextNode_Div){
-            return ((_NextNode_Div) this.nodeBase).A_2;
-        }else if(this.nodeBase instanceof _NextNode_Plus){
-            return ((_NextNode_Plus) this.nodeBase).A_2;
-        }else if(this.nodeBase instanceof _NextNode_Minus){
-            return ((_NextNode_Minus) this.nodeBase).A_2;
-        }
-        else return null;
+        } else return null;
     }
 
-    public boolean isStar(){
+    public List<NextNode> get_A2() {
+        if (this.nodeBase instanceof _NextNode_Star) {
+            return ((_NextNode_Star) this.nodeBase).A_2;
+        } else if (this.nodeBase instanceof _NextNode_Div) {
+            return ((_NextNode_Div) this.nodeBase).A_2;
+        } else if (this.nodeBase instanceof _NextNode_Plus) {
+            return ((_NextNode_Plus) this.nodeBase).A_2;
+        } else if (this.nodeBase instanceof _NextNode_Minus) {
+            return ((_NextNode_Minus) this.nodeBase).A_2;
+        } else return null;
+    }
+
+    public boolean isStar() {
         return this.nodeBase instanceof _NextNode_Star;
     }
-    public boolean isDiv(){
+
+    public boolean isDiv() {
         return this.nodeBase instanceof _NextNode_Div;
     }
 
@@ -586,6 +588,7 @@ public class NextNode {
             return true;
         return false;
     }
+
     public boolean isMathOperation() {
         if (nodeBase instanceof _NextNode_Plus ||
                 nodeBase instanceof _NextNode_Minus ||
@@ -593,5 +596,17 @@ public class NextNode {
                 nodeBase instanceof _NextNode_Div)
             return true;
         return false;
+    }
+
+    public boolean isConstant() {
+        return (this.nodeBase instanceof _NextNode_Int) || (this.nodeBase instanceof _NextNode_Double);
+    }
+
+    public boolean isInt() {
+        return (this.nodeBase instanceof _NextNode_Int);
+    }
+
+    public boolean isDouble() {
+        return (this.nodeBase instanceof _NextNode_Double);
     }
 }
