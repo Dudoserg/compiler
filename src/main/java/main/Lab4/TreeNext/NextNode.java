@@ -2,6 +2,10 @@ package main.Lab4.TreeNext;
 
 import lombok.AllArgsConstructor;
 import main.Lab2.LexTypeTERMINAL;
+import main.Lab4.TreeNext.MathOperation._NextNode_Div;
+import main.Lab4.TreeNext.MathOperation._NextNode_Minus;
+import main.Lab4.TreeNext.MathOperation._NextNode_Plus;
+import main.Lab4.TreeNext.MathOperation._NextNode_Star;
 import main.Lab4.TreeNext.Relations.*;
 
 import java.io.FileWriter;
@@ -77,13 +81,6 @@ public class NextNode {
                 color = "\"" + color + "\"";
             writer.write(vertexName + this.id + "[style=filled, fillcolor=" + color + "]" + "\n");
         }
-    }
-
-    private void set_Color(FileWriter writer, String vertexName, String color)
-            throws IOException {
-        if (color.charAt(0) == '#')
-            color = "\"" + color + "\"";
-        writer.write(vertexName + this.id + "[style=filled, fillcolor=" + color + "]" + "\n");
     }
 
     public void print(FileWriter writer, NextNode current) throws Exception {
@@ -577,5 +574,24 @@ public class NextNode {
     }
     public boolean isDiv(){
         return this.nodeBase instanceof _NextNode_Div;
+    }
+
+    public boolean isOperand() {
+        if (nodeBase instanceof _NextNode_ID ||
+                nodeBase instanceof _NextNode_Int ||
+                nodeBase instanceof _NextNode_Double ||
+                nodeBase instanceof _NextNode_Call ||
+                nodeBase instanceof _NextNode_Cast
+        )
+            return true;
+        return false;
+    }
+    public boolean isMathOperation() {
+        if (nodeBase instanceof _NextNode_Plus ||
+                nodeBase instanceof _NextNode_Minus ||
+                nodeBase instanceof _NextNode_Star ||
+                nodeBase instanceof _NextNode_Div)
+            return true;
+        return false;
     }
 }

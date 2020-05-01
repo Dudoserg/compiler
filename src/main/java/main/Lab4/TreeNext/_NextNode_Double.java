@@ -4,12 +4,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import main.Lab2.LexTypeTERMINAL;
+import main.Lab4.TreeNext.MathOperation.Interface_LexType;
 import main.SavePoint;
 
 @Getter
 @Setter
 
-public class _NextNode_Double extends _NextNodeBase {
+public class _NextNode_Double extends _NextNodeBase implements Interface_LexType {
     public LexTypeTERMINAL lexTypeTERMINAL;
     public String lexem;
 
@@ -21,5 +22,10 @@ public class _NextNode_Double extends _NextNodeBase {
 
     public _NextNode_Double(SavePoint savePoint) {
         super(savePoint);
+    }
+
+    @Override
+    public LexTypeTERMINAL getType() {
+        return lexTypeTERMINAL;
     }
 }

@@ -4,6 +4,7 @@ import main.Lab2.LexTypeTERMINAL;
 import main.Lab3.LLK;
 import main.Lab3.Semantic;
 import main.Lab3.exceptions.*;
+import main.Lab4.TreeNext.MathOperation.*;
 import main.Lab4.TreeNext.Relations.*;
 import main.Lab4.Triads;
 
@@ -459,8 +460,9 @@ public class TreeNext {
     long lastDrawTime = 0;
 
     public void draw(NextNode start, NextNode current, String fileName) throws IOException {
-        fileName = "деревья\\" + fileName;
-        try (FileWriter writer = new FileWriter(fileName + ".gv", false)) {
+        String jpgPath = "деревья/" + fileName;
+        String gvPath = "деревья/gv/" + fileName + ".gv";
+        try (FileWriter writer = new FileWriter(gvPath, false)) {
             writer.write("graph binary {\n" +
                     "\tdpi=\"75\";\n" + " splines=\"line\"  \n");
             start.print(writer, current);
@@ -474,17 +476,17 @@ public class TreeNext {
 
         // рисуем
         if (System.getProperty("os.name").equals("Linux")) {
-            Runtime.getRuntime().exec("dot " + fileName + ".gv -Tpng -o " + fileName + ".jpg");
-
+            Runtime.getRuntime().exec("dot " + gvPath + " -Tpng -o " + jpgPath + ".jpg");
         } else {
-            Runtime.getRuntime().exec("cmd /c dot " + fileName + ".gv -Tpng -o " + fileName + ".jpg");
+            Runtime.getRuntime().exec("cmd /c dot " + gvPath + " -Tpng -o " + jpgPath + ".jpg");
         }
 
     }
 
     public void draw(NextNode current, String fileName) throws Exception {
-        fileName = "деревья\\" + fileName;
-        try (FileWriter writer = new FileWriter(fileName + ".gv", false)) {
+        String jpgPath = "деревья/" + fileName;
+        String gvPath = "деревья/gv/" + fileName + ".gv";
+        try (FileWriter writer = new FileWriter(gvPath, false)) {
             // запись всей строки
             String text = "Hello Gold!";
             writer.write("graph binary {\n" +
@@ -503,10 +505,9 @@ public class TreeNext {
 
         // рисуем
         if (System.getProperty("os.name").equals("Linux")) {
-            Runtime.getRuntime().exec("dot " + fileName + ".gv -Tpng -o " + fileName + ".jpg");
-
+            Runtime.getRuntime().exec("dot " + gvPath + " -Tpng -o " + jpgPath + ".jpg");
         } else {
-            Runtime.getRuntime().exec("cmd /c dot " + fileName + ".gv -Tpng -o " + fileName + ".jpg");
+            Runtime.getRuntime().exec("cmd /c dot " + gvPath + " -Tpng -o " + jpgPath + ".jpg");
         }
         lastDrawTime = System.currentTimeMillis();
 
@@ -1239,14 +1240,14 @@ public class TreeNext {
 
     NextNode startNodeOptimization = null;
 
-    private NextNode optimization_agrigate_createStar(List<NextNode> a1){
+    private NextNode optimization_agrigate_createStar(List<NextNode> a1) {
         NextNode startNextNode = new NextNode();
         NextNode last = startNextNode;
         final _NextNode_Star nextNode_star = new _NextNode_Star(LLK.savePointCurrent);
         nextNode_star.lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
         last.nodeBase = nextNode_star;
 
-        if(a1.size() <= 0)
+        if (a1.size() <= 0)
             return null;
         last.left = a1.get(0);
 
@@ -1264,6 +1265,103 @@ public class TreeNext {
         return startNextNode;
     }
 
+    // Правильно расставляем типы вершин. Добавляем нужные ведения типов.
+    private void optimization_agrigate_setTypes(NextNode node) throws IOException {
+        final NextNode left = node.left;
+        final NextNode right = node.right;
+
+        if (left != null)
+            optimization_agrigate_setTypes(left);
+
+        if (right != null)
+            optimization_agrigate_setTypes(right);
+
+        if (node.isMathOperation()) {
+            try {
+                this.draw(root, node, "kek");
+                Interface_MathOperation interface_mathOperation = (Interface_MathOperation) node.nodeBase;
+                Interface_LexType left_lexTypeNodeBase = (Interface_LexType) left.nodeBase;
+                Interface_LexType right_lexTypeNodeBase = (Interface_LexType) right.nodeBase;
+
+
+                // НО, есть исключение. Если деление, то в любом случае результат будет дабл
+                if (node.nodeBase instanceof _NextNode_Div) {
+                    interface_mathOperation.setType(LexTypeTERMINAL._DOUBLE);
+                } else {
+                    LexTypeTERMINAL left_Type = LexTypeTERMINAL._INT;
+                    LexTypeTERMINAL right_Type = LexTypeTERMINAL._INT;
+                    if (left_lexTypeNodeBase.getType() == LexTypeTERMINAL._ID) {
+                        // сначала кастим к ID, потом поле еще кастим к декларейшен
+                        left_Type = ((_NextNode_DeclareVariable)(((_NextNode_ID) left.nodeBase).nextNode.nodeBase)).lexTypeTERMINAL;
+                    } else if (left_lexTypeNodeBase.getType() == LexTypeTERMINAL._DOUBLE) {
+                        left_Type = LexTypeTERMINAL._DOUBLE;
+                    }
+
+                    if (right_lexTypeNodeBase.getType() == LexTypeTERMINAL._ID) {
+                        // сначала кастим к ID, потом поле еще кастим к декларейшен
+                        right_Type = ((_NextNode_DeclareVariable) (((_NextNode_ID) right.nodeBase).nextNode.nodeBase)).lexTypeTERMINAL;
+                    } else if (left_lexTypeNodeBase.getType() == LexTypeTERMINAL._DOUBLE) {
+                        right_Type = LexTypeTERMINAL._DOUBLE;
+                    }
+
+                    // Если правый или левый операнд дабл, то результат тоже дабл
+                    if (left_Type == LexTypeTERMINAL._DOUBLE || right_Type == LexTypeTERMINAL._DOUBLE)
+                        interface_mathOperation.setType(LexTypeTERMINAL._DOUBLE);
+                    else     // иначе инт
+                        interface_mathOperation.setType(LexTypeTERMINAL._INT);
+
+                }
+            } catch (ClassCastException e) {
+                throw e;
+            }
+
+        } else {
+
+        }
+    }
+
+    // удаляем приведения типов
+    private void optimization_agrigate_removeCast(NextNode nextNode) throws IOException {
+        //this.draw(root, nextNode, "kek");
+        if (nextNode.left != null) {
+            //this.draw(root, nextNode, "kek");
+            final NextNode left = nextNode.left;
+            if (left.nodeBase instanceof _NextNode_Cast) {
+                nextNode.setLeft(left.right);
+                //this.draw(root, nextNode, "kek");
+                System.out.print("");
+            }
+            optimization_agrigate_removeCast(nextNode.left);
+        }
+        if (nextNode.right != null) {
+            //this.draw(root, nextNode, "kek");
+            final NextNode right = nextNode.right;
+            if (right.nodeBase instanceof _NextNode_Cast) {
+                nextNode.setRight(right.right);
+                //this.draw(root, nextNode, "kek");
+                System.out.print("");
+            }
+            optimization_agrigate_removeCast(nextNode.right);
+        }
+        //this.draw(root, nextNode, "kek");
+//        if (nextNode.nodeBase instanceof _NextNode_Cast) {
+//            NextNode cast = nextNode;
+//            final NextNode child = cast.right;
+//            // если приведение типов это правый потомок родителя
+//            if (cast.parent.right == cast) {
+//                cast.parent.setRight(child);
+//            }
+//            // если приведение типов это левый потомок родителя
+//            if (cast.parent.left == cast) {
+//                cast.parent.setLeft(child);
+//                cast.parent = null;
+//                cast.left = null;
+//                cast.right = null;
+//            }
+//            this.draw(root, current, "kek");
+//        }
+    }
+
     private NextNode optimization_agrigate(NextNode startNode) throws Exception {
         //this.draw(startNode, startNode, "test");
         if (startNode.isStar() || startNode.isDiv()) {
@@ -1276,7 +1374,7 @@ public class TreeNext {
             final List<NextNode> a2 = startNode.get_A2();
             NextNode secondStar = optimization_agrigate_createStar(a2);
 
-            if(a1.size() < 2 || a2.size() < 2)
+            if (a1.size() < 2 || a2.size() < 2)
                 return null;
 
             NextNode divNextNode = new NextNode();
@@ -1287,15 +1385,21 @@ public class TreeNext {
             divNextNode.left = firstStar;
             divNextNode.right = secondStar;
 
-            if(startNode == startNode.parent.right){
+            if (startNode == startNode.parent.right) {
                 startNode.parent.setRight(divNextNode);
+                this.draw(root, divNextNode, "kek");
             }
-            if(startNode == startNode.parent.left){
+            if (startNode == startNode.parent.left) {
                 startNode.parent.setLeft(divNextNode);
+                this.draw(root, divNextNode, "kek");
             }
+
+            // теперь у нас уже новая структура выражения, нужно правильно расставить типы и привидения типов
+            optimization_agrigate_removeCast(divNextNode);
+            optimization_agrigate_setTypes(divNextNode);
+
 //            return divNextNode;
-        }
-        else {
+        } else {
             if (startNode.left != null) {
                 optimization_agrigate(startNode.left);
             }
@@ -1309,18 +1413,19 @@ public class TreeNext {
     int gavno = 0;
 
     boolean flag_draw_optimization_agrigate_do_it = false;
+
     private boolean optimization_agrigate_do_it(NextNode startNode) throws Exception {
-        if(flag_draw_optimization_agrigate_do_it) this.draw(startNodeOptimization, startNode, "test");
+        if (flag_draw_optimization_agrigate_do_it) this.draw(startNodeOptimization, startNode, "test");
         System.out.println("gavno " + ++gavno);
 
         if (startNode.left != null)
             optimization_agrigate_do_it(startNode.left);
-        if(flag_draw_optimization_agrigate_do_it) this.draw(startNodeOptimization, startNode, "test");
+        if (flag_draw_optimization_agrigate_do_it) this.draw(startNodeOptimization, startNode, "test");
         System.out.println("gavno " + ++gavno);
 
         if (startNode.right != null)
             optimization_agrigate_do_it(startNode.right);
-        if(flag_draw_optimization_agrigate_do_it) this.draw(startNodeOptimization, startNode, "test");
+        if (flag_draw_optimization_agrigate_do_it) this.draw(startNodeOptimization, startNode, "test");
         System.out.println("gavno " + ++gavno);
 
         if (gavno == 32)
@@ -1354,6 +1459,7 @@ public class TreeNext {
                     nodeBase.A_1.addAll(right_A_2);
                     nodeBase.A_2.addAll(right_A_1);
                 } else {
+                    // + -
                     final List<NextNode> a_2 = nodeBase.getA_2();
                     a_2.add(startNode.left);
                 }
@@ -1446,7 +1552,7 @@ public class TreeNext {
         return false;
     }
 
-    private boolean isNodeMathOperation(NextNode node) {
+    private boolean isMathOperation(NextNode node) {
         if (node.nodeBase instanceof _NextNode_Plus ||
                 node.nodeBase instanceof _NextNode_Minus ||
                 node.nodeBase instanceof _NextNode_Star ||
@@ -1459,7 +1565,9 @@ public class TreeNext {
         if (node.nodeBase instanceof _NextNode_ID ||
                 node.nodeBase instanceof _NextNode_Int ||
                 node.nodeBase instanceof _NextNode_Double ||
-                node.nodeBase instanceof _NextNode_Call)
+                node.nodeBase instanceof _NextNode_Call ||
+                node.nodeBase instanceof _NextNode_Cast
+        )
             return true;
         return false;
     }

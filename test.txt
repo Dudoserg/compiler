@@ -2,9 +2,12 @@
 //int first = ((u + v) + (w + x)) + (y + z);
 
 
-double a, b, c, d, e, f , g;
-//double lol, kek;
-int two = (e / ((a / b) * (c * (d + d)))) * (f / g);
+int a, b, c, d, e, f , g;
+int t, h,  k;
+//int first = b * c / (f * k / h) / d * t;
+double dbl  = 18;
+int second = dbl * (37 / c / t) * a;
+//int two = (e / ((a / b) * (c * (d + d)))) * (f / g);
 
 
 //int a = 228;
