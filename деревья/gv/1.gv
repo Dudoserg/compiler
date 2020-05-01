@@ -1,5 +1,5 @@
 graph binary {
-	dpi="90";
+	dpi="75";
  splines="line"  
 v0[style=filled, fillcolor=grey]
 v0[label="next"]
@@ -316,7 +316,7 @@ v38 -- v38notVisibleR[style=invis][style=invis]
 {
 	rank=same v38notVisibleL -- v38center -- v38notVisibleR  [style=invis]
 } 
-v58[style=filled, fillcolor=grey]
+v58[style=filled, fillcolor=yellow]
 v58[label="next"]
 v58center[style=invis, width=0, label=""];
 v58 -- v58center[style=invis]
@@ -354,40 +354,30 @@ v60center[style=invis, width=0, label=""];
 v60 -- v60center[style=invis]
 v60notVisibleL[style=invis]
 v60 -- v60notVisibleL[style=invis]
-v60 -- v66[color="blue"]
+v60 -- v56[color="blue"]
 {
-	rank=same v60notVisibleL -- v60center -- v66  [style=invis]
+	rank=same v60notVisibleL -- v60center -- v56  [style=invis]
 } 
-v66[style=filled, fillcolor="#ccebe8"]
-v66[label="/"]
-v66[xlabel="doub"]
-v66center[style=invis, width=0, label=""];
-v66 -- v66center[style=invis]
-v66 -- v68[color="red"]
-v66 -- v65[color="blue"]
+v56[style=filled, fillcolor="#ccebe8"]
+v56[label="/"]
+v56[xlabel="doub"]
+v56center[style=invis, width=0, label=""];
+v56 -- v56center[style=invis]
+v56 -- v57[color="red"]
+v56 -- v54[color="blue"]
 {
-	rank=same v68 -- v66center -- v65  [style=invis]
+	rank=same v57 -- v56center -- v54  [style=invis]
 } 
-v68[style=filled, fillcolor="#88db8b"]
-v68[label="_DOUBLE"]
-v68[xlabel="CAST"]
-v68center[style=invis, width=0, label=""];
-v68 -- v68center[style=invis]
-v68notVisibleL[style=invis]
-v68 -- v68notVisibleL[style=invis]
-v68 -- v64[color="blue"]
+v57[style=filled, fillcolor="#88db8b"]
+v57[label="_DOUBLE"]
+v57[xlabel="CAST"]
+v57center[style=invis, width=0, label=""];
+v57 -- v57center[style=invis]
+v57notVisibleL[style=invis]
+v57 -- v57notVisibleL[style=invis]
+v57 -- v41[color="blue"]
 {
-	rank=same v68notVisibleL -- v68center -- v64  [style=invis]
-} 
-v64[style=filled, fillcolor="#ccebe8"]
-v64[label="*"]
-v64[xlabel="int"]
-v64center[style=invis, width=0, label=""];
-v64 -- v64center[style=invis]
-v64 -- v41[color="red"]
-v64 -- v50[color="blue"]
-{
-	rank=same v41 -- v64center -- v50  [style=invis]
+	rank=same v57notVisibleL -- v57center -- v41  [style=invis]
 } 
 v41[style=filled, fillcolor="#9991e3"]
 v41[label="d"]
@@ -401,27 +391,25 @@ v41 -- v41notVisibleR[style=invis][style=invis]
 {
 	rank=same v41notVisibleL -- v41center -- v41notVisibleR  [style=invis]
 } 
-v50[style=filled, fillcolor="#9991e3"]
-v50[label="t"]
-v50[xlabel="xz"]
-v50center[style=invis, width=0, label=""];
-v50 -- v50center[style=invis]
-v50notVisibleL[style=invis]
-v50 -- v50notVisibleL[style=invis][style=invis]
-v50notVisibleR[style=invis]
-v50 -- v50notVisibleR[style=invis][style=invis]
+v54[style=filled, fillcolor="#ccebe8"]
+v54[label="*"]
+v54[xlabel="doub"]
+v54center[style=invis, width=0, label=""];
+v54 -- v54center[style=invis]
+v54 -- v51[color="red"]
+v54 -- v55[color="blue"]
 {
-	rank=same v50notVisibleL -- v50center -- v50notVisibleR  [style=invis]
+	rank=same v51 -- v54center -- v55  [style=invis]
 } 
-v65[style=filled, fillcolor="#ccebe8"]
-v65[label="*"]
-v65[xlabel="doub"]
-v65center[style=invis, width=0, label=""];
-v65 -- v65center[style=invis]
-v65 -- v63[color="red"]
-v65 -- v67[color="blue"]
+v51[style=filled, fillcolor="#ccebe8"]
+v51[label="/"]
+v51[xlabel="doub"]
+v51center[style=invis, width=0, label=""];
+v51 -- v51center[style=invis]
+v51 -- v63[color="red"]
+v51 -- v52[color="blue"]
 {
-	rank=same v63 -- v65center -- v67  [style=invis]
+	rank=same v63 -- v51center -- v52  [style=invis]
 } 
 v63[style=filled, fillcolor="#e1e8bc"]
 v63[label="355.2"]
@@ -435,16 +423,39 @@ v63 -- v63notVisibleR[style=invis][style=invis]
 {
 	rank=same v63notVisibleL -- v63center -- v63notVisibleR  [style=invis]
 } 
-v67[style=filled, fillcolor="#88db8b"]
-v67[label="_DOUBLE"]
-v67[xlabel="CAST"]
-v67center[style=invis, width=0, label=""];
-v67 -- v67center[style=invis]
-v67notVisibleL[style=invis]
-v67 -- v67notVisibleL[style=invis]
-v67 -- v53[color="blue"]
+v52[style=filled, fillcolor="#88db8b"]
+v52[label="_DOUBLE"]
+v52[xlabel="CAST"]
+v52center[style=invis, width=0, label=""];
+v52 -- v52center[style=invis]
+v52notVisibleL[style=invis]
+v52 -- v52notVisibleL[style=invis]
+v52 -- v50[color="blue"]
 {
-	rank=same v67notVisibleL -- v67center -- v53  [style=invis]
+	rank=same v52notVisibleL -- v52center -- v50  [style=invis]
+} 
+v50[style=filled, fillcolor="#9991e3"]
+v50[label="t"]
+v50[xlabel="xz"]
+v50center[style=invis, width=0, label=""];
+v50 -- v50center[style=invis]
+v50notVisibleL[style=invis]
+v50 -- v50notVisibleL[style=invis][style=invis]
+v50notVisibleR[style=invis]
+v50 -- v50notVisibleR[style=invis][style=invis]
+{
+	rank=same v50notVisibleL -- v50center -- v50notVisibleR  [style=invis]
+} 
+v55[style=filled, fillcolor="#88db8b"]
+v55[label="_DOUBLE"]
+v55[xlabel="CAST"]
+v55center[style=invis, width=0, label=""];
+v55 -- v55center[style=invis]
+v55notVisibleL[style=invis]
+v55 -- v55notVisibleL[style=invis]
+v55 -- v53[color="blue"]
+{
+	rank=same v55notVisibleL -- v55center -- v53  [style=invis]
 } 
 v53[style=filled, fillcolor="#e1e8bc"]
 v53[label="59"]

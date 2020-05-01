@@ -601,6 +601,9 @@ public class NextNode {
     public boolean isConstant() {
         return (this.nodeBase instanceof _NextNode_Int) || (this.nodeBase instanceof _NextNode_Double);
     }
+    public boolean isCast() {
+        return this.nodeBase instanceof _NextNode_Cast;
+    }
 
     public boolean isInt() {
         return (this.nodeBase instanceof _NextNode_Int);

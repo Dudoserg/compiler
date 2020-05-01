@@ -28,10 +28,22 @@ public class CalculateBeforeCompile {
         if (node.right != null)
             DFS(node.right);
 
-        if (node.isMathOperation() && (node.left.isConstant()) && node.right.isConstant()) {
+        if (node.isMathOperation() &&
+                (node.left.isConstant() || (node.left.isCast() && node.left.right.isConstant())) &&
+                (node.right.isConstant() || (node.right.isCast() && node.right.right.isConstant()) )) {
             Interface_MathOperation nodeMathOperation = (Interface_MathOperation) node.nodeBase;
-            final NextNode left = node.left;
-            final NextNode right = node.right;
+            NextNode left = node.left;
+            if(!left.isConstant()){
+                // значит тут приведение типов
+                if(left.left == null && left.right != null)
+                    left = left.right;
+            }
+            NextNode right = node.right;
+            if(!right.isConstant()){
+                // значит тут приведение типов
+                if(right.left == null && right.right != null)
+                    right = right.right;
+            }
 
             NextNode newNode = new NextNode();
             Interface_Const newNodeBase = null;

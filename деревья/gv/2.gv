@@ -1,5 +1,5 @@
 graph binary {
-	dpi="90";
+	dpi="75";
  splines="line"  
 v0[style=filled, fillcolor=grey]
 v0[label="next"]
@@ -316,7 +316,7 @@ v38 -- v38notVisibleR[style=invis][style=invis]
 {
 	rank=same v38notVisibleL -- v38center -- v38notVisibleR  [style=invis]
 } 
-v58[style=filled, fillcolor=grey]
+v58[style=filled, fillcolor=yellow]
 v58[label="next"]
 v58center[style=invis, width=0, label=""];
 v58 -- v58center[style=invis]

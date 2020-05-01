@@ -28,6 +28,9 @@ public class Agrigate {
         nextNode_star.lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
         last.nodeBase = nextNode_star;
 
+        if(a1.size() == 1){
+            return a1.get(0);
+        }
         if (a1.size() <= 0)
             return null;
         last.left = a1.get(0);
@@ -174,7 +177,7 @@ public class Agrigate {
             final List<NextNode> a2 = startNode.get_A2();
             NextNode secondStar = optimization_agrigate_createStar(a2);
 
-            if (a1.size() < 2 || a2.size() < 2)
+            if (a1.size() < 1 || a2.size() < 1)
                 return null;
 
             NextNode divNextNode = new NextNode();

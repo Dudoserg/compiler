@@ -465,7 +465,7 @@ public class LLK {
 
         {
             if (devMode)
-                treeNext.draw(null,"before");
+                treeNext.draw(null,"_before");
             System.out.println("\n\n------------------------------------");
             System.out.println("before optimization----------------------------------------------\n");
             final String treeNext_triadsStr_before = treeNext.createTriads();

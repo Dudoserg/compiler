@@ -1241,15 +1241,24 @@ public class TreeNext {
             CalculateBeforeCompile calculateBeforeCompile = new CalculateBeforeCompile(this);
             calculateBeforeCompile.start();
         }
+        draw(root, current, "1");
+        {
+            Agrigate agrigate = new Agrigate(this);
+            agrigate.optimization_agrigate(this.root);
+        }
+        draw(root, current, "2");
 
         {
-            Agrigate agrigate = new Agrigate(this);
-            agrigate.optimization_agrigate(this.root);
+            CalculateBeforeCompile calculateBeforeCompile = new CalculateBeforeCompile(this);
+            calculateBeforeCompile.start();
         }
-        {
-            Agrigate agrigate = new Agrigate(this);
-            agrigate.optimization_agrigate(this.root);
-        }
+        draw(root, current, "3");
+
+//        {
+//            Agrigate agrigate = new Agrigate(this);
+//            agrigate.optimization_agrigate(this.root);
+//        }
+//        draw(root, current, "4");
 
 
     }
