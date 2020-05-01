@@ -1279,38 +1279,57 @@ public class TreeNext {
         if (node.isMathOperation()) {
             try {
                 this.draw(root, node, "kek");
-                Interface_MathOperation interface_mathOperation = (Interface_MathOperation) node.nodeBase;
+                Interface_MathOperation nodeBase_interface_mathOperation = (Interface_MathOperation) node.nodeBase;
                 Interface_LexType left_lexTypeNodeBase = (Interface_LexType) left.nodeBase;
                 Interface_LexType right_lexTypeNodeBase = (Interface_LexType) right.nodeBase;
 
 
+
+                LexTypeTERMINAL left_Type = LexTypeTERMINAL._INT;
+                LexTypeTERMINAL right_Type = LexTypeTERMINAL._INT;
+                if (left_lexTypeNodeBase.getType() == LexTypeTERMINAL._ID) {
+                    // сначала кастим к ID, потом поле еще кастим к декларейшен
+                    left_Type = ((_NextNode_DeclareVariable) (((_NextNode_ID) left.nodeBase).nextNode.nodeBase)).lexTypeTERMINAL;
+                } else if (left_lexTypeNodeBase.getType() == LexTypeTERMINAL._DOUBLE) {
+                    left_Type = LexTypeTERMINAL._DOUBLE;
+                }
+
+                if (right_lexTypeNodeBase.getType() == LexTypeTERMINAL._ID) {
+                    // сначала кастим к ID, потом поле еще кастим к декларейшен
+                    right_Type = ((_NextNode_DeclareVariable) (((_NextNode_ID) right.nodeBase).nextNode.nodeBase)).lexTypeTERMINAL;
+                } else if (right_lexTypeNodeBase.getType() == LexTypeTERMINAL._DOUBLE) {
+                    right_Type = LexTypeTERMINAL._DOUBLE;
+                }
+
+                // Расставляем типы
                 // НО, есть исключение. Если деление, то в любом случае результат будет дабл
                 if (node.nodeBase instanceof _NextNode_Div) {
-                    interface_mathOperation.setType(LexTypeTERMINAL._DOUBLE);
+                    nodeBase_interface_mathOperation.setType(LexTypeTERMINAL._DOUBLE);
                 } else {
-                    LexTypeTERMINAL left_Type = LexTypeTERMINAL._INT;
-                    LexTypeTERMINAL right_Type = LexTypeTERMINAL._INT;
-                    if (left_lexTypeNodeBase.getType() == LexTypeTERMINAL._ID) {
-                        // сначала кастим к ID, потом поле еще кастим к декларейшен
-                        left_Type = ((_NextNode_DeclareVariable)(((_NextNode_ID) left.nodeBase).nextNode.nodeBase)).lexTypeTERMINAL;
-                    } else if (left_lexTypeNodeBase.getType() == LexTypeTERMINAL._DOUBLE) {
-                        left_Type = LexTypeTERMINAL._DOUBLE;
-                    }
-
-                    if (right_lexTypeNodeBase.getType() == LexTypeTERMINAL._ID) {
-                        // сначала кастим к ID, потом поле еще кастим к декларейшен
-                        right_Type = ((_NextNode_DeclareVariable) (((_NextNode_ID) right.nodeBase).nextNode.nodeBase)).lexTypeTERMINAL;
-                    } else if (left_lexTypeNodeBase.getType() == LexTypeTERMINAL._DOUBLE) {
-                        right_Type = LexTypeTERMINAL._DOUBLE;
-                    }
-
                     // Если правый или левый операнд дабл, то результат тоже дабл
                     if (left_Type == LexTypeTERMINAL._DOUBLE || right_Type == LexTypeTERMINAL._DOUBLE)
-                        interface_mathOperation.setType(LexTypeTERMINAL._DOUBLE);
+                        nodeBase_interface_mathOperation.setType(LexTypeTERMINAL._DOUBLE);
                     else     // иначе инт
-                        interface_mathOperation.setType(LexTypeTERMINAL._INT);
-
+                        nodeBase_interface_mathOperation.setType(LexTypeTERMINAL._INT);
                 }
+
+                // Добавляем приведение типов если нужно
+                if(nodeBase_interface_mathOperation.getType() != left_Type){
+                    NextNode castNode = new NextNode();
+                    _NextNode_Cast cast = new _NextNode_Cast(nodeBase_interface_mathOperation.getType(), LLK.savePointCurrent);
+                    castNode.nodeBase = cast;
+                    castNode.setRight(left);
+                    node.setLeft(castNode);
+                }
+                // Добавляем приведение типов если нужно
+                if(nodeBase_interface_mathOperation.getType() != right_Type){
+                    NextNode castNode = new NextNode();
+                    _NextNode_Cast cast = new _NextNode_Cast(nodeBase_interface_mathOperation.getType(), LLK.savePointCurrent);
+                    castNode.nodeBase = cast;
+                    castNode.setRight(right);
+                    node.setRight(castNode);
+                }
+
             } catch (ClassCastException e) {
                 throw e;
             }
