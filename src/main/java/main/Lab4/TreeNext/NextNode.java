@@ -22,6 +22,7 @@ import java.util.Stack;
 public class NextNode {
     public static int counter;
 
+    public boolean isDrawed = false;
     public int id;
     public NextNode parent;
     public NextNode left;
@@ -87,6 +88,10 @@ public class NextNode {
 
     public void print(FileWriter writer, NextNode current) throws Exception {
         String str = "";
+        if(isDrawed)
+            return;
+        isDrawed = true;
+
         if (nodeBase instanceof _NextNode_Next) {
             set_Color(writer, "v", "grey", current);
             set_Label(writer, "v", "next");

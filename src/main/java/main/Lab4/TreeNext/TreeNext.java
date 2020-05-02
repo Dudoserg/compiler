@@ -464,7 +464,17 @@ public class TreeNext {
 
     long lastDrawTime = 0;
 
+    private void clearDrawed(NextNode start){
+        start.isDrawed = false;
+        if(start.left != null)
+            clearDrawed(start.left);
+        if(start.right != null)
+            clearDrawed(start.right);
+    }
+
+
     public void draw(NextNode start, NextNode current, String fileName) throws IOException {
+        clearDrawed(start);
         String jpgPath = "деревья/" + fileName;
         String gvPath = "деревья/gv/" + fileName + ".gv";
         try (FileWriter writer = new FileWriter(gvPath, false)) {
@@ -489,6 +499,7 @@ public class TreeNext {
     }
 
     public void draw(NextNode current, String fileName) throws Exception {
+        clearDrawed(this.root);
         String jpgPath = "деревья/" + fileName;
         String gvPath = "деревья/gv/" + fileName + ".gv";
         try (FileWriter writer = new FileWriter(gvPath, false)) {
