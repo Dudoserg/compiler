@@ -33,7 +33,7 @@ public class Agrigate {
         }
         if (a1.size() <= 0)
             return null;
-        last.left = a1.get(0);
+        last.setLeft(a1.get(0));
 
         for (int i = 1; i < a1.size() - 1; i++) {
             NextNode tmpStartNextNode = new NextNode();
@@ -41,11 +41,11 @@ public class Agrigate {
             // TODO тут не должен быть дабл
             tmp_nextNode_star.lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
             tmpStartNextNode.nodeBase = tmp_nextNode_star;
-            tmpStartNextNode.left = a1.get(i);
-            last.right = tmpStartNextNode;
+            tmpStartNextNode.setLeft(a1.get(i));
+            last.setRight(tmpStartNextNode);
             last = tmpStartNextNode;
         }
-        last.right = a1.get(a1.size() - 1);
+        last.setRight(a1.get(a1.size() - 1));
         return startNextNode;
     }
 
@@ -185,8 +185,10 @@ public class Agrigate {
             nextNode_div.lexTypeTERMINAL = LexTypeTERMINAL._DOUBLE;
             divNextNode.nodeBase = nextNode_div;
 
-            divNextNode.left = firstStar;
-            divNextNode.right = secondStar;
+//            divNextNode.left = firstStar;
+//            divNextNode.right = secondStar;
+            divNextNode.setLeft(firstStar);
+            divNextNode.setRight(secondStar);;
 
             if (startNode == startNode.parent.right) {
                 startNode.parent.setRight(divNextNode);

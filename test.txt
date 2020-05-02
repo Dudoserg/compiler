@@ -5,8 +5,9 @@
 int a, b, c, d, e, f , g;
 int t, h,  k;
 //int first = b * c / (f * k / h) / d * t;
-double dbl  = 18;
-int second = d / (37 * (12 * 4 / 5) / t * 59) ;
+//double dbl  = 18;
+//int second = d / (37 * (12 * 4 / 5) / t / 59) ;
+int shiftVariable = (d * t) * 51;
 //int two = (e / ((a / b) * (c * (d + d)))) * (f / g);
 
 

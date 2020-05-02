@@ -392,7 +392,7 @@ v41 -- v41notVisibleR[style=invis][style=invis]
 	rank=same v41notVisibleL -- v41center -- v41notVisibleR  [style=invis]
 } 
 v54[style=filled, fillcolor="#ccebe8"]
-v54[label="*"]
+v54[label="/"]
 v54[xlabel="doub"]
 v54center[style=invis, width=0, label=""];
 v54 -- v54center[style=invis]

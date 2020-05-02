@@ -6,6 +6,7 @@ import main.Lab3.Semantic;
 import main.Lab3.exceptions.*;
 import main.Lab4.Optimizations.Agrigate;
 import main.Lab4.Optimizations.CalculateBeforeCompile;
+import main.Lab4.Optimizations.Shift;
 import main.Lab4.TreeNext.Const._NextNode_Double;
 import main.Lab4.TreeNext.Const._NextNode_Int;
 import main.Lab4.TreeNext.MathOperation.*;
@@ -1236,29 +1237,35 @@ public class TreeNext {
 
     public void optimization() throws Exception {
 
+        boolean isDraw = false;
 
         {
             CalculateBeforeCompile calculateBeforeCompile = new CalculateBeforeCompile(this);
             calculateBeforeCompile.start();
         }
-        draw(root, current, "1");
+        if(isDraw) draw(root, current, "1");
         {
             Agrigate agrigate = new Agrigate(this);
             agrigate.optimization_agrigate(this.root);
         }
-        draw(root, current, "2");
+        if(isDraw)  draw(root, current, "2");
 
         {
             CalculateBeforeCompile calculateBeforeCompile = new CalculateBeforeCompile(this);
             calculateBeforeCompile.start();
         }
-        draw(root, current, "3");
+        if(isDraw)   draw(root, current, "3");
 
-//        {
-//            Agrigate agrigate = new Agrigate(this);
-//            agrigate.optimization_agrigate(this.root);
-//        }
-//        draw(root, current, "4");
+        {
+            Agrigate agrigate = new Agrigate(this);
+            agrigate.optimization_agrigate(this.root);
+        }
+        draw(root, current, "4");
+
+        {
+            Shift shift = new Shift(this);
+            shift.start();
+        }
 
 
     }

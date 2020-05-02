@@ -145,10 +145,12 @@ public class NextNode {
             set_Label(writer, "v", nodeBase.lexem);
             set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_ID) {
+            final NextNode tmp = ((_NextNode_ID) nodeBase).nextNode;
+            final _NextNode_DeclareVariable tmpBase = (_NextNode_DeclareVariable) tmp.nodeBase;
             _NextNode_ID nodeBase = (_NextNode_ID) this.nodeBase;
             set_Color(writer, "v", "#9991e3", current);
             set_Label(writer, "v", nodeBase.lexem);
-            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
+            set_Xlabel(writer, "v", tmpBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_If) {
             set_Color(writer, "v", "#00c200", current);
             set_Label(writer, "v", "IF");
@@ -208,6 +210,13 @@ public class NextNode {
             set_Color(writer, "v", "#de7d0d", current);
             set_Label(writer, "v", tmp_lexem);
             set_Xlabel(writer, "v", "CALL");
+        } else if (nodeBase instanceof _NextNode_Shift) {
+            _NextNode_Shift nodeBase = (_NextNode_Shift) this.nodeBase;
+            final int degree = nodeBase.degree;
+            String tmp = nodeBase.isLeft == true ? "<<" : ">>";
+            set_Color(writer, "v", "#FFFFFF", current);
+            set_Label(writer, "v", tmp + degree );
+//            set_Xlabel(writer, "v", "CALL");
         } else {
             throw new Exception("ASD1ASDASD " + nodeBase.getClass().getName());
         }
@@ -601,6 +610,15 @@ public class NextNode {
     public boolean isConstant() {
         return (this.nodeBase instanceof _NextNode_Int) || (this.nodeBase instanceof _NextNode_Double);
     }
+
+    public boolean isId() {
+        return (this.nodeBase instanceof _NextNode_ID);
+    }
+
+    public boolean isCall() {
+        return (this.nodeBase instanceof _NextNode_Call);
+    }
+
     public boolean isCast() {
         return this.nodeBase instanceof _NextNode_Cast;
     }
