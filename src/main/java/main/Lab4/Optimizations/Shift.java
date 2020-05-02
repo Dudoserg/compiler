@@ -185,6 +185,11 @@ public class Shift {
             System.out.println("===");
 
             NextNode newNode = createNewVertex(otherChild, listShifts);
+
+            if(node.parent.left == node)
+                node.parent.setLeft(newNode);
+            if(node.parent.right == node)
+                node.parent.setRight(newNode);
         }
     }
 
@@ -226,7 +231,7 @@ public class Shift {
             left = nextNode;
         }
         treeNext.draw(left, left, "part");
-        return null;
+        return left;
     }
 
     private int log2(int N) {

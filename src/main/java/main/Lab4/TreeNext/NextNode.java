@@ -23,6 +23,7 @@ public class NextNode {
     public static int counter;
 
     public boolean isDrawed = false;
+    public boolean isCreateTriad = false;
     public int id;
     public NextNode parent;
     public NextNode left;
@@ -280,6 +281,9 @@ public class NextNode {
     private static Stack<NextNode_Triad> stack_GOTO = new Stack<>();
 
     public List<NextNode_Triad> createTriads(List<NextNode_Triad> listTriads) throws Exception {
+        if(isCreateTriad)
+            return new ArrayList<>();
+        isCreateTriad = true;
         String str = "";
         if (nodeBase instanceof _NextNode_Next) {
             _NextNode_Next nodeBase = (_NextNode_Next) this.nodeBase;
@@ -497,6 +501,20 @@ public class NextNode {
             if (left != null) this.left.createTriads(listTriads);
             addTriad("call", funcNodeBase.lexem, null, listTriads);
             callNodeBase.triad_number = listTriads.size() - 1;
+        } else if (nodeBase instanceof _NextNode_Shift) {
+            if (right != null) this.right.createTriads(listTriads);
+
+            _NextNode_Shift shiftNodeBase = (_NextNode_Shift) this.nodeBase;
+
+            String first = "??";
+            if (right.nodeBase.triad_number >= 0)
+                first = "(" + right.nodeBase.triad_number.toString() + ")";
+            else
+                first = right.nodeBase.triad_lexem;
+
+            addTriad("<<", first, shiftNodeBase.degree.toString(), listTriads);
+
+            shiftNodeBase.triad_number = listTriads.size() - 1;
         } else {
             throw new Exception("us8188-xjjk " + nodeBase.getClass().getName());
         }

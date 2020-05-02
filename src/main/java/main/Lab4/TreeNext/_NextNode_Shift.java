@@ -8,7 +8,7 @@ import main.SavePoint;
 @Setter
 
 public class _NextNode_Shift extends _NextNodeBase{
-    public int degree;
+    public Integer degree;
     public boolean isLeft = true;
     public _NextNode_Shift(int degree,boolean isLeft, SavePoint savePoint) {
         super(savePoint);

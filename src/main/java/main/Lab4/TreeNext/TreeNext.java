@@ -1121,9 +1121,17 @@ public class TreeNext {
         nextNode.setLeft(fromStack);
     }
 
-
+    private void clearCreateTriads(NextNode nextNode){
+        nextNode.isCreateTriad = false;
+        if(nextNode.left  != null)
+            clearCreateTriads(nextNode.left);
+        if(nextNode.right  != null)
+            clearCreateTriads(nextNode.right);
+    }
     public String createTriads() throws Exception {
         List<NextNode_Triad> listTriads = new ArrayList<>();
+
+        clearCreateTriads(this.root);
 
         listTriads = root.createTriads(listTriads);
 

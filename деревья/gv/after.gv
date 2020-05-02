@@ -257,9 +257,9 @@ v40[label="="]
 v40center[style=invis, width=0, label=""];
 v40 -- v40center[style=invis]
 v40 -- v33[color="red"]
-v40 -- v38[color="blue"]
+v40 -- v58[color="blue"]
 {
-	rank=same v33 -- v40center -- v38  [style=invis]
+	rank=same v33 -- v40center -- v58  [style=invis]
 } 
 v33[style=filled, fillcolor="#9991e3"]
 v33[label="shiftVariable"]
@@ -273,15 +273,45 @@ v33 -- v33notVisibleR[style=invis][style=invis]
 {
 	rank=same v33notVisibleL -- v33center -- v33notVisibleR  [style=invis]
 } 
-v38[style=filled, fillcolor="#ccebe8"]
-v38[label="*"]
-v38[xlabel="int"]
-v38center[style=invis, width=0, label=""];
-v38 -- v38center[style=invis]
-v38 -- v36[color="red"]
-v38 -- v37[color="blue"]
+v58[style=filled, fillcolor="#ccebe8"]
+v58[label="-"]
+v58[xlabel="int"]
+v58center[style=invis, width=0, label=""];
+v58 -- v58center[style=invis]
+v58 -- v57[color="red"]
+v58 -- v55[color="blue"]
 {
-	rank=same v36 -- v38center -- v37  [style=invis]
+	rank=same v57 -- v58center -- v55  [style=invis]
+} 
+v57[style=filled, fillcolor="#ccebe8"]
+v57[label="+"]
+v57[xlabel="int"]
+v57center[style=invis, width=0, label=""];
+v57 -- v57center[style=invis]
+v57 -- v56[color="red"]
+v57 -- v54[color="blue"]
+{
+	rank=same v56 -- v57center -- v54  [style=invis]
+} 
+v56[style=filled, fillcolor="#ccebe8"]
+v56[label="-"]
+v56[xlabel="int"]
+v56center[style=invis, width=0, label=""];
+v56 -- v56center[style=invis]
+v56 -- v52[color="red"]
+v56 -- v53[color="blue"]
+{
+	rank=same v52 -- v56center -- v53  [style=invis]
+} 
+v52[style=filled, fillcolor="#FFFFFF"]
+v52[label="<<6"]
+v52center[style=invis, width=0, label=""];
+v52 -- v52center[style=invis]
+v52notVisibleL[style=invis]
+v52 -- v52notVisibleL[style=invis]
+v52 -- v36[color="blue"]
+{
+	rank=same v52notVisibleL -- v52center -- v36  [style=invis]
 } 
 v36[style=filled, fillcolor="#ccebe8"]
 v36[label="*"]
@@ -317,17 +347,37 @@ v35 -- v35notVisibleR[style=invis][style=invis]
 {
 	rank=same v35notVisibleL -- v35center -- v35notVisibleR  [style=invis]
 } 
-v37[style=filled, fillcolor="#e1e8bc"]
-v37[label="51"]
-v37[xlabel="int"]
-v37center[style=invis, width=0, label=""];
-v37 -- v37center[style=invis]
-v37notVisibleL[style=invis]
-v37 -- v37notVisibleL[style=invis][style=invis]
-v37notVisibleR[style=invis]
-v37 -- v37notVisibleR[style=invis][style=invis]
+v53[style=filled, fillcolor="#FFFFFF"]
+v53[label="<<4"]
+v53center[style=invis, width=0, label=""];
+v53 -- v53center[style=invis]
+v53notVisibleL[style=invis]
+v53 -- v53notVisibleL[style=invis]
+v53 -- v36[color="blue"]
 {
-	rank=same v37notVisibleL -- v37center -- v37notVisibleR  [style=invis]
+	rank=same v53notVisibleL -- v53center -- v36  [style=invis]
+} 
+v54[style=filled, fillcolor="#FFFFFF"]
+v54[label="<<2"]
+v54center[style=invis, width=0, label=""];
+v54 -- v54center[style=invis]
+v54notVisibleL[style=invis]
+v54 -- v54notVisibleL[style=invis]
+v54 -- v36[color="blue"]
+{
+	rank=same v54notVisibleL -- v54center -- v36  [style=invis]
+} 
+v55[style=filled, fillcolor="#e1e8bc"]
+v55[label="1"]
+v55[xlabel="int"]
+v55center[style=invis, width=0, label=""];
+v55 -- v55center[style=invis]
+v55notVisibleL[style=invis]
+v55 -- v55notVisibleL[style=invis][style=invis]
+v55notVisibleR[style=invis]
+v55 -- v55notVisibleR[style=invis][style=invis]
+{
+	rank=same v55notVisibleL -- v55center -- v55notVisibleR  [style=invis]
 } 
 
 }
