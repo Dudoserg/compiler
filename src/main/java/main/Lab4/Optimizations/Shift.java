@@ -2,14 +2,12 @@ package main.Lab4.Optimizations;
 
 import main.Lab2.LexTypeTERMINAL;
 import main.Lab3.LLK;
+import main.Lab4.TreeNext.*;
 import main.Lab4.TreeNext.Const.Interface_Const;
 import main.Lab4.TreeNext.Const._NextNode_Int;
 import main.Lab4.TreeNext.MathOperation.Interface_LexType;
 import main.Lab4.TreeNext.MathOperation._NextNode_Minus;
 import main.Lab4.TreeNext.MathOperation._NextNode_Plus;
-import main.Lab4.TreeNext.NextNode;
-import main.Lab4.TreeNext.TreeNext;
-import main.Lab4.TreeNext._NextNode_Shift;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -172,6 +170,11 @@ public class Shift {
             Interface_LexType interface_lexType = null;
 
             interface_lexType = (Interface_LexType) otherChild.nodeBase;
+            //  в случае если там айдишник, надо достать его реальный тип
+            if(interface_lexType.getType() == LexTypeTERMINAL._ID){
+                final NextNode declNode = ((_NextNode_ID) otherChild.nodeBase).nextNode;
+                interface_lexType = (Interface_LexType) ((_NextNode_DeclareVariable)(declNode.nodeBase));
+            }
             // Идем дальше если только второй потомок типа инт
             if (interface_lexType.getType() != LexTypeTERMINAL._INT)
                 return;

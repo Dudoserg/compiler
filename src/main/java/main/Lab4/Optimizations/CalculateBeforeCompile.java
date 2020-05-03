@@ -91,6 +91,8 @@ public class CalculateBeforeCompile {
             } else throw new Exception("CalculateBeforeCompile Asd810");
 
             // TODO заменить
+            if(node.parent == null)
+                System.out.println();
             if (node.parent.left == node) {
                 node.parent.setLeft(newNode);
                 //treeNext.draw(treeNext.root, newNode, "kek");

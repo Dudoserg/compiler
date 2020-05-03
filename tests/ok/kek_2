@@ -1,0 +1,20 @@
+//int u = 0, v = 0, w = 0, x = 0, y = 0, z = 0;
+//int first = ((u + v) + (w + x)) + (y + z);
+
+
+int a, b, c, d, e, f , g;
+int t, h,  k;
+//int first = b * c / (f * k / h) / d * t;
+//double dbl  = 18;
+int second = d / (37 * (12 * 4 / 5) / t / 59) ;
+int shiftVariable = (d * t) * 51;
+//int two = (e / ((a / b) * (c * (d + d)))) * (f / g);
+
+
+//int a = 228;
+//int b = 1337;
+
+//double c = a / b + a / b;
+
+//double d = (a / b) * (a / b);
+

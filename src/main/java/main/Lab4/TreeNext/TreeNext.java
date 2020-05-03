@@ -1256,35 +1256,36 @@ public class TreeNext {
 
     public void optimization() throws Exception {
 
-        boolean isDraw = false;
+        boolean isDraw = true;
 
         {
             CalculateBeforeCompile calculateBeforeCompile = new CalculateBeforeCompile(this);
             calculateBeforeCompile.start();
         }
-        if(isDraw) draw(root, current, "1");
+        if(isDraw) draw(root, current, "1_calculateBeforeCompile");
         {
             Agrigate agrigate = new Agrigate(this);
             agrigate.optimization_agrigate(this.root);
         }
-        if(isDraw)  draw(root, current, "2");
+        if(isDraw)  draw(root, current, "2_agrigate");
 
         {
             CalculateBeforeCompile calculateBeforeCompile = new CalculateBeforeCompile(this);
             calculateBeforeCompile.start();
         }
-        if(isDraw)   draw(root, current, "3");
+        if(isDraw)   draw(root, current, "3_calculateBeforeCompile");
 
         {
             Agrigate agrigate = new Agrigate(this);
             agrigate.optimization_agrigate(this.root);
         }
-        draw(root, current, "4");
+        draw(root, current, "4_agrigate");
 
         {
             Shift shift = new Shift(this);
             shift.start();
         }
+        draw(root, current, "5_shift");
 
 
     }
