@@ -15,9 +15,14 @@ import java.util.Objects;
 
 
 public class _NextNode_DeclareVariable extends _NextNodeBase implements Interface_LexType {
+    public static int asm_addr_counter = 0;
     public LexTypeTERMINAL lexTypeTERMINAL;
     public String lexem;
     public String currentValue = null;
+
+    public String asm_name;
+    public int asm_addr;
+    public int asm_len;
 
     public _NextNode_DeclareVariable(SavePoint savePoint) {
         super(savePoint);

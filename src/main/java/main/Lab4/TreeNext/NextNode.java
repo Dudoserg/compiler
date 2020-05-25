@@ -90,7 +90,7 @@ public class NextNode {
 
     public void print(FileWriter writer, NextNode current) throws Exception {
         String str = "";
-        if(isDrawed)
+        if (isDrawed)
             return;
         isDrawed = true;
 
@@ -100,7 +100,7 @@ public class NextNode {
         } else if (nodeBase instanceof _NextNode_Func) {
             _NextNode_Func nodeBase = (_NextNode_Func) this.nodeBase;
             set_Color(writer, "v", "red", current);
-            set_Label(writer, "v", nodeBase.lexem);
+            set_Label(writer, "v", nodeBase.lexem + "\n" + "loc_v = " + nodeBase.asm_countLocalVariable);
             set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_FuncEnd) {
             _NextNode_FuncEnd nodeBaseFuncEnd = (_NextNode_FuncEnd) this.nodeBase;
@@ -110,7 +110,7 @@ public class NextNode {
         } else if (nodeBase instanceof _NextNode_DeclareVariable) {
             _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) this.nodeBase;
             set_Color(writer, "v", "#ebcccc", current);
-            set_Label(writer, "v", "decl. " + nodeBase.lexem);
+            set_Label(writer, "v", "decl. " + nodeBase.lexem + "\n" + nodeBase.asm_addr + "\n" + nodeBase.asm_name);
             set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_Assign) {
             _NextNode_Assign nodeBase = (_NextNode_Assign) this.nodeBase;
@@ -156,7 +156,7 @@ public class NextNode {
             final _NextNode_DeclareVariable tmpBase = (_NextNode_DeclareVariable) tmp.nodeBase;
             _NextNode_ID nodeBase = (_NextNode_ID) this.nodeBase;
             set_Color(writer, "v", "#9991e3", current);
-            set_Label(writer, "v", nodeBase.lexem);
+            set_Label(writer, "v", nodeBase.lexem + "\n" + tmpBase.asm_name);
             set_Xlabel(writer, "v", tmpBase.lexTypeTERMINAL.getMin());
         } else if (nodeBase instanceof _NextNode_If) {
             set_Color(writer, "v", "#00c200", current);
@@ -222,7 +222,7 @@ public class NextNode {
             final int degree = nodeBase.degree;
             String tmp = nodeBase.isLeft == true ? "<<" : ">>";
             set_Color(writer, "v", "#FFFFFF", current);
-            set_Label(writer, "v", tmp + degree );
+            set_Label(writer, "v", tmp + degree);
 //            set_Xlabel(writer, "v", "CALL");
         } else {
             throw new Exception("ASD1ASDASD " + nodeBase.getClass().getName());
@@ -282,7 +282,7 @@ public class NextNode {
     private static Stack<NextNode_Triad> stack_GOTO = new Stack<>();
 
     public List<NextNode_Triad> createTriads(List<NextNode_Triad> listTriads) throws Exception {
-        if(isCreateTriad)
+        if (isCreateTriad)
             return new ArrayList<>();
         isCreateTriad = true;
         String str = "";
@@ -634,21 +634,23 @@ public class NextNode {
     public boolean isConstant() {
         return (this.nodeBase instanceof _NextNode_Int) || (this.nodeBase instanceof _NextNode_Double);
     }
+
     public boolean isAssign() {
         return (this.nodeBase instanceof _NextNode_Assign);
     }
+
     // объявленная переменная со значением.
     public boolean isId_withValue() {
-        if(this.nodeBase instanceof _NextNode_ID){
+        if (this.nodeBase instanceof _NextNode_ID) {
             final _NextNode_ID nodeBase = (_NextNode_ID) this.nodeBase;
             final NextNode nextNode = nodeBase.nextNode;
-            if( !(nextNode.nodeBase instanceof  _NextNode_DeclareVariable))
+            if (!(nextNode.nodeBase instanceof _NextNode_DeclareVariable))
                 return false;
             _NextNode_DeclareVariable nextNode_declareVariable =
                     (_NextNode_DeclareVariable) nextNode.nodeBase;
 
             final String currentValue = nextNode_declareVariable.currentValue;
-            if(currentValue != null)
+            if (currentValue != null)
                 return true;
         }
         return false;
@@ -657,6 +659,10 @@ public class NextNode {
 
     public boolean isId() {
         return (this.nodeBase instanceof _NextNode_ID);
+    }
+
+    public boolean isDeclareVariable() {
+        return (this.nodeBase instanceof _NextNode_DeclareVariable);
     }
 
     public boolean isCall() {

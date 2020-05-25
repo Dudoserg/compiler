@@ -9,6 +9,7 @@ import main.Lab3.createLLK.Table;
 import main.Lab3.exceptions.Ex_Exception;
 import main.Lab4.TreeNext.TreeNext;
 import main.Lab4.Triads;
+import main.Lab7.Asm;
 import main.SavePoint;
 import main.algoritm_1and2.maga.Elem;
 import main.algoritm_1and2.maga.ElemType;
@@ -471,15 +472,20 @@ public class LLK {
             final String treeNext_triadsStr_before = treeNext.createTriads();
             System.out.println(treeNext_triadsStr_before);
 
+            Asm asm = new Asm(treeNext);
+            asm.renameVariableAsm();
+            asm.createSectionData();
+            System.out.print("");
+
 
 //            treeNext.optimization();
-//            System.out.println("\n\n");
-//            System.out.println("\n\n------------------------------------");
-//            System.out.println("after optimization----------------------------------------------\n");
-//            if (devMode)
-//                treeNext.draw(null,"after");
-//            final String treeNext_triadsStr_after = treeNext.createTriads();
-//            System.out.println(treeNext_triadsStr_after);
+            System.out.println("\n\n");
+            System.out.println("\n\n------------------------------------");
+            System.out.println("after optimization----------------------------------------------\n");
+            if (devMode)
+                treeNext.draw(null,"after");
+            final String treeNext_triadsStr_after = treeNext.createTriads();
+            System.out.println(treeNext_triadsStr_after);
 
         }
 
