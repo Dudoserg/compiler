@@ -2,14 +2,13 @@ package main.Lab4.TreeNext;
 
 import lombok.AllArgsConstructor;
 import main.Lab2.LexTypeTERMINAL;
+import main.Lab4.TreeNext.Const.Interface_Const;
 import main.Lab4.TreeNext.Const._NextNode_Double;
 import main.Lab4.TreeNext.Const._NextNode_Int;
-import main.Lab4.TreeNext.MathOperation._NextNode_Div;
-import main.Lab4.TreeNext.MathOperation._NextNode_Minus;
-import main.Lab4.TreeNext.MathOperation._NextNode_Plus;
-import main.Lab4.TreeNext.MathOperation._NextNode_Star;
+import main.Lab4.TreeNext.MathOperation.*;
 import main.Lab4.TreeNext.Relations.*;
-import main.Lab4.TriadsByType.Triad_Proc;
+import main.Lab4.Triad;
+import main.Lab4.TriadsByType.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -284,10 +283,7 @@ public class NextNode {
 
 
     /**
-     * Создаем триады строки
-     * @param listTriads
-     * @return
-     * @throws Exception
+     * Создаем триады
      */
     public List<NextNode_Triad> createTriads_str(List<NextNode_Triad> listTriads) throws Exception {
         if (isCreateTriad)
@@ -304,17 +300,25 @@ public class NextNode {
             _NextNode_Func nodeBase = (_NextNode_Func) this.nodeBase;
 
             final NextNode_Triad proc = addTriad("proc", nodeBase.lexem, null, listTriads);
-            proc.triad_base = new Triad_Proc(nodeBase.lexem, this);
+            proc.triad.triad_base = new Triad_Proc(nodeBase.lexem, this);
+
             final NextNode_Triad prolog = addTriad("prolog", null, null, listTriads);
+            prolog.triad.triad_base = new Triad_Prolog();
+
             if (left != null)
                 this.left.createTriads_str(listTriads);
 
         } else if (nodeBase instanceof _NextNode_FuncEnd) {
             _NextNode_FuncEnd nodeBase = (_NextNode_FuncEnd) this.nodeBase;
 
-            addTriad("epilog", null, null, listTriads);
-            addTriad("ret", null, null, listTriads);
-            addTriad("endp", null, null, listTriads);
+            final NextNode_Triad epilog = addTriad("epilog", null, null, listTriads);
+            epilog.triad.triad_base = new Triad_Epilog();
+
+            final NextNode_Triad ret = addTriad("ret", null, null, listTriads);
+            ret.triad.triad_base = new Triad_Ret();
+
+            final NextNode_Triad endp = addTriad("endp", null, null, listTriads);
+            endp.triad.triad_base = new Triad_Endp();
 
         } else if (nodeBase instanceof _NextNode_DeclareVariable) {
             _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) this.nodeBase;
@@ -334,10 +338,31 @@ public class NextNode {
             else
                 second = right.nodeBase.triad_lexem;
 
-            addTriad("=", first, second, listTriads);
+            final NextNode_Triad assignTriad = addTriad("=", first, second, listTriads);
 
+            Triad_Math_Operation triad_math_operation = new Triad_Math_Operation();
+            assignTriad.triad.triad_base = triad_math_operation;
+            {
+                triad_math_operation.left_node = left;
+                triad_math_operation.left_lexTypeTERMINAL = ((Interface_LexType) left.nodeBase).getType();
+                triad_math_operation.left_lexemStr = ((Interface_Const) left.nodeBase).getLexem_();
 
-        } else if (nodeBase instanceof _NextNode_Cast) {
+                triad_math_operation.right_node = right;
+                if (right.isConstant()) {
+                    // константа
+                    triad_math_operation.right_lexTypeTERMINAL = ((Interface_LexType) right.nodeBase).getType();
+                    triad_math_operation.right_lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
+                } else if (right.nodeBase.isTriad()) {
+                    triad_math_operation.right_triad = listTriads.get(right.nodeBase.triad_number).triad;
+                    triad_math_operation.right_triad_num = right.nodeBase.triad_number;
+                } else if (right.nodeBase instanceof _NextNode_ID) {
+                    triad_math_operation.right_lexTypeTERMINAL = ((Interface_LexType) right.nodeBase).getType();
+                    triad_math_operation.right_lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
+                }
+            }
+            System.out.print("");
+        }
+        else if (nodeBase instanceof _NextNode_Cast) {
             _NextNode_Cast nodeBase = (_NextNode_Cast) this.nodeBase;
             if (left != null) this.left.createTriads_str(listTriads);
             if (right != null) this.right.createTriads_str(listTriads);
@@ -379,19 +404,17 @@ public class NextNode {
         } else if (nodeBase instanceof _NextNode_Plus) {
             _NextNode_Plus nodeBase = (_NextNode_Plus) this.nodeBase;
             createMathOperation_Triads(this, listTriads);
-
+            System.out.print("");
         } else if (nodeBase instanceof _NextNode_Minus) {
             _NextNode_Minus nodeBase = (_NextNode_Minus) this.nodeBase;
             createMathOperation_Triads(this, listTriads);
-
         } else if (nodeBase instanceof _NextNode_Div) {
             _NextNode_Div nodeBase = (_NextNode_Div) this.nodeBase;
             createMathOperation_Triads(this, listTriads);
-
         } else if (nodeBase instanceof _NextNode_Star) {
             _NextNode_Star nodeBase = (_NextNode_Star) this.nodeBase;
             createMathOperation_Triads(this, listTriads);
-
+            System.out.print("");
         } else if (nodeBase instanceof _NextNode_Int) {
             _NextNode_Int nodeBase = (_NextNode_Int) this.nodeBase;
             nodeBase.triad_lexem = nodeBase.lexem;
@@ -414,21 +437,34 @@ public class NextNode {
 //                    final _NextNode_Func funcNodeBase = (_NextNode_Func) callNodeBase.func.nodeBase;
 //                    addTriad("+", "0", funcNodeBase.lexem, listTriads);
 //                }
-                if (left.nodeBase instanceof _NextNode_ID) {
-                    addTriad("+", "0", ((_NextNode_ID) left.nodeBase).lexem, listTriads);
+                if (left.nodeBase instanceof _NextNode_ID || left.nodeBase instanceof _NextNode_Int ||
+                        left.nodeBase instanceof _NextNode_Double) {
+                    final NextNode_Triad nextNode_triad = addTriad("+", "0", ((Interface_Const) left.nodeBase).getLexem_(), listTriads);
+                    nextNode_triad.triad = new Triad(nextNode_triad.operation, nextNode_triad.first, nextNode_triad.second);
+
+                    Triad_Math_Operation triad_math_operation = new Triad_Math_Operation();
+                    nextNode_triad.triad.triad_base = triad_math_operation;
+
+                    triad_math_operation.left_lexTypeTERMINAL = LexTypeTERMINAL._INT;
+                    triad_math_operation.left_lexemStr = "0";
+                    // TODO желательно еще вершину создать для однообразия
+
                 }
-                if (left.nodeBase instanceof _NextNode_Int) {
-                    addTriad("+", "0", ((_NextNode_Int) left.nodeBase).lexem, listTriads);
-                }
-                if (left.nodeBase instanceof _NextNode_Double) {
-                    addTriad("+", "0", ((_NextNode_Double) left.nodeBase).lexem, listTriads);
-                }
+
                 this.left.createTriads_str(listTriads);
             }
 
             String first = "(" + (listTriads.size() + 1) + ")";
             String second = "??";
             final NextNode_Triad triad_IF = addTriad("if", first, second, listTriads);
+
+            triad_IF.triad = new Triad(triad_IF.operation, triad_IF.first, triad_IF.second);    // создаем объект триаду
+
+            final Triad_IF triad_if = new Triad_IF();   // помещаем туда триаду иф
+            triad_IF.triad.triad_base = triad_if;
+
+            triad_if.triad_true_index = listTriads.size() + 1;
+
             NextNode.stack_IF.add(triad_IF);
 
             if (right != null) this.right.createTriads_str(listTriads);
@@ -441,15 +477,36 @@ public class NextNode {
             if (left != null) this.left.createTriads_str(listTriads);
             // GOTO
             final NextNode_Triad triad_GOTO = addTriad("goto", null, null, listTriads);
+            triad_GOTO.triad = new Triad(triad_GOTO.operation, triad_GOTO.first, triad_GOTO.second);
+            triad_GOTO.triad.triad_base = new Triad_GOTO();
             NextNode.stack_GOTO.add(triad_GOTO);
             // иф ложь
             if (right != null) this.right.createTriads_str(listTriads);
             // NOP
-            addTriad("NOP", null, null, listTriads);
-            final NextNode_Triad popIf = stack_IF.pop();
+            final NextNode_Triad nop = addTriad("NOP", null, null, listTriads);
+            nop.triad = new Triad(nop.operation, nop.first, nop.second);
+            nop.triad.triad_base = new Triad_NOP();
+
+
+
             final NextNode_Triad popGOTO = stack_GOTO.pop();
-            popIf.second = "(" + String.valueOf(listTriads.size() - 1) + ")";
             popGOTO.second = "(" + String.valueOf(listTriads.size() - 1) + ")";
+            ((Triad_GOTO)popGOTO.triad.triad_base).jumpTo = listTriads.get(listTriads.size() - 1).triad;
+            ((Triad_GOTO)popGOTO.triad.triad_base).jumpTo_index = listTriads.size() - 1;
+
+
+            final NextNode_Triad popIf = stack_IF.pop();
+            popIf.second = "(" + String.valueOf(popGOTO.index + 1) + ")";
+            popIf.triad.second = "(" + String.valueOf(popGOTO.index + 1) + ")";
+            ((Triad_IF)popIf.triad.triad_base).triad_true = listTriads.get(((Triad_IF)popIf.triad.triad_base).triad_true_index).triad;
+            ((Triad_IF)popIf.triad.triad_base).triad_false = listTriads.get(popGOTO.index + 1).triad;
+            ((Triad_IF)popIf.triad.triad_base).triad_false_index = popGOTO.index + 1;
+
+            // Если goto и NOP Рядом, то значит GOTO не нужен
+            if (nop.index.equals(popGOTO.index + 1)){
+                // удаляем goto из массива
+                listTriads.remove(popGOTO);
+            }
 
         } else if (nodeBase instanceof _NextNode_Great) {
             _NextNode_Great nodeBase = (_NextNode_Great) this.nodeBase;
@@ -485,7 +542,24 @@ public class NextNode {
                 first = "(" + right.nodeBase.triad_number.toString() + ")";
             else
                 first = right.nodeBase.triad_lexem;
-            addTriad("push_for_return", first, null, listTriads);
+            final NextNode_Triad push_for_return = addTriad("push_for_return", first, null, listTriads);
+
+            Triad_Push_For_Return triad_push_for_return = new Triad_Push_For_Return();
+            push_for_return.triad.triad_base = triad_push_for_return;
+            {
+
+                if (right.isConstant()) {
+                    // константа
+                    triad_push_for_return.lexTypeTERMINAL = ((Interface_LexType) right.nodeBase).getType();
+                    triad_push_for_return.lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
+                } else if (right.nodeBase.isTriad()) {
+                    triad_push_for_return.triad = listTriads.get(right.nodeBase.triad_number).triad;
+                    triad_push_for_return.triad_index = right.nodeBase.triad_number;
+                } else if (right.nodeBase instanceof _NextNode_ID) {
+                    triad_push_for_return.lexTypeTERMINAL = ((Interface_LexType) right.nodeBase).getType();
+                    triad_push_for_return.lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
+                }
+            }
 
         } else if (nodeBase instanceof _NextNode_StartLevel) {
             _NextNode_StartLevel nodeBase = (_NextNode_StartLevel) this.nodeBase;
@@ -503,14 +577,35 @@ public class NextNode {
             else
                 first = right.nodeBase.triad_lexem;
 
-            addTriad("push", first, null, listTriads);
+            final NextNode_Triad push = addTriad("push", first, null, listTriads);
 
+            Triad_PUSH triad_push = new Triad_PUSH();
+            push.triad.triad_base = triad_push;
+            {
+                if (right.isConstant()) {
+                    // константа
+                    triad_push.lexTypeTERMINAL = ((Interface_LexType) right.nodeBase).getType();
+                    triad_push.lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
+                } else if (right.nodeBase.isTriad()) {
+                    triad_push.triad = listTriads.get(right.nodeBase.triad_number).triad;
+                    triad_push.triad_index = right.nodeBase.triad_number;
+                } else if (right.nodeBase instanceof _NextNode_ID) {
+                    triad_push.lexTypeTERMINAL = ((Interface_LexType) right.nodeBase).getType();
+                    triad_push.lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
+                }
+            }
         } else if (nodeBase instanceof _NextNode_Call) {
             _NextNode_Call callNodeBase = (_NextNode_Call) this.nodeBase;
             _NextNode_Func funcNodeBase = (_NextNode_Func) callNodeBase.func.nodeBase;
             if (left != null) this.left.createTriads_str(listTriads);
-            addTriad("call", funcNodeBase.lexem, null, listTriads);
+            final NextNode_Triad call = addTriad("call", funcNodeBase.lexem, null, listTriads);
             callNodeBase.triad_number = listTriads.size() - 1;
+
+            Triad_CALL triad_call =
+                    new Triad_CALL(callNodeBase.func, funcNodeBase.lexem, funcNodeBase.lexTypeTERMINAL);
+            call.triad.triad_base = triad_call;
+
+
         } else if (nodeBase instanceof _NextNode_Shift) {
             if (right != null) this.right.createTriads_str(listTriads);
 
@@ -550,33 +645,67 @@ public class NextNode {
         else
             second = nextNode.right.nodeBase.triad_lexem;
 
-
+        NextNode_Triad currentTriad;
         if (nextNode.nodeBase instanceof _NextNode_Plus) {
-            addTriad("+", first, second, list);
+            currentTriad = addTriad("+", first, second, list);
         } else if (nextNode.nodeBase instanceof _NextNode_Minus) {
-            addTriad("-", first, second, list);
+            currentTriad = addTriad("-", first, second, list);
         } else if (nextNode.nodeBase instanceof _NextNode_Div) {
-            addTriad("/", first, second, list);
+            currentTriad = addTriad("/", first, second, list);
         } else if (nextNode.nodeBase instanceof _NextNode_Star) {
-            addTriad("*", first, second, list);
+            currentTriad = addTriad("*", first, second, list);
         } else if (nextNode.nodeBase instanceof _NextNode_Great) {
-            addTriad(">", first, second, list);
+            currentTriad = addTriad(">", first, second, list);
         } else if (nextNode.nodeBase instanceof _NextNode_Great_Equal) {
-            addTriad(">=", first, second, list);
+            currentTriad = addTriad(">=", first, second, list);
         } else if (nextNode.nodeBase instanceof _NextNode_Less) {
-            addTriad("<", first, second, list);
+            currentTriad = addTriad("<", first, second, list);
         } else if (nextNode.nodeBase instanceof _NextNode_Less_Equal) {
-            addTriad("<=", first, second, list);
+            currentTriad = addTriad("<=", first, second, list);
         } else if (nextNode.nodeBase instanceof _NextNode_Equal) {
-            addTriad("==", first, second, list);
+            currentTriad = addTriad("==", first, second, list);
         } else if (nextNode.nodeBase instanceof _NextNode_Not_Equal) {
-            addTriad("!=", first, second, list);
+            currentTriad = addTriad("!=", first, second, list);
         } else
             throw new Exception("asdf7320jsj");
 
+
+        Triad_Math_Operation triad_math_operation = new Triad_Math_Operation();
+        currentTriad.triad.triad_base = triad_math_operation;
+        {
+            triad_math_operation.left_node = left;
+            if (left.isConstant()) {
+                // константа
+                triad_math_operation.left_lexTypeTERMINAL = ((Interface_LexType) left.nodeBase).getType();
+                triad_math_operation.left_lexemStr = ((Interface_Const) left.nodeBase).getLexem_();
+            } else if (left.nodeBase.isTriad()) {
+                triad_math_operation.left_triad = list.get(left.nodeBase.triad_number).triad;
+                triad_math_operation.left_triad_num = left.nodeBase.triad_number;
+            } else if (left.nodeBase instanceof _NextNode_ID) {
+                triad_math_operation.left_lexTypeTERMINAL = ((Interface_LexType) left.nodeBase).getType();
+                triad_math_operation.left_lexemStr = ((Interface_Const) left.nodeBase).getLexem_();
+            }
+        }
+
+        {
+            triad_math_operation.right_node = right;
+            if (right.isConstant()) {
+                // константа
+                triad_math_operation.right_lexTypeTERMINAL = ((Interface_LexType) right.nodeBase).getType();
+                triad_math_operation.right_lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
+            } else if (right.nodeBase.isTriad()) {
+                triad_math_operation.right_triad = list.get(right.nodeBase.triad_number).triad;
+                triad_math_operation.right_triad_num = right.nodeBase.triad_number;
+            } else if (right.nodeBase instanceof _NextNode_ID) {
+                triad_math_operation.right_lexTypeTERMINAL = ((Interface_LexType) right.nodeBase).getType();
+                triad_math_operation.right_lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
+            }
+        }
+
         nodeBase.triad_number = list.size() - 1;
     }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void isConst_or_isVar(NextNode nextNode) {
 //        if(nextNode.nodeBase instanceof _Nex)
     }

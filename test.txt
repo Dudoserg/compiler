@@ -1,7 +1,20 @@
 int global1 = 136;
 int global2  = global1 * 2;
+int global3 = global2;
 
 int square(int x){
+    int x0 = 2;
+    int x1 = 2;
+    int x2 = 2;
+    int x3 = 2;
+    int x4 = 2;
+    int x5 = 2;
+
+    if( x > 2){
+       int g = 0;
+    }else{
+        int q = 99999;
+    }
     return x * x;
 }
 int main(){
@@ -11,9 +24,10 @@ int main(){
     int a, b, c, d, e, f , g;
     int t, h,  k;
 
-    a = 2;
+    a = square(2);
     b = 3;
-    c = a + b;
+    c = 4;
+    c = a + b + c;
     //a = b * c / (f * k / h) / d * t;
 
     //int first = b * c / (f * k / h) / d * t;
@@ -32,7 +46,6 @@ int main(){
 
     //double d = (a / b) * (a / b);
     int kekf = 213;
-    return 0;
+    return 0 + 1;
 }
 
-int global3 = 3;

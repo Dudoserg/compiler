@@ -26,4 +26,7 @@ public class _NextNode_Func extends _NextNodeBase implements Interface_LexType {
     public LexTypeTERMINAL getType() {
         return lexTypeTERMINAL;
     }
+
+
+
 }

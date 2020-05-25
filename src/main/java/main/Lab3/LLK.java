@@ -22,6 +22,15 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class LLK {
+    public  static boolean DRAWING = false;
+
+
+
+
+
+
+    boolean flag_working = true;
+    boolean devMode;
     public static void main(String[] args) throws Exception {
         long start = System.currentTimeMillis();
         LLK llk = new LLK(true);
@@ -32,8 +41,7 @@ public class LLK {
     Triads triads;
     Map<Pair<Elem, Elem>, List<RightPart>> table;
     Table tableObj;
-    boolean flag_working = true;
-    boolean devMode;
+
     Stack<Elem> stack = new Stack<>();
     List<Elem> historyStack = new ArrayList<>();
     List<Pair<LexTypeTERMINAL, String>> historyScaner = new ArrayList<>();
@@ -475,6 +483,8 @@ public class LLK {
             Asm asm = new Asm(treeNext);
             asm.renameVariableAsm();
             asm.createSectionData();
+
+            asm.createAsmFile();
             System.out.print("");
 
 

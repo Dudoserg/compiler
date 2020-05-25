@@ -152,54 +152,54 @@ public class Triads {
     }
 
     public void addMathOperation(String sign) {
-        if (!isTriads) return ;
-
-        StackElem s_2 = this.stackGetId(-1);
-        StackElem s_1 = this.stackGetId(-1);
-        String s_1Str = s_1.isTriad == true ? "(" + s_1.triad_index + ")" : s_1.lexemStr;
-        String s_2Str = s_2.isTriad == true ? "(" + s_2.triad_index + ")" : s_2.lexemStr;
-
-        Triad triad = new Triad(sign, s_1Str, s_2Str);
-//        this.add(sign, s_1Str, s_2Str);
-
-        Triad_Math_Operation triad_math_operation = new Triad_Math_Operation();
-
-        {
-            if (s_1.isTriad) {
-                triad_math_operation.left_index = s_1.triad_index;
-                triad_math_operation.left_triad = this.triadList.get(s_1.triad_index);
-            } else if (s_1.isCallVariable) {
-                triad_math_operation.left_lexemStr = s_1.lexemStr;
-                triad_math_operation.left_node = s_1.node;
-            } else if (s_1.isConstant) {
-                triad_math_operation.left_lexTypeTERMINAL = s_1.lexTypeTERMINAL;
-                triad_math_operation.left_lexemStr = s_1.lexemStr;
-            }
-        }
-        {
-            if (s_2.isTriad) {
-                triad_math_operation.right_index = s_2.triad_index;
-                triad_math_operation.right_triad = this.triadList.get(s_2.triad_index);
-            } else if (s_2.isCallVariable) {
-                triad_math_operation.right_lexemStr = s_2.lexemStr;
-                triad_math_operation.right_node = s_2.node;
-            } else if (s_2.isConstant) {
-                triad_math_operation.right_lexTypeTERMINAL = s_2.lexTypeTERMINAL;
-                triad_math_operation.right_lexemStr = s_2.lexemStr;
-            }
-        }
-
-        triad.triad_base = triad_math_operation;
-
-        this.triadList.add(triad);
-
-
-        if (!sign.equals("=")) {
-            StackElem stackElem = StackElem.createTriad((this.triadList.size() - 1));
-//            this.stackAdd("(" + (this.triadList.size() - 1) + ")");
-            this.stackAdd(stackElem);
-        } else
-            System.out.print("");
+//        if (!isTriads) return ;
+//
+//        StackElem s_2 = this.stackGetId(-1);
+//        StackElem s_1 = this.stackGetId(-1);
+//        String s_1Str = s_1.isTriad == true ? "(" + s_1.triad_index + ")" : s_1.lexemStr;
+//        String s_2Str = s_2.isTriad == true ? "(" + s_2.triad_index + ")" : s_2.lexemStr;
+//
+//        Triad triad = new Triad(sign, s_1Str, s_2Str);
+////        this.add(sign, s_1Str, s_2Str);
+//
+//        Triad_Math_Operation triad_math_operation = new Triad_Math_Operation();
+//
+//        {
+//            if (s_1.isTriad) {
+//                triad_math_operation.left_index = s_1.triad_index;
+//                triad_math_operation.left_triad = this.triadList.get(s_1.triad_index);
+//            } else if (s_1.isCallVariable) {
+//                triad_math_operation.left_lexemStr = s_1.lexemStr;
+//                triad_math_operation.left_node = s_1.node;
+//            } else if (s_1.isConstant) {
+//                triad_math_operation.left_lexTypeTERMINAL = s_1.lexTypeTERMINAL;
+//                triad_math_operation.left_lexemStr = s_1.lexemStr;
+//            }
+//        }
+//        {
+//            if (s_2.isTriad) {
+//                triad_math_operation.right_index = s_2.triad_index;
+//                triad_math_operation.right_triad = this.triadList.get(s_2.triad_index);
+//            } else if (s_2.isCallVariable) {
+//                triad_math_operation.right_lexemStr = s_2.lexemStr;
+//                triad_math_operation.right_node = s_2.node;
+//            } else if (s_2.isConstant) {
+//                triad_math_operation.right_lexTypeTERMINAL = s_2.lexTypeTERMINAL;
+//                triad_math_operation.right_lexemStr = s_2.lexemStr;
+//            }
+//        }
+//
+//        triad.triad_base = triad_math_operation;
+//
+//        this.triadList.add(triad);
+//
+//
+//        if (!sign.equals("=")) {
+//            StackElem stackElem = StackElem.createTriad((this.triadList.size() - 1));
+////            this.stackAdd("(" + (this.triadList.size() - 1) + ")");
+//            this.stackAdd(stackElem);
+//        } else
+//            System.out.print("");
     }
 
     // =================================================================================================================
@@ -222,17 +222,17 @@ public class Triads {
     }
 
     public void triad_new_func(String lexemStr) {
-        if (!isTriads) return ;
-
-        Triad triad = new Triad("proc", lexemStr, null);
-
-        Triad_Proc triad_proc = new Triad_Proc(lexemStr, this.semantic.getCurrent());
-
-        triad.triad_base = triad_proc;
-
-        this.triadList.add(triad);
-
-//        this.add("proc", lexemStr, null);
+//        if (!isTriads) return ;
+//
+//        Triad triad = new Triad("proc", lexemStr, null);
+//
+//        Triad_Proc triad_proc = new Triad_Proc(lexemStr, this.semantic.getCurrent());
+//
+//        triad.triad_base = triad_proc;
+//
+//        this.triadList.add(triad);
+//
+////        this.add("proc", lexemStr, null);
     }
 
     public void triad_prolog() {
@@ -327,43 +327,43 @@ public class Triads {
     }
 
     public void triad_gener_if_NOP() throws Exception {
-        if (!isTriads) return ;
-
-        Triad triad = new Triad("NOP", null, null);
-
-        Triad_NOP triad_nop = new Triad_NOP();
-
-        triad.triad_base = triad_nop;
-
-        this.triadList.add(triad);
-//        this.add("NOP", null, null);
-
-        int indexTriadNOP = this.triadList.size() - 1;
-        // установим правильные адреса в if
-        int indexTriadIfInList = this.triad_remember_if_num.pop();
-
-        Triad triad_if = this.triadList.get(indexTriadIfInList);
-        triad_if.second = "(" + indexTriadNOP + ")";
-        if (triad_if.triad_base instanceof Triad_IF) {
-            ((Triad_IF) triad_if.triad_base).isFalse = this.triadList.get(indexTriadNOP);
-            ((Triad_IF) triad_if.triad_base).isFalse_index = indexTriadNOP;
-
-            ((Triad_IF) triad_if.triad_base).isTrue = this.triadList.get(indexTriadIfInList + 1);
-            ((Triad_IF) triad_if.triad_base).isTrue_index = indexTriadIfInList + 1;
-            triad_if.first = "(" + (indexTriadIfInList + 1) + ")";
-        } else
-            throw new Exception(" triad_if.triad_base instanceof Triad_IF ");
-
-        // установим правильные адреса в goto
-        Triad triad_goto = this.triadList.get(this.triad_remember_goto_num.pop());
-
-        triad_goto.first = "(" + indexTriadNOP + ")";
-        if (triad_goto.triad_base instanceof Triad_GOTO) {
-            ((Triad_GOTO) triad_goto.triad_base).jumpTo = this.triadList.get(this.triadList.size() - 1);
-            ((Triad_GOTO) triad_goto.triad_base).jumpTo_index = this.triadList.size() - 1;
-        } else
-            throw new Exception(" triad_goto.triad_base instanceof Triad_GOTO ");
-        System.out.print("");
+//        if (!isTriads) return ;
+//
+//        Triad triad = new Triad("NOP", null, null);
+//
+//        Triad_NOP triad_nop = new Triad_NOP();
+//
+//        triad.triad_base = triad_nop;
+//
+//        this.triadList.add(triad);
+////        this.add("NOP", null, null);
+//
+//        int indexTriadNOP = this.triadList.size() - 1;
+//        // установим правильные адреса в if
+//        int indexTriadIfInList = this.triad_remember_if_num.pop();
+//
+//        Triad triad_if = this.triadList.get(indexTriadIfInList);
+//        triad_if.second = "(" + indexTriadNOP + ")";
+//        if (triad_if.triad_base instanceof Triad_IF) {
+//            ((Triad_IF) triad_if.triad_base).isFalse = this.triadList.get(indexTriadNOP);
+//            ((Triad_IF) triad_if.triad_base).isFalse_index = indexTriadNOP;
+//
+//            ((Triad_IF) triad_if.triad_base).isTrue = this.triadList.get(indexTriadIfInList + 1);
+//            ((Triad_IF) triad_if.triad_base).isTrue_index = indexTriadIfInList + 1;
+//            triad_if.first = "(" + (indexTriadIfInList + 1) + ")";
+//        } else
+//            throw new Exception(" triad_if.triad_base instanceof Triad_IF ");
+//
+//        // установим правильные адреса в goto
+//        Triad triad_goto = this.triadList.get(this.triad_remember_goto_num.pop());
+//
+//        triad_goto.first = "(" + indexTriadNOP + ")";
+//        if (triad_goto.triad_base instanceof Triad_GOTO) {
+//            ((Triad_GOTO) triad_goto.triad_base).jumpTo = this.triadList.get(this.triadList.size() - 1);
+//            ((Triad_GOTO) triad_goto.triad_base).jumpTo_index = this.triadList.size() - 1;
+//        } else
+//            throw new Exception(" triad_goto.triad_base instanceof Triad_GOTO ");
+//        System.out.print("");
     }
 
     public void triad_push(String lexemStr, LexTypeTERMINAL next) throws Exception {
@@ -382,81 +382,81 @@ public class Triads {
     }
 
     public void triad_push_param() {
-        if (!isTriads) return ;
-
-        StackElem stackElem = this.stackGetId(-1);
-        Triad triad = null;
-
-        Triad_PUSH triad_push = new Triad_PUSH();
-
-        if (stackElem.isTriad) {
-            triad = new Triad("push", "(" + stackElem.triad_index + ")", null);
-            triad_push.index = stackElem.triad_index;
-            triad_push.triad = this.triadList.get(triad_push.index);
-
-        } else if (stackElem.isCallVariable) {
-            triad = new Triad("push", stackElem.lexemStr , null);
-            triad_push.lexemStr = stackElem.lexemStr;
-
-        } else if (stackElem.isConstant) {
-            triad = new Triad("push", stackElem.lexemStr , null);
-            triad_push.constantStr = stackElem.lexemStr;
-        }
-
-        triad.triad_base = triad_push;
-
-        this.triadList.add(triad);
-//        this.add("push", s_1, null);
+//        if (!isTriads) return ;
+//
+//        StackElem stackElem = this.stackGetId(-1);
+//        Triad triad = null;
+//
+//        Triad_PUSH triad_push = new Triad_PUSH();
+//
+//        if (stackElem.isTriad) {
+//            triad = new Triad("push", "(" + stackElem.triad_index + ")", null);
+//            triad_push.index = stackElem.triad_index;
+//            triad_push.triad = this.triadList.get(triad_push.index);
+//
+//        } else if (stackElem.isCallVariable) {
+//            triad = new Triad("push", stackElem.lexemStr , null);
+//            triad_push.lexemStr = stackElem.lexemStr;
+//
+//        } else if (stackElem.isConstant) {
+//            triad = new Triad("push", stackElem.lexemStr , null);
+//            triad_push.constantStr = stackElem.lexemStr;
+//        }
+//
+//        triad.triad_base = triad_push;
+//
+//        this.triadList.add(triad);
+////        this.add("push", s_1, null);
     }
 
     public void triad_call() {
-        if (!isTriads) return ;
-
-        StackElem stackElem = this.stackGetId(-1);
-        String s_1 = stackElem.lexemStr;
-//        this.add("call", s_1, null);
-        Triad triad = new Triad("call", s_1, null);
-
-        Triad_CALL triad_call = new Triad_CALL(this.semantic.getNode_callFunc());
-
-        triad.triad_base = triad_call;
-
-        triadList.add(triad);
-        StackElem stackElemResult = StackElem.createTriad((this.triadList.size() - 1));
-//        this.stackAdd("(" + (this.triadList.size() - 1) + ")");
-        this.stackAdd(stackElemResult);
+//        if (!isTriads) return ;
+//
+//        StackElem stackElem = this.stackGetId(-1);
+//        String s_1 = stackElem.lexemStr;
+////        this.add("call", s_1, null);
+//        Triad triad = new Triad("call", s_1, null);
+//
+//        Triad_CALL triad_call = new Triad_CALL(this.semantic.getNode_callFunc());
+//
+//        triad.triad_base = triad_call;
+//
+//        triadList.add(triad);
+//        StackElem stackElemResult = StackElem.createTriad((this.triadList.size() - 1));
+////        this.stackAdd("(" + (this.triadList.size() - 1) + ")");
+//        this.stackAdd(stackElemResult);
     }
 
     public void triad_return() throws Exception {
-        if (!isTriads) return ;
-
-        StackElem stackElem = this.stackGetId(-1);
-        Triad triad ;
-        Triad_Push_For_Return triad_push_for_return = new Triad_Push_For_Return();
-        if (stackElem.isTriad) {
-            triad = new Triad("push_for_return", "(" + stackElem.triad_index + ")", null);
-            triad_push_for_return.index = stackElem.triad_index;
-            triad_push_for_return.triad = this.triadList.get(stackElem.triad_index);
-//            this.add("push_for_return", "(" + stackElem.triad_index + ")", null);
-
-        } else if (stackElem.isCallVariable) {
-            triad = new Triad("push_for_return", stackElem.lexemStr, null);
-            triad_push_for_return.lexemStr = stackElem.lexemStr;
-            triad_push_for_return.node = stackElem.node;
-//            this.add("push_for_return", stackElem.lexemStr, null);
-
-        } else if (stackElem.isConstant) {
-            triad = new Triad("push_for_return", stackElem.lexemStr, null);
-            triad_push_for_return.lexTypeTERMINAL = stackElem.lexTypeTERMINAL;
-            triad_push_for_return.lexemStr = stackElem.lexemStr;
-            //this.add("push_for_return", stackElem.lexemStr, null);
-        }else {
-            throw  new Exception("triad_return");
-        }
-
-        triad.triad_base = triad_push_for_return;
-
-        triadList.add(triad);
+//        if (!isTriads) return ;
+//
+//        StackElem stackElem = this.stackGetId(-1);
+//        Triad triad ;
+//        Triad_Push_For_Return triad_push_for_return = new Triad_Push_For_Return();
+//        if (stackElem.isTriad) {
+//            triad = new Triad("push_for_return", "(" + stackElem.triad_index + ")", null);
+//            triad_push_for_return.index = stackElem.triad_index;
+//            triad_push_for_return.triad = this.triadList.get(stackElem.triad_index);
+////            this.add("push_for_return", "(" + stackElem.triad_index + ")", null);
+//
+//        } else if (stackElem.isCallVariable) {
+//            triad = new Triad("push_for_return", stackElem.lexemStr, null);
+//            triad_push_for_return.lexemStr = stackElem.lexemStr;
+//            triad_push_for_return.node = stackElem.node;
+////            this.add("push_for_return", stackElem.lexemStr, null);
+//
+//        } else if (stackElem.isConstant) {
+//            triad = new Triad("push_for_return", stackElem.lexemStr, null);
+//            triad_push_for_return.lexTypeTERMINAL = stackElem.lexTypeTERMINAL;
+//            triad_push_for_return.lexemStr = stackElem.lexemStr;
+//            //this.add("push_for_return", stackElem.lexemStr, null);
+//        }else {
+//            throw  new Exception("triad_return");
+//        }
+//
+//        triad.triad_base = triad_push_for_return;
+//
+//        triadList.add(triad);
 
     }
 

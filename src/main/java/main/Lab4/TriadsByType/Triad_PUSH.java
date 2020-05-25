@@ -2,22 +2,22 @@ package main.Lab4.TriadsByType;
 
 import lombok.Getter;
 import lombok.Setter;
+import main.Lab2.LexTypeTERMINAL;
+import main.Lab4.TreeNext.NextNode;
 import main.Lab4.Triad;
 import main.Lab4.TriadType;
 
 @Getter
 @Setter
 public class Triad_PUSH extends _Triad_Base {
-    // Если кладем триаду (тут может быть вычисление математической операции, вызов функции)
-    public int index;
-    public Triad triad;
 
 
-    // Если кладем идентификатор переменно
-    public String lexemStr = null;
-
-    public String constantStr = null;
-
+    public String lexemStr;
+    public NextNode node;  // Если переменная
+    //public int index = Integer.MIN_VALUE;
+    public Triad triad;    // если триада
+    public Integer triad_index;
+    public LexTypeTERMINAL lexTypeTERMINAL;   // если константа
 
     public Triad_PUSH() {
         this.triadType = TriadType.PUSH;

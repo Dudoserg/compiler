@@ -12,5 +12,6 @@ import main.Lab4.TriadType;
 public class Triad_Prolog extends _Triad_Base{
     public Triad_Prolog() {
         this.triadType = TriadType.PROLOG;
+
     }
 }

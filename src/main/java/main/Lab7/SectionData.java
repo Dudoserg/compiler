@@ -3,10 +3,10 @@ package main.Lab7;
 import main.Lab4.TreeNext.NextNode;
 
 public class SectionData {
-    String variable_str;
-    String type_str;
-    String value_str;
-    NextNode node;
+    public String variable_str;
+    public String type_str;
+    public String value_str;
+    public NextNode node;
 
     public SectionData(NextNode node, String variable_str, String type_str, String value_str) {
         this.variable_str = variable_str;

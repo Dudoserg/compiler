@@ -28,6 +28,7 @@ public class TreeNext {
     private NextNode savedVariable;
     private NextNode find_last;
     private List<NextNode> stack_node_callFunc = new ArrayList<>(0);
+    public List<NextNode_Triad> listTriads = new ArrayList<>();
 
     public TreeNext(Semantic semantic, Triads triads, boolean devMode) {
         this.semantic = semantic;
@@ -475,6 +476,8 @@ public class TreeNext {
 
     public void draw(NextNode start, NextNode current, String fileName) throws IOException {
         clearDrawed(start);
+        if(!LLK.DRAWING)
+            return;
         String jpgPath = "деревья/" + fileName;
         String gvPath = "деревья/gv/" + fileName + ".gv";
         try (FileWriter writer = new FileWriter(gvPath, false)) {
@@ -500,6 +503,8 @@ public class TreeNext {
 
     public void draw(NextNode current, String fileName) throws Exception {
         clearDrawed(this.root);
+        if(!LLK.DRAWING)
+            return;
         String jpgPath = "деревья/" + fileName;
         String gvPath = "деревья/gv/" + fileName + ".gv";
         try (FileWriter writer = new FileWriter(gvPath, false)) {
@@ -1128,11 +1133,13 @@ public class TreeNext {
         if(nextNode.right  != null)
             clearCreateTriads(nextNode.right);
     }
+
     public String createTriads() throws Exception {
-        List<NextNode_Triad> listTriads = new ArrayList<>();
+
 
         clearCreateTriads(this.root);
 
+        listTriads.clear();
         listTriads = root.createTriads_str(listTriads);
 
 

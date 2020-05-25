@@ -2,6 +2,7 @@ package main.Lab4.TreeNext;
 
 import lombok.AllArgsConstructor;
 import main.Lab4.TreeNext.Relations.*;
+import main.Lab4.Triad;
 import main.Lab4.TriadsByType._Triad_Base;
 
 import java.io.FileWriter;
@@ -11,20 +12,24 @@ import java.util.Objects;
 
 
 public class NextNode_Triad {
+
     public String operation;
 
     public String first;
     public String second;
     public Integer index;
 
+    ///
+    public Triad triad;
+
     public NextNode_Triad(String operation, String first, String second, Integer index) {
         this.operation = operation;
         this.first = first;
         this.second = second;
         this.index = index;
+        this.triad = new Triad(operation, first, second);
     }
 
-    ///
-    _Triad_Base triad_base;
+
 
 }

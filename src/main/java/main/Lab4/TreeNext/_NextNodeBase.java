@@ -11,4 +11,8 @@ public class _NextNodeBase {
     public _NextNodeBase(SavePoint savePoint) {
         this.savePoint = savePoint;
     }
+
+    public boolean isTriad(){
+        return  this.triad_number >= 0;
+    }
 }

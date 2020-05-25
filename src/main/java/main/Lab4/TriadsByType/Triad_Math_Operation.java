@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import main.Lab2.LexTypeTERMINAL;
 import main.Lab3.Node;
+import main.Lab4.TreeNext.NextNode;
 import main.Lab4.Triad;
 import main.Lab4.TriadType;
 
@@ -13,17 +14,21 @@ import main.Lab4.TriadType;
 public class Triad_Math_Operation extends _Triad_Base{
 
     public String left_lexemStr;
-    public Node left_node;  // Если переменная
-    public int left_index = Integer.MIN_VALUE;
-    public Triad left_triad;    // если триада
-    public LexTypeTERMINAL left_lexTypeTERMINAL;   // если константа
+    //public int left_index = Integer.MIN_VALUE;
+
+    public NextNode left_node;                          // Если переменная
+    public Triad left_triad;                            // если триада
+    public Integer left_triad_num;
+    public LexTypeTERMINAL left_lexTypeTERMINAL;        // если константа
+
+
 
     public String right_lexemStr;
-
-    public Triad right_triad;    // если триада
-    public int right_index = Integer.MIN_VALUE;;
-    public Node right_node;  // Если переменная
-    public LexTypeTERMINAL right_lexTypeTERMINAL;  // если константа
+    public NextNode right_node;                             // Если переменная
+    //public int right_index = Integer.MIN_VALUE;;
+    public Triad right_triad;                           // если триада
+    public Integer right_triad_num;
+    public LexTypeTERMINAL right_lexTypeTERMINAL;       // если константа
 
 
     public Triad_Math_Operation() {

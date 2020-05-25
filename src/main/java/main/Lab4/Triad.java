@@ -12,7 +12,7 @@ public class Triad {
     public String first;
     public String second;
 
-    _Triad_Base triad_base;
+    public _Triad_Base triad_base;
 
 
     public Triad(String operation, String first, String second) {
