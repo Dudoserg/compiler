@@ -472,14 +472,14 @@ public class LLK {
             System.out.println(treeNext_triadsStr_before);
 
 
-            treeNext.optimization();
-            System.out.println("\n\n");
-            System.out.println("\n\n------------------------------------");
-            System.out.println("after optimization----------------------------------------------\n");
-            if (devMode)
-                treeNext.draw(null,"after");
-            final String treeNext_triadsStr_after = treeNext.createTriads();
-            System.out.println(treeNext_triadsStr_after);
+//            treeNext.optimization();
+//            System.out.println("\n\n");
+//            System.out.println("\n\n------------------------------------");
+//            System.out.println("after optimization----------------------------------------------\n");
+//            if (devMode)
+//                treeNext.draw(null,"after");
+//            final String treeNext_triadsStr_after = treeNext.createTriads();
+//            System.out.println(treeNext_triadsStr_after);
 
         }
 

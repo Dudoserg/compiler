@@ -2,6 +2,7 @@ package main.Lab4.TreeNext;
 
 import lombok.AllArgsConstructor;
 import main.Lab2.LexTypeTERMINAL;
+import main.Lab4.TreeNext.Const.Interface_Const;
 import main.Lab4.TreeNext.Const._NextNode_Double;
 import main.Lab4.TreeNext.Const._NextNode_Int;
 import main.Lab4.TreeNext.MathOperation._NextNode_Div;
@@ -633,6 +634,26 @@ public class NextNode {
     public boolean isConstant() {
         return (this.nodeBase instanceof _NextNode_Int) || (this.nodeBase instanceof _NextNode_Double);
     }
+    public boolean isAssign() {
+        return (this.nodeBase instanceof _NextNode_Assign);
+    }
+    // объявленная переменная со значением.
+    public boolean isId_withValue() {
+        if(this.nodeBase instanceof _NextNode_ID){
+            final _NextNode_ID nodeBase = (_NextNode_ID) this.nodeBase;
+            final NextNode nextNode = nodeBase.nextNode;
+            if( !(nextNode.nodeBase instanceof  _NextNode_DeclareVariable))
+                return false;
+            _NextNode_DeclareVariable nextNode_declareVariable =
+                    (_NextNode_DeclareVariable) nextNode.nodeBase;
+
+            final String currentValue = nextNode_declareVariable.currentValue;
+            if(currentValue != null)
+                return true;
+        }
+        return false;
+    }
+    // объявленная переменная в математическом выражении
 
     public boolean isId() {
         return (this.nodeBase instanceof _NextNode_ID);

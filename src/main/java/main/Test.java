@@ -12,7 +12,7 @@ public class Test {
     public Test() {
         int t = 13;
         int x = 59;
-
+        int keke = (int)(-0.666666666666);
 
         System.out.println(t * x);
         System.out.println((t << 6) - (t << 2) - t);

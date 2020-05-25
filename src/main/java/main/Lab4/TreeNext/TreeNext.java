@@ -869,7 +869,7 @@ public class TreeNext {
         this.current = nextNode;
 
 //        NextNode nodeIF = listIf.get(listIf.size() - 1);
-        nodeIf.left = this.getFromStack(-1);
+        nodeIf.setLeft(this.getFromStack(-1));
 
 
         NextNode elseLeftNext = new NextNode();
@@ -1021,7 +1021,7 @@ public class TreeNext {
         // Кастим передаваемый параметр к типу который принимает функция
         right_FromStack = castToLeft(paramNode, right_FromStack);
 
-        nodePushParam.right = right_FromStack;
+        nodePushParam.setRight(right_FromStack);
 
 //        if (right_FromStack.nodeBase instanceof _NextNode_Int) {
 ////            nodeBase.whatIsPush = right_FromStack;

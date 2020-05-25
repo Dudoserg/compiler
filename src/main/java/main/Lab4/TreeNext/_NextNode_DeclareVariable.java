@@ -17,7 +17,7 @@ import java.util.Objects;
 public class _NextNode_DeclareVariable extends _NextNodeBase implements Interface_LexType {
     public LexTypeTERMINAL lexTypeTERMINAL;
     public String lexem;
-
+    public String currentValue = null;
 
     public _NextNode_DeclareVariable(SavePoint savePoint) {
         super(savePoint);
