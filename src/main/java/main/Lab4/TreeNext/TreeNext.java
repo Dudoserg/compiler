@@ -1133,7 +1133,7 @@ public class TreeNext {
 
         clearCreateTriads(this.root);
 
-        listTriads = root.createTriads(listTriads);
+        listTriads = root.createTriads_str(listTriads);
 
 
         final String collect = listTriads.stream()

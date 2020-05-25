@@ -94,6 +94,15 @@ public class Asm {
             }
         }
 
+        if(currentNode.left != null){
+            NextNode node = currentNode.left;
+            if( node.nodeBase instanceof _NextNode_Func){
+                final String lexem = ((_NextNode_Func) node.nodeBase).lexem;
+                if(lexem.equals("main"))
+                    return;
+            }
+        }
+
         if (currentNode.right != null)
             createSectionData_recursion(currentNode.right);
 

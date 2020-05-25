@@ -2,7 +2,6 @@ package main.Lab4.TreeNext;
 
 import lombok.AllArgsConstructor;
 import main.Lab2.LexTypeTERMINAL;
-import main.Lab4.TreeNext.Const.Interface_Const;
 import main.Lab4.TreeNext.Const._NextNode_Double;
 import main.Lab4.TreeNext.Const._NextNode_Int;
 import main.Lab4.TreeNext.MathOperation._NextNode_Div;
@@ -10,6 +9,7 @@ import main.Lab4.TreeNext.MathOperation._NextNode_Minus;
 import main.Lab4.TreeNext.MathOperation._NextNode_Plus;
 import main.Lab4.TreeNext.MathOperation._NextNode_Star;
 import main.Lab4.TreeNext.Relations.*;
+import main.Lab4.TriadsByType.Triad_Proc;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -280,8 +280,16 @@ public class NextNode {
 
     private static Stack<NextNode_Triad> stack_IF = new Stack<>();
     private static Stack<NextNode_Triad> stack_GOTO = new Stack<>();
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public List<NextNode_Triad> createTriads(List<NextNode_Triad> listTriads) throws Exception {
+
+    /**
+     * Создаем триады строки
+     * @param listTriads
+     * @return
+     * @throws Exception
+     */
+    public List<NextNode_Triad> createTriads_str(List<NextNode_Triad> listTriads) throws Exception {
         if (isCreateTriad)
             return new ArrayList<>();
         isCreateTriad = true;
@@ -289,16 +297,17 @@ public class NextNode {
         if (nodeBase instanceof _NextNode_Next) {
             _NextNode_Next nodeBase = (_NextNode_Next) this.nodeBase;
 
-            if (left != null) this.left.createTriads(listTriads);
-            if (right != null) this.right.createTriads(listTriads);
+            if (left != null) this.left.createTriads_str(listTriads);
+            if (right != null) this.right.createTriads_str(listTriads);
 
         } else if (nodeBase instanceof _NextNode_Func) {
             _NextNode_Func nodeBase = (_NextNode_Func) this.nodeBase;
 
-            addTriad("proc", nodeBase.lexem, null, listTriads);
-            addTriad("prolog", null, null, listTriads);
+            final NextNode_Triad proc = addTriad("proc", nodeBase.lexem, null, listTriads);
+            proc.triad_base = new Triad_Proc(nodeBase.lexem, this);
+            final NextNode_Triad prolog = addTriad("prolog", null, null, listTriads);
             if (left != null)
-                this.left.createTriads(listTriads);
+                this.left.createTriads_str(listTriads);
 
         } else if (nodeBase instanceof _NextNode_FuncEnd) {
             _NextNode_FuncEnd nodeBase = (_NextNode_FuncEnd) this.nodeBase;
@@ -313,8 +322,8 @@ public class NextNode {
         } else if (nodeBase instanceof _NextNode_Assign) {
             _NextNode_Assign nodeBase = (_NextNode_Assign) this.nodeBase;
 
-            if (left != null) this.left.createTriads(listTriads);
-            if (right != null) this.right.createTriads(listTriads);
+            if (left != null) this.left.createTriads_str(listTriads);
+            if (right != null) this.right.createTriads_str(listTriads);
 
             final _NextNode_ID leftNodeBase = (_NextNode_ID) left.nodeBase;
 
@@ -330,8 +339,8 @@ public class NextNode {
 
         } else if (nodeBase instanceof _NextNode_Cast) {
             _NextNode_Cast nodeBase = (_NextNode_Cast) this.nodeBase;
-            if (left != null) this.left.createTriads(listTriads);
-            if (right != null) this.right.createTriads(listTriads);
+            if (left != null) this.left.createTriads_str(listTriads);
+            if (right != null) this.right.createTriads_str(listTriads);
             String cast_to = "";
 
             // у потомка получаем исходный тип из которого приводим
@@ -414,7 +423,7 @@ public class NextNode {
                 if (left.nodeBase instanceof _NextNode_Double) {
                     addTriad("+", "0", ((_NextNode_Double) left.nodeBase).lexem, listTriads);
                 }
-                this.left.createTriads(listTriads);
+                this.left.createTriads_str(listTriads);
             }
 
             String first = "(" + (listTriads.size() + 1) + ")";
@@ -422,19 +431,19 @@ public class NextNode {
             final NextNode_Triad triad_IF = addTriad("if", first, second, listTriads);
             NextNode.stack_IF.add(triad_IF);
 
-            if (right != null) this.right.createTriads(listTriads);
+            if (right != null) this.right.createTriads_str(listTriads);
 
 
         } else if (nodeBase instanceof _NextNode_Else) {
             _NextNode_Else nodeBase = (_NextNode_Else) this.nodeBase;
 
             // иф истина
-            if (left != null) this.left.createTriads(listTriads);
+            if (left != null) this.left.createTriads_str(listTriads);
             // GOTO
             final NextNode_Triad triad_GOTO = addTriad("goto", null, null, listTriads);
             NextNode.stack_GOTO.add(triad_GOTO);
             // иф ложь
-            if (right != null) this.right.createTriads(listTriads);
+            if (right != null) this.right.createTriads_str(listTriads);
             // NOP
             addTriad("NOP", null, null, listTriads);
             final NextNode_Triad popIf = stack_IF.pop();
@@ -469,7 +478,7 @@ public class NextNode {
         } else if (nodeBase instanceof _NextNode_Return) {
             _NextNode_Return nodeBase = (_NextNode_Return) this.nodeBase;
 
-            if (right != null) this.right.createTriads(listTriads);
+            if (right != null) this.right.createTriads_str(listTriads);
 
             String first = "??";
             if (right.nodeBase.triad_number >= 0)
@@ -480,13 +489,13 @@ public class NextNode {
 
         } else if (nodeBase instanceof _NextNode_StartLevel) {
             _NextNode_StartLevel nodeBase = (_NextNode_StartLevel) this.nodeBase;
-            if (left != null) this.left.createTriads(listTriads);
-            if (right != null) this.right.createTriads(listTriads);
+            if (left != null) this.left.createTriads_str(listTriads);
+            if (right != null) this.right.createTriads_str(listTriads);
 
         } else if (nodeBase instanceof _NextNode_Push_Param) {
             _NextNode_Push_Param nodeBase = (_NextNode_Push_Param) this.nodeBase;
 
-            if (right != null) this.right.createTriads(listTriads);
+            if (right != null) this.right.createTriads_str(listTriads);
 
             String first = "??";
             if (right.nodeBase.triad_number >= 0)
@@ -499,11 +508,11 @@ public class NextNode {
         } else if (nodeBase instanceof _NextNode_Call) {
             _NextNode_Call callNodeBase = (_NextNode_Call) this.nodeBase;
             _NextNode_Func funcNodeBase = (_NextNode_Func) callNodeBase.func.nodeBase;
-            if (left != null) this.left.createTriads(listTriads);
+            if (left != null) this.left.createTriads_str(listTriads);
             addTriad("call", funcNodeBase.lexem, null, listTriads);
             callNodeBase.triad_number = listTriads.size() - 1;
         } else if (nodeBase instanceof _NextNode_Shift) {
-            if (right != null) this.right.createTriads(listTriads);
+            if (right != null) this.right.createTriads_str(listTriads);
 
             _NextNode_Shift shiftNodeBase = (_NextNode_Shift) this.nodeBase;
 
@@ -526,8 +535,8 @@ public class NextNode {
 
     private void createMathOperation_Triads(NextNode nextNode, List<NextNode_Triad> list) throws Exception {
 
-        if (nextNode.left != null) nextNode.left.createTriads(list);
-        if (nextNode.right != null) nextNode.right.createTriads(list);
+        if (nextNode.left != null) nextNode.left.createTriads_str(list);
+        if (nextNode.right != null) nextNode.right.createTriads_str(list);
 
         String first = "";
         if (nextNode.left.nodeBase.triad_number >= 0)
@@ -567,7 +576,7 @@ public class NextNode {
 
         nodeBase.triad_number = list.size() - 1;
     }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void isConst_or_isVar(NextNode nextNode) {
 //        if(nextNode.nodeBase instanceof _Nex)
     }

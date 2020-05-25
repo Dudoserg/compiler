@@ -462,7 +462,7 @@ public class LLK {
             semantic.createGraphViz();
             semantic.drawTree();
         }
-        triadsStr = this.triads.printTriads();
+        //triadsStr = this.triads.printTriads();
 
         {
             if (devMode)
@@ -493,11 +493,11 @@ public class LLK {
 //            throw new Exception("новые и старые триады не равны");
 
 
-        if (devMode && this.triads.isTriads) {
-            if (!triadsStr.equals(lolkek)) {
-                //throw new Exception("!triadsS197tr.equals(\"lolkek\")");
-            }
-        }
+//        if (devMode && this.triads.isTriads) {
+//            if (!triadsStr.equals(lolkek)) {
+//                //throw new Exception("!triadsS197tr.equals(\"lolkek\")");
+//            }
+//        }
         return true;
     }
 
