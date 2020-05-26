@@ -471,7 +471,7 @@ public class LLK {
             semantic.drawTree();
         }
         //triadsStr = this.triads.printTriads();
-
+        treeNext.setGlobalLocalParamTypeToDeclareVariable();
         {
             if (devMode)
                 treeNext.draw(null,"_before");

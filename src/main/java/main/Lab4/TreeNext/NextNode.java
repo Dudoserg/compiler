@@ -112,7 +112,14 @@ public class NextNode {
             _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) this.nodeBase;
             set_Color(writer, "v", "#ebcccc", current);
             set_Label(writer, "v", "decl. " + nodeBase.lexem + "\n" + nodeBase.asm_addr + "\n" + nodeBase.asm_name);
-            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin(), this.id);
+            String globalLocalParamType = "";
+            if(nodeBase.isGlobal)
+                globalLocalParamType = "Global";
+            if(nodeBase.isLocal)
+                globalLocalParamType = "Local";
+            if(nodeBase.isParam)
+                globalLocalParamType = "Param";
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin() + " " + globalLocalParamType, this.id);
         } else if (nodeBase instanceof _NextNode_Assign) {
             _NextNode_Assign nodeBase = (_NextNode_Assign) this.nodeBase;
             set_Color(writer, "v", "white", current);

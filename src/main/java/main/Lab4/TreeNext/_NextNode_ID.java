@@ -14,6 +14,9 @@ import java.util.Objects;
 @Getter
 @Setter
 public class _NextNode_ID extends _NextNodeBase implements Interface_LexType, Interface_Const {
+
+
+
     public LexTypeTERMINAL lexTypeTERMINAL;
     public String lexem;
     public NextNode nextNode;

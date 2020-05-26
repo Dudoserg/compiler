@@ -26,7 +26,7 @@ v1[style=filled, fillcolor="#ebcccc"]
 v1[label="decl. global1
 0
 null"]
-v1[xlabel="(1) int"]
+v1[xlabel="(1) int Global"]
 v1center[style=invis, width=0, label=""];
 v1 -- v1center[style=invis]
 v1notVisibleL[style=invis]
@@ -95,7 +95,7 @@ v7[style=filled, fillcolor="#ebcccc"]
 v7[label="decl. global2
 0
 null"]
-v7[xlabel="(7) int"]
+v7[xlabel="(7) int Global"]
 v7center[style=invis, width=0, label=""];
 v7 -- v7center[style=invis]
 v7notVisibleL[style=invis]
@@ -187,7 +187,7 @@ v15[style=filled, fillcolor="#ebcccc"]
 v15[label="decl. global3
 0
 null"]
-v15[xlabel="(15) int"]
+v15[xlabel="(15) int Global"]
 v15center[style=invis, width=0, label=""];
 v15 -- v15center[style=invis]
 v15notVisibleL[style=invis]
@@ -290,7 +290,7 @@ v24[style=filled, fillcolor="#ebcccc"]
 v24[label="decl. x
 0
 null"]
-v24[xlabel="(24) int"]
+v24[xlabel="(24) int Param"]
 v24center[style=invis, width=0, label=""];
 v24 -- v24center[style=invis]
 v24notVisibleL[style=invis]
@@ -334,7 +334,7 @@ v29[style=filled, fillcolor="#ebcccc"]
 v29[label="decl. sq1
 0
 null"]
-v29[xlabel="(29) int"]
+v29[xlabel="(29) int Local"]
 v29center[style=invis, width=0, label=""];
 v29 -- v29center[style=invis]
 v29notVisibleL[style=invis]
@@ -447,7 +447,7 @@ v39[style=filled, fillcolor="#ebcccc"]
 v39[label="decl. k
 0
 null"]
-v39[xlabel="(39) int"]
+v39[xlabel="(39) int Local"]
 v39center[style=invis, width=0, label=""];
 v39 -- v39center[style=invis]
 v39notVisibleL[style=invis]
@@ -718,7 +718,7 @@ v63[style=filled, fillcolor="#ebcccc"]
 v63[label="decl. a
 0
 null"]
-v63[xlabel="(63) int"]
+v63[xlabel="(63) int Local"]
 v63center[style=invis, width=0, label=""];
 v63 -- v63center[style=invis]
 v63notVisibleL[style=invis]
@@ -742,7 +742,7 @@ v66[style=filled, fillcolor="#ebcccc"]
 v66[label="decl. b
 0
 null"]
-v66[xlabel="(66) int"]
+v66[xlabel="(66) int Local"]
 v66center[style=invis, width=0, label=""];
 v66 -- v66center[style=invis]
 v66notVisibleL[style=invis]
@@ -766,7 +766,7 @@ v69[style=filled, fillcolor="#ebcccc"]
 v69[label="decl. c
 0
 null"]
-v69[xlabel="(69) int"]
+v69[xlabel="(69) int Local"]
 v69center[style=invis, width=0, label=""];
 v69 -- v69center[style=invis]
 v69notVisibleL[style=invis]
@@ -790,7 +790,7 @@ v72[style=filled, fillcolor="#ebcccc"]
 v72[label="decl. d
 0
 null"]
-v72[xlabel="(72) int"]
+v72[xlabel="(72) int Local"]
 v72center[style=invis, width=0, label=""];
 v72 -- v72center[style=invis]
 v72notVisibleL[style=invis]
@@ -814,7 +814,7 @@ v75[style=filled, fillcolor="#ebcccc"]
 v75[label="decl. e
 0
 null"]
-v75[xlabel="(75) int"]
+v75[xlabel="(75) int Local"]
 v75center[style=invis, width=0, label=""];
 v75 -- v75center[style=invis]
 v75notVisibleL[style=invis]
@@ -838,7 +838,7 @@ v78[style=filled, fillcolor="#ebcccc"]
 v78[label="decl. f
 0
 null"]
-v78[xlabel="(78) int"]
+v78[xlabel="(78) int Local"]
 v78center[style=invis, width=0, label=""];
 v78 -- v78center[style=invis]
 v78notVisibleL[style=invis]
@@ -862,7 +862,7 @@ v81[style=filled, fillcolor="#ebcccc"]
 v81[label="decl. g
 0
 null"]
-v81[xlabel="(81) int"]
+v81[xlabel="(81) int Local"]
 v81center[style=invis, width=0, label=""];
 v81 -- v81center[style=invis]
 v81notVisibleL[style=invis]
@@ -886,7 +886,7 @@ v84[style=filled, fillcolor="#ebcccc"]
 v84[label="decl. t
 0
 null"]
-v84[xlabel="(84) int"]
+v84[xlabel="(84) int Local"]
 v84center[style=invis, width=0, label=""];
 v84 -- v84center[style=invis]
 v84notVisibleL[style=invis]
@@ -910,7 +910,7 @@ v87[style=filled, fillcolor="#ebcccc"]
 v87[label="decl. h
 0
 null"]
-v87[xlabel="(87) int"]
+v87[xlabel="(87) int Local"]
 v87center[style=invis, width=0, label=""];
 v87 -- v87center[style=invis]
 v87notVisibleL[style=invis]
@@ -934,7 +934,7 @@ v90[style=filled, fillcolor="#ebcccc"]
 v90[label="decl. k
 0
 null"]
-v90[xlabel="(90) int"]
+v90[xlabel="(90) int Local"]
 v90center[style=invis, width=0, label=""];
 v90 -- v90center[style=invis]
 v90notVisibleL[style=invis]
@@ -1229,7 +1229,7 @@ v117[style=filled, fillcolor="#ebcccc"]
 v117[label="decl. kekf
 0
 null"]
-v117[xlabel="(117) int"]
+v117[xlabel="(117) int Local"]
 v117center[style=invis, width=0, label=""];
 v117 -- v117center[style=invis]
 v117notVisibleL[style=invis]

@@ -15,6 +15,13 @@ import java.util.Objects;
 
 
 public class _NextNode_DeclareVariable extends _NextNodeBase implements Interface_LexType {
+
+    public boolean isGlobal = false;
+    public boolean isLocal = false;
+    public boolean isParam = false;
+
+
+
     public static int asm_addr_counter = 0;
     public LexTypeTERMINAL lexTypeTERMINAL;
     public String lexem;

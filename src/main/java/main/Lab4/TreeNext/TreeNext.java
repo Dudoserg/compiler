@@ -465,18 +465,18 @@ public class TreeNext {
 
     long lastDrawTime = 0;
 
-    private void clearDrawed(NextNode start){
+    private void clearDrawed(NextNode start) {
         start.isDrawed = false;
-        if(start.left != null)
+        if (start.left != null)
             clearDrawed(start.left);
-        if(start.right != null)
+        if (start.right != null)
             clearDrawed(start.right);
     }
 
 
     public void draw(NextNode start, NextNode current, String fileName) throws IOException {
         clearDrawed(start);
-        if(!LLK.DRAWING)
+        if (!LLK.DRAWING)
             return;
         String jpgPath = "деревья/" + fileName;
         String gvPath = "деревья/gv/" + fileName + ".gv";
@@ -503,7 +503,7 @@ public class TreeNext {
 
     public void draw(NextNode current, String fileName) throws Exception {
         clearDrawed(this.root);
-        if(!LLK.DRAWING)
+        if (!LLK.DRAWING)
             return;
         String jpgPath = "деревья/" + fileName;
         String gvPath = "деревья/gv/" + fileName + ".gv";
@@ -1126,11 +1126,11 @@ public class TreeNext {
         nextNode.setLeft(fromStack);
     }
 
-    private void clearCreateTriads(NextNode nextNode){
+    private void clearCreateTriads(NextNode nextNode) {
         nextNode.isCreateTriad = false;
-        if(nextNode.left  != null)
+        if (nextNode.left != null)
             clearCreateTriads(nextNode.left);
-        if(nextNode.right  != null)
+        if (nextNode.right != null)
             clearCreateTriads(nextNode.right);
     }
 
@@ -1269,18 +1269,18 @@ public class TreeNext {
             CalculateBeforeCompile calculateBeforeCompile = new CalculateBeforeCompile(this);
             calculateBeforeCompile.start();
         }
-        if(isDraw) draw(root, current, "1_calculateBeforeCompile");
+        if (isDraw) draw(root, current, "1_calculateBeforeCompile");
         {
             Agrigate agrigate = new Agrigate(this);
             agrigate.optimization_agrigate(this.root);
         }
-        if(isDraw)  draw(root, current, "2_agrigate");
+        if (isDraw) draw(root, current, "2_agrigate");
 
         {
             CalculateBeforeCompile calculateBeforeCompile = new CalculateBeforeCompile(this);
             calculateBeforeCompile.start();
         }
-        if(isDraw)   draw(root, current, "3_calculateBeforeCompile");
+        if (isDraw) draw(root, current, "3_calculateBeforeCompile");
 
         {
             Agrigate agrigate = new Agrigate(this);
@@ -1301,5 +1301,83 @@ public class TreeNext {
 
     }
 
+    /**
+     * Устанавливаем тип переменных, будь то глобальная, локальная, параметр функции
+     */
+    public void setGlobalLocalParamTypeToDeclareVariable() {
+        this.setGlobalTypeToDeclareVariable_recursion(this.root);
+        this.setLocalTypeToDeclareVariable_recursion(this.root, false);
+        this.setParamTypeToDeclareVariable_recursion(this.root, false);
+    }
+
+    private void setParamTypeToDeclareVariable_recursion(NextNode nextNode, boolean isInFunc) {
+        final NextNode left = nextNode.left;
+        final NextNode right = nextNode.right;
+
+        if (isInFunc) {
+            if (left != null && left.nodeBase instanceof _NextNode_DeclareVariable) {
+                ((_NextNode_DeclareVariable) left.nodeBase).isLocal = false;
+                ((_NextNode_DeclareVariable) left.nodeBase).isGlobal = false;
+                ((_NextNode_DeclareVariable) left.nodeBase).isParam = true;
+            }
+        }
+        if (left != null) {
+            if (left.nodeBase instanceof _NextNode_Func) {
+                isInFunc = true;
+                setParamTypeToDeclareVariable_recursion(left, isInFunc);
+            } else if (left.nodeBase instanceof _NextNode_StartLevel) {
+                return;
+            } else if (left.nodeBase instanceof _NextNode_FuncEnd) {
+                return;
+            } else
+                setParamTypeToDeclareVariable_recursion(left, isInFunc);
+        }
+
+        if (right != null)
+            setParamTypeToDeclareVariable_recursion(right, isInFunc);
+    }
+
+    private void setLocalTypeToDeclareVariable_recursion(NextNode nextNode, Boolean isInFunc) {
+        final NextNode left = nextNode.left;
+        final NextNode right = nextNode.right;
+
+        if (isInFunc) {
+            if (left != null && left.nodeBase instanceof _NextNode_DeclareVariable) {
+                ((_NextNode_DeclareVariable) left.nodeBase).isLocal = true;
+                ((_NextNode_DeclareVariable) left.nodeBase).isGlobal = false;
+                ((_NextNode_DeclareVariable) left.nodeBase).isParam = false;
+            }
+        }
+
+        if (left != null) {
+            if (left.nodeBase instanceof _NextNode_StartLevel) {
+                isInFunc = true;
+                setLocalTypeToDeclareVariable_recursion(left, isInFunc);
+                isInFunc = false;
+            } else
+                setLocalTypeToDeclareVariable_recursion(left, isInFunc);
+        }
+
+        if (right != null)
+            setLocalTypeToDeclareVariable_recursion(right, isInFunc);
+    }
+
+    private void setGlobalTypeToDeclareVariable_recursion(NextNode nextNode) {
+        final NextNode left = nextNode.left;
+        final NextNode right = nextNode.right;
+        if (left != null && left.nodeBase instanceof _NextNode_DeclareVariable) {
+            ((_NextNode_DeclareVariable) left.nodeBase).isGlobal = true;
+            ((_NextNode_DeclareVariable) left.nodeBase).isLocal = false;
+            ((_NextNode_DeclareVariable) left.nodeBase).isParam = false;
+        }
+        if (left != null && left.nodeBase instanceof _NextNode_Func) {
+            if (((_NextNode_Func) left.nodeBase).lexem.equals("main"))
+                return;
+        }
+        if (right != null) {
+            this.setGlobalTypeToDeclareVariable_recursion(right);
+        }
+
+    }
 
 }
