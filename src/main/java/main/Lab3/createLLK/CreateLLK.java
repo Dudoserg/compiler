@@ -750,5 +750,9 @@ public class CreateLLK {
 
         //  <W7>  id
         this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._W7), Elem.createEpsilon(LexTypeTERMINAL._ID));
+
+        // нет такого в таблице : <W7>  if
+        this.addOneMoreEpsilon(Elem.createEpsilon(LexTypeNot._W7), Elem.createEpsilon(LexTypeTERMINAL._IF));
+
     }
 }

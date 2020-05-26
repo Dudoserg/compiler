@@ -3,18 +3,19 @@ int global2  = global1 * 2;
 int global3 = global2;
 
 int square(int x){
-    int x0 = 2;
-    int x1 = 2;
-    int x2 = 2;
-    int x3 = 2;
-    int x4 = 2;
-    int x5 = 2;
-
-    if( x > 2){
-       int g = 0;
-    }else{
-        int q = 99999;
+    if( x > 1 ){
+       int g = 1;
+       return g;
     }
+    if( x > 2 ){
+       int g = 2;
+       return g;
+    }
+     if( x > 3 ){
+       int g = 3;
+       return g;
+    }
+    int k = 2;
     return x * x;
 }
 int main(){

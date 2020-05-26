@@ -72,8 +72,8 @@ public class NextNode {
         writer.write(vertexName + this.id + "[label=\"" + label + "\"]" + "\n");
     }
 
-    private void set_Xlabel(FileWriter writer, String vertexName, String Xlabel) throws IOException {
-        writer.write("v" + this.id + "[xlabel=\"" + Xlabel + "\"]" + "\n");
+    private void set_Xlabel(FileWriter writer, String vertexName, String Xlabel, Integer id) throws IOException {
+        writer.write("v" + this.id + "[xlabel=\"" + "(" + id + ") " + Xlabel + "\"]" + "\n");
     }
 
     private void set_Color(FileWriter writer, String vertexName, String color, NextNode current)
@@ -96,97 +96,109 @@ public class NextNode {
         if (nodeBase instanceof _NextNode_Next) {
             set_Color(writer, "v", "grey", current);
             set_Label(writer, "v", "next");
+            set_Xlabel(writer, "v", "", this.id);
         } else if (nodeBase instanceof _NextNode_Func) {
             _NextNode_Func nodeBase = (_NextNode_Func) this.nodeBase;
             set_Color(writer, "v", "red", current);
             set_Label(writer, "v", nodeBase.lexem + "\n" + "loc_v = " + nodeBase.asm_countLocalVariable);
-            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin(), this.id);
         } else if (nodeBase instanceof _NextNode_FuncEnd) {
             _NextNode_FuncEnd nodeBaseFuncEnd = (_NextNode_FuncEnd) this.nodeBase;
             final _NextNode_Func nodeBaseFunc = (_NextNode_Func) nodeBaseFuncEnd.func.nodeBase;
             set_Color(writer, "v", "red", current);
             set_Label(writer, "v", "END " + nodeBaseFunc.lexem);
+            set_Xlabel(writer, "v", "", this.id);
         } else if (nodeBase instanceof _NextNode_DeclareVariable) {
             _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) this.nodeBase;
             set_Color(writer, "v", "#ebcccc", current);
             set_Label(writer, "v", "decl. " + nodeBase.lexem + "\n" + nodeBase.asm_addr + "\n" + nodeBase.asm_name);
-            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin(), this.id);
         } else if (nodeBase instanceof _NextNode_Assign) {
             _NextNode_Assign nodeBase = (_NextNode_Assign) this.nodeBase;
             set_Color(writer, "v", "white", current);
             set_Label(writer, "v", "=");
+            set_Xlabel(writer, "v", "", this.id);
         } else if (nodeBase instanceof _NextNode_Cast) {
             _NextNode_Cast nodeBase = (_NextNode_Cast) this.nodeBase;
             set_Color(writer, "v", "#88db8b", current);
             set_Label(writer, "v", nodeBase.castTo_lexTypeTERMINAL.toString());
-            set_Xlabel(writer, "v", "CAST");
+            set_Xlabel(writer, "v", "CAST", this.id);
         } else if (nodeBase instanceof _NextNode_Div) {
             _NextNode_Div nodeBase = (_NextNode_Div) this.nodeBase;
             set_Color(writer, "v", "#ccebe8", current);
             set_Label(writer, "v", "/");
-            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin(), this.id);
         } else if (nodeBase instanceof _NextNode_Star) {
             _NextNode_Star nodeBase = (_NextNode_Star) this.nodeBase;
             set_Color(writer, "v", "#ccebe8", current);
             set_Label(writer, "v", "*");
-            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin(), this.id);
         } else if (nodeBase instanceof _NextNode_Plus) {
             _NextNode_Plus nodeBase = (_NextNode_Plus) this.nodeBase;
             set_Color(writer, "v", "#ccebe8", current);
             set_Label(writer, "v", "+");
-            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin(), this.id);
         } else if (nodeBase instanceof _NextNode_Minus) {
             _NextNode_Minus nodeBase = (_NextNode_Minus) this.nodeBase;
             set_Color(writer, "v", "#ccebe8", current);
             set_Label(writer, "v", "-");
-            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin(), this.id);
         } else if (nodeBase instanceof _NextNode_Int) {
             _NextNode_Int nodeBase = (_NextNode_Int) this.nodeBase;
             set_Color(writer, "v", "#e1e8bc", current);
             set_Label(writer, "v", nodeBase.lexem);
-            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin(), this.id);
         } else if (nodeBase instanceof _NextNode_Double) {
             _NextNode_Double nodeBase = (_NextNode_Double) this.nodeBase;
             set_Color(writer, "v", "#e1e8bc", current);
             set_Label(writer, "v", nodeBase.lexem);
-            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin());
+            set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin(), this.id);
         } else if (nodeBase instanceof _NextNode_ID) {
             final NextNode tmp = ((_NextNode_ID) nodeBase).nextNode;
             final _NextNode_DeclareVariable tmpBase = (_NextNode_DeclareVariable) tmp.nodeBase;
             _NextNode_ID nodeBase = (_NextNode_ID) this.nodeBase;
             set_Color(writer, "v", "#9991e3", current);
             set_Label(writer, "v", nodeBase.lexem + "\n" + tmpBase.asm_name);
-            set_Xlabel(writer, "v", tmpBase.lexTypeTERMINAL.getMin());
+            set_Xlabel(writer, "v", tmpBase.lexTypeTERMINAL.getMin(), this.id);
         } else if (nodeBase instanceof _NextNode_If) {
             set_Color(writer, "v", "#00c200", current);
             set_Label(writer, "v", "IF");
+            set_Xlabel(writer, "v", "", this.id);
         } else if (nodeBase instanceof _NextNode_Else) {
             set_Color(writer, "v", "#00c200", current);
             set_Label(writer, "v", "ELSE");
+            set_Xlabel(writer, "v", "", this.id);
         } else if (nodeBase instanceof _NextNode_Great) {
             set_Color(writer, "v", "white", current);
             set_Label(writer, "v", ">");
+            set_Xlabel(writer, "v", "", this.id);
         } else if (nodeBase instanceof _NextNode_Great_Equal) {
             set_Color(writer, "v", "white", current);
             set_Label(writer, "v", ">=");
+            set_Xlabel(writer, "v", "", this.id);
         } else if (nodeBase instanceof _NextNode_Less) {
             set_Color(writer, "v", "white", current);
             set_Label(writer, "v", "<");
+            set_Xlabel(writer, "v", "", this.id);
         } else if (nodeBase instanceof _NextNode_Less_Equal) {
             set_Color(writer, "v", "white", current);
             set_Label(writer, "v", "<=");
+            set_Xlabel(writer, "v", "", this.id);
         } else if (nodeBase instanceof _NextNode_Equal) {
             set_Color(writer, "v", "white", current);
             set_Label(writer, "v", "==");
+            set_Xlabel(writer, "v", "", this.id);
         } else if (nodeBase instanceof _NextNode_Not_Equal) {
             set_Color(writer, "v", "white", current);
             set_Label(writer, "v", "!=");
+            set_Xlabel(writer, "v", "", this.id);
         } else if (nodeBase instanceof _NextNode_Return) {
             set_Color(writer, "v", "#00d4d4", current);
             set_Label(writer, "v", "RETURN");
+            set_Xlabel(writer, "v", "", this.id);
         } else if (nodeBase instanceof _NextNode_StartLevel) {
             set_Color(writer, "v", "#000000", current);
-            set_Xlabel(writer, "v", "level");
+            set_Xlabel(writer, "v", "level", this.id);
         } else if (nodeBase instanceof _NextNode_Push_Param) {
             _NextNode_Push_Param nodeBase = (_NextNode_Push_Param) this.nodeBase;
             String tmp_str = "";
@@ -209,19 +221,21 @@ public class NextNode {
 //                throw new Exception("asd078fa0s");
             set_Color(writer, "v", "#fff15c", current);
             set_Label(writer, "v", "push");
+            set_Xlabel(writer, "v", "", this.id);
         } else if (nodeBase instanceof _NextNode_Call) {
             _NextNode_Call nodeBase = (_NextNode_Call) this.nodeBase;
             String tmp_lexem = ((_NextNode_Func) (nodeBase.func.nodeBase)).lexem;
 
             set_Color(writer, "v", "#de7d0d", current);
             set_Label(writer, "v", tmp_lexem);
-            set_Xlabel(writer, "v", "CALL");
+            set_Xlabel(writer, "v", "CALL", this.id);
         } else if (nodeBase instanceof _NextNode_Shift) {
             _NextNode_Shift nodeBase = (_NextNode_Shift) this.nodeBase;
             final int degree = nodeBase.degree;
             String tmp = nodeBase.isLeft == true ? "<<" : ">>";
             set_Color(writer, "v", "#FFFFFF", current);
             set_Label(writer, "v", tmp + degree);
+            set_Xlabel(writer, "v", "", this.id);
 //            set_Xlabel(writer, "v", "CALL");
         } else {
             throw new Exception("ASD1ASDASD " + nodeBase.getClass().getName());

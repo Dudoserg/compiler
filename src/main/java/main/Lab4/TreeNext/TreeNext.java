@@ -1198,7 +1198,7 @@ public class TreeNext {
                 if (isDraw) draw(k, nextNode, "test");
             } else {
                 // иначе говориим что часть возвращает значение(  хотя ее как таковой и нет)
-                false_side_flag = true;
+                false_side_flag = false;
             }
             return true_side_flag & false_side_flag;
         } else if (nextNode.nodeBase instanceof _NextNode_StartLevel) {
