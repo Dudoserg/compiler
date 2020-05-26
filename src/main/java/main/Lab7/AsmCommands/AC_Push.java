@@ -16,6 +16,7 @@ public class AC_Push extends _AsmCommand {
             this.add(REG.type);
             this.add(MEM_LOCAL.type);
             this.add(MEM_GLOBAL.type);
+            this.add(IMM.type);
         }
     };
 

@@ -16,7 +16,7 @@ public class PoolRegister {
     public Register esp = new Register("esp");
 
     public PoolRegister() {
-        this.poolRegister.add(eax);
+//        this.poolRegister.add(eax); не кладем eax, т.к. через него мы будем возвращать значения
         this.poolRegister.add(ebx);
         this.poolRegister.add(ecx);
         this.poolRegister.add(edx);
@@ -35,7 +35,7 @@ public class PoolRegister {
         if (poolRegister.size() >= 1) {
             final Register register = poolRegister.get(poolRegister.size() - 1);
             poolRegister.remove(register);
-            System.out.println("Забираем из пула регистр " + register.name + "\tСвободны: "
+            System.out.println(";Забираем из пула регистр " + register.name + "\tСвободны: "
                     + poolRegister.stream()
                     .map(r -> r.name)
                     .collect(Collectors.joining(" "))
@@ -47,7 +47,7 @@ public class PoolRegister {
 
     public void release(Register register) {
         this.poolRegister.add(register);
-        System.out.println("Освобождаем регистр " + register.name + "\t\t\tСвободны: "
+        System.out.println(";Освобождаем регистр " + register.name + "\t\t\tСвободны: "
                 + poolRegister.stream()
                 .map(r -> r.name)
                 .collect(Collectors.joining(" "))

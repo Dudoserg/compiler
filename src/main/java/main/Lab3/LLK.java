@@ -22,7 +22,7 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class LLK {
-    public  static boolean DRAWING = true;
+    public  static boolean DRAWING = false;
 
 
 

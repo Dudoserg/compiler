@@ -585,6 +585,7 @@ public class NextNode {
                     triad_push_for_return.lexTypeTERMINAL = ((Interface_LexType) right.nodeBase).getType();
                     triad_push_for_return.lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
                     triad_push_for_return.node = right;
+                    triad_push_for_return.isNode = true;
                 }
             }
 
@@ -619,6 +620,7 @@ public class NextNode {
                 } else if (right.nodeBase instanceof _NextNode_ID) {
                     triad_push.lexTypeTERMINAL = ((Interface_LexType) right.nodeBase).getType();
                     triad_push.lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
+                    triad_push.isNode = true;
                 }
             }
         } else if (nodeBase instanceof _NextNode_Call) {

@@ -25,7 +25,6 @@ public class _AsmCommand {
         }
         return rules_OK;
     }
-
     public boolean check_OK(InfoArea first, List<InfoAreaType> rules) {
         boolean rules_OK = false;
 

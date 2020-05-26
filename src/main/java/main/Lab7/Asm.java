@@ -1,6 +1,6 @@
 package main.Lab7;
 
-import jdk.nashorn.internal.runtime.regexp.joni.constants.AsmConstants;
+import com.sun.org.apache.regexp.internal.RE;
 import main.Lab4.TreeNext.*;
 import main.Lab4.Triad;
 import main.Lab4.TriadsByType.*;
@@ -12,7 +12,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class Asm {
-    public static Integer SHIFT_EBP_PARAM_VARIABLE = 12;
+    public static Integer SHIFT_EBP_PARAM_VARIABLE = 16;        // на 4 меньше чем реальное начало
+    // ( т.к. расчитывал смещение переменных, а оно с 4 начинается_
+
     public static String LEVEL_1_INDENT = "    ";   // отступ для кода асемблерного
     public static String LEVEL_2_INDENT = "        ";   // отступ для кода асемблерного
 
@@ -77,8 +79,8 @@ public class Asm {
             isLocalVariable = false;
             shift_LocalVariable = 0;
             shift_ParamVariable = 0;
-        } else if(currentNode.nodeBase instanceof  _NextNode_StartLevel){
-            if( isParamVariable && !isLocalVariable){
+        } else if (currentNode.nodeBase instanceof _NextNode_StartLevel) {
+            if (isParamVariable && !isLocalVariable) {
                 isParamVariable = false;
                 isLocalVariable = true;
             }
@@ -94,7 +96,7 @@ public class Asm {
 
                 if (this.lastFuncNodeBase != null)
                     this.lastFuncNodeBase.localVariableList.add(currentNode);
-            }else if (!isLocalVariable && isParamVariable){
+            } else if (!isLocalVariable && isParamVariable) {
                 final _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) currentNode.nodeBase;
                 nodeBase.asm_len = 4;   // 4 бита, т.к. разрешено делать только один тип данных ( ну сделаю int)
                 nodeBase.asm_addr = ++shift_ParamVariable * nodeBase.asm_len;   // адрес(смещение)
@@ -203,6 +205,11 @@ public class Asm {
 
     List<SectionData> sectionTextList = new ArrayList<>();
 
+    int sumByteForLocalVariable = -1;
+    NextNode inFunc = null;
+    _NextNode_Func inFuncNodeBase = null;
+    List<Boolean> inFuncFreeLocalMemory_4byte = new ArrayList<>(); // количество "ячеек" по 4 байта
+
     public void createAsmFile() throws Exception {
         System.out.println();
         String tmp;
@@ -221,9 +228,7 @@ public class Asm {
         List<NextNode_Triad> globalActionList = this.getGlobalActionList();
         List<List<NextNode_Triad>> functionsList = this.getFunctionList();
 
-        NextNode inFunc = null;
-        List<Boolean> inFuncFreeLocalMemory_4byte = new ArrayList<>(); // количество "ячеек" по 4 байта
-        int sumByteForLocalVariable = -1;
+
         for (List<NextNode_Triad> currentFuncList : functionsList) {
             for (int i = 0; i < currentFuncList.size(); i++) {
                 final NextNode_Triad currentTriad = currentFuncList.get(i);
@@ -232,215 +237,54 @@ public class Asm {
 
 
                 if (triad.triad_base instanceof Triad_Proc) {
-                    final Triad_Proc triad_base = (Triad_Proc) triad.triad_base;
-                    _AsmCommand command = new AC_FuncLabel(triad_base.funcId, triad_base.node);
-                    this.addCommand(command);
-                    inFunc = triad_base.node;
+                    inFunc = createASM_Proc(triad);
+                    inFuncNodeBase = (_NextNode_Func) inFunc.nodeBase;
                 } else if (triad.triad_base instanceof Triad_Prolog) {
-                    //  push ebp            ; сохраняем базу    +8
-                    _AsmCommand push_ebp = new AC_Push(new REG(poolRegister.ebp));
-                    this.addCommand(push_ebp);
-                    //  push ebx            ; сохраняем регистры    +12
-                    _AsmCommand push_ebx = new AC_Push(new REG(poolRegister.ebx));
-                    this.addCommand(push_ebx);
-                    //  push ecx            ;   +16
-                    _AsmCommand push_ecx = new AC_Push(new REG(poolRegister.ecx));
-                    this.addCommand(push_ecx);
-                    //  push edx            ;   +20
-                    _AsmCommand push_edx = new AC_Push(new REG(poolRegister.edx));
-                    this.addCommand(push_edx);
-                    //    mov ebp, esp        ; сохраняем указатель стека
-                    InfoArea mov_to = new REG(poolRegister.ebp);
-                    InfoArea mov_from = new REG(poolRegister.esp);
-                    _AsmCommand mov = new AC_Mov(mov_to, mov_from);
+                    sumByteForLocalVariable = createASM_Prolog(inFunc);
+
+                } else if (triad.triad_base instanceof Triad_Epilog) {
+                    createASM_Epilog(sumByteForLocalVariable);
+
+                } else if (triad.triad_base instanceof Triad_Ret) {
+                    createASM_Ret();
+
+                } else if (triad.triad_base instanceof Triad_Push_For_Return) {
+                    createASM_PushForReturn(triad);
+
+                } else if (triad.triad_base instanceof Triad_Math_Operation) {
+                    createASM_MathOperation(triad);
+
+                } else if (triad.triad_base instanceof Triad_PUSH) {
+                    createASM_PUSH(triad);
+                } else if (triad.triad_base instanceof Triad_CALL) {
+                    final Triad_CALL triad_base = (Triad_CALL) triad.triad_base;
+                    final NextNode callFuncNode = triad_base.node_callFunc;
+                    final _NextNode_Func callFuncNodeBase = (_NextNode_Func) callFuncNode.nodeBase;
+                    AC_Call call = new AC_Call(triad_base.lexemStr, triad_base.node_callFunc);
+                    this.addCommand(call);
+
+                    // add esp, x очищаем память от параметров функции
+                    AC_Add add = new AC_Add(new REG(poolRegister.esp), new IMM(callFuncNodeBase.countParam * 4), poolRegister, asmComandList);
+                    this.addCommand(add);
+
+
+                    // запоминаем, где лежит результат ( после вызова функции результат лежит в EAX)
+                    // сначала скопируем EAX в локальные переменные во временное хранилище
+                    int shift = getShiftInFreeLocalMemory(inFuncFreeLocalMemory_4byte);
+
+                    final MEM_LOCAL mem_local = new MEM_LOCAL(poolRegister.ebp, -shift * 4);
+                    _AsmCommand mov = new AC_Mov(
+                            mem_local,
+                            new REG(poolRegister.eax)
+                    );
+                    // TODO Нужно потом еще дописать, чтобы при использовании временной памяти она очищалась
+                    //нигде не освобождаю память от временных переменных
+                    triad.triad_base.result = mem_local;
                     this.addCommand(mov);
 
-                    // sub  esp, XXX        ; выделяем память под локальные переменные
-                    // получаем количество локальных переменных
-                    final _NextNode_Func currentFuncNodeBase = (_NextNode_Func) inFunc.nodeBase;
-                    final int countLocalVariable = currentFuncNodeBase.localVariableList.size();
-                    // Считаем количество байт
-                    sumByteForLocalVariable = 0;
-                    for (NextNode nextNode : currentFuncNodeBase.localVariableList) {
-                        final _NextNode_DeclareVariable decl = (_NextNode_DeclareVariable) nextNode.nodeBase;
-                        sumByteForLocalVariable += decl.asm_len;
-                    }
-                    sumByteForLocalVariable = (sumByteForLocalVariable / 32);
-                    sumByteForLocalVariable++;
-                    sumByteForLocalVariable = sumByteForLocalVariable * 32;
-                    _AsmCommand sub =
-                            new AC_Sub(
-                                    new REG(poolRegister.esp),
-                                    new IMM(sumByteForLocalVariable)
-                            );
-                    this.addCommand(sub);
-                    // помечаем, что память под локальные переменные занята
-                    // остальную область будем использовать как временное хранилище под промежуточные вычисления
-                    inFuncFreeLocalMemory_4byte = new ArrayList<>(Collections.nCopies(sumByteForLocalVariable / 4, true));
-                    for (int w = 0; w < currentFuncNodeBase.localVariableList.size(); w++) {
-                        inFuncFreeLocalMemory_4byte.set(w, false);
-                    }
-                } else if (triad.triad_base instanceof Triad_Epilog) {
-                    //  add esp, 32   очищаем память от локальных переменных
-                    InfoArea firstArea = new REG(poolRegister.esp);
-                    InfoArea secondArea = new IMM(sumByteForLocalVariable);
-                    _AsmCommand ac_add = new AC_Add(firstArea, secondArea, poolRegister, this.asmComandList);
-                    //  pop edx
-                    _AsmCommand pop_edx = new AC_Pop(new REG(poolRegister.edx));
-                    this.addCommand(pop_edx);
-                    //  pop ecx
-                    _AsmCommand pop_ecx = new AC_Pop(new REG(poolRegister.ecx));
-                    this.addCommand(pop_ecx);
-                    //  pop ebx
-                    _AsmCommand pop_ebx = new AC_Pop(new REG(poolRegister.ebx));
-                    this.addCommand(pop_ebx);
-                    //  pop ebp
-                    _AsmCommand pop_ebp = new AC_Pop(new REG(poolRegister.ebp));
-                    this.addCommand(pop_ebp);
-                } else if (triad.triad_base instanceof Triad_Ret) {
-                    //  ret;
-                    _AsmCommand ret = new AC_Ret();
-                    this.addCommand(ret);
-                } else if (triad.triad_base instanceof Triad_Push_For_Return) {
-                    final Triad_Push_For_Return triad_base = (Triad_Push_For_Return) triad.triad_base;
-                    if (triad_base.node != null && triad_base.lexemStr != null &&
-                            !triad_base.lexemStr.isEmpty() && triad_base.lexTypeTERMINAL != null) {
-                        // Если переменная
-                        System.out.print("");
-                        // TODO
-                    } else if (triad_base.lexemStr != null && !triad_base.lexemStr.isEmpty() && triad_base.lexTypeTERMINAL != null) {
-                        // если константа
-                        System.out.print("");
-                        // TODO
-                    } else if (triad_base.triad != null && triad_base.triad_index >= 0) {
-                        // Если в стек кладем значение другой триады
-                        System.out.print("");
-                        // TODO
-                    } else {
-                        throw new Exception("это и не триада и не переменная и не константа!");
-                    }
-                } else if (triad.triad_base instanceof Triad_Math_Operation) {
-                    final Triad_Math_Operation triad_base = (Triad_Math_Operation) triad.triad_base;
-                    InfoArea firstArea = null;
-                    InfoArea secondArea = null;
-                    // left
-                    {
-                        if (triad_base.left_isNode) {
-                            // Если переменная
-                            // узнаем, глобальная она или локальная
-                            final _NextNode_ID nodeBase_ID = (_NextNode_ID) triad_base.left_node.nodeBase;
-                            final _NextNode_DeclareVariable nodeBase_Declare =
-                                    (_NextNode_DeclareVariable) nodeBase_ID.nextNode.nodeBase;
-                            if (nodeBase_Declare.isLocal) {
-                                firstArea = new MEM_LOCAL(poolRegister.ebp, -nodeBase_Declare.asm_addr);
-                            } else if (nodeBase_Declare.isParam) {
-                                firstArea = new MEM_LOCAL(poolRegister.ebp, SHIFT_EBP_PARAM_VARIABLE + nodeBase_Declare.asm_addr);
-                            } else if (nodeBase_Declare.isGlobal) {
 
-                            }
-                            // создаем нужный тип
-                        } else if (triad_base.left_lexemStr != null && !triad_base.left_lexemStr.isEmpty() &&
-                                triad_base.left_lexTypeTERMINAL != null) {
-                            // если константа
-                            firstArea = new IMM(triad_base.left_lexemStr);
-                        } else if (triad_base.left_triad != null && triad_base.left_triad_index >= 0) {
-                            // Если в стек кладем значение другой триады
-                            //TODO Нужно добавить в объект триаду - ссылку на объект памяти где сейчас находится ее результат
-                            firstArea = triad_base.left_triad.triad_base.result;
-                        } else
-                            throw new Exception("это и не триада и не переменная и не константа!");
-                    }
-                    // right
-                    {
-                        // создаем вторую область памяти (  переменная, константа или триада)
-                        if (triad_base.right_isNode) {
-                            // Если переменная
-                            // узнаем, глобальная она или локальная
-                            final _NextNode_ID nodeBase_ID = (_NextNode_ID) triad_base.right_node.nodeBase;
-                            final _NextNode_DeclareVariable nodeBase_Declare =
-                                    (_NextNode_DeclareVariable) nodeBase_ID.nextNode.nodeBase;
-                            if (nodeBase_Declare.isLocal) {
-                                secondArea = new MEM_LOCAL(poolRegister.ebp, -nodeBase_Declare.asm_addr);
-                            } else if (nodeBase_Declare.isParam) {
-                                secondArea = new MEM_LOCAL(poolRegister.ebp, SHIFT_EBP_PARAM_VARIABLE + nodeBase_Declare.asm_addr);
-                            } else if (nodeBase_Declare.isGlobal) {
-
-                            }
-                            // создаем нужный тип
-                        } else if (triad_base.right_lexemStr != null && !triad_base.right_lexemStr.isEmpty() &&
-                                triad_base.right_lexTypeTERMINAL != null) {
-                            // если константа
-                            secondArea = new IMM(triad_base.right_lexemStr);
-                        } else if (triad_base.right_triad != null && triad_base.right_triad_index >= 0) {
-                            // Если в стек кладем значение другой триады
-                            //TODO Нужно добавить в объект триаду - ссылку на объект памяти где сейчас находится ее результат
-                            secondArea = triad_base.right_triad.triad_base.result;
-                        } else
-                            throw new Exception("это и не триада и не переменная и не константа!");
-                    }
-
-                    _AsmCommand asmCommand;
-                    switch (triad.operation) {
-                        case "+": {
-                            final AC_Add ac_add = new AC_Add(firstArea, secondArea, poolRegister, this.asmComandList);
-                            asmCommand = ac_add;
-                            this.addCommand(asmCommand);
-                            // выгружаем значение из регистра в локальную память
-                            // выгружаем из результата сложения, в область памяти
-                            //int shift = getShiftInFreeLocalMemory(inFuncFreeLocalMemory_4byte);
-                            //AC_Mov ac_mov = new AC_Mov(new MEM_LOCAL(poolRegister.getRegister("ebp"), shift * 4), ac_add.first);
-                            // запоминаем, где лежит результат
-                            triad.triad_base.result = ac_add.first;
-
-                            break;
-                        }
-
-                        case "=": {
-                            System.out.println();
-                            _AsmCommand mov = new AC_Mov(firstArea, secondArea);
-                            this.addCommand(mov);
-                        }
-                        default: {
-                            //throw new Exception("ты еще не реализовал данную триаду " + triad.operation);
-                        }
-                    }
-                    // Освобождаем регист, если можем
-                    if(secondArea.getType() == InfoAreaType.REG){
-                        final Register register = ((REG) secondArea).register;
-                        poolRegister.release(register);
-                    }
-                    System.out.print("");
-                }else if (triad.triad_base instanceof Triad_PUSH) {
-                    final Triad_PUSH triad_base = (Triad_PUSH) triad.triad_base;
-
-                    InfoArea infoArea;
-                    {
-                        if (triad_base.left_isNode) {
-                            // Если переменная
-                            // узнаем, глобальная она или локальная
-                            final _NextNode_ID nodeBase_ID = (_NextNode_ID) triad_base.left_node.nodeBase;
-                            final _NextNode_DeclareVariable nodeBase_Declare =
-                                    (_NextNode_DeclareVariable) nodeBase_ID.nextNode.nodeBase;
-                            if (nodeBase_Declare.isLocal) {
-                                firstArea = new MEM_LOCAL(poolRegister.ebp, -nodeBase_Declare.asm_addr);
-                            } else if (nodeBase_Declare.isParam) {
-                                firstArea = new MEM_LOCAL(poolRegister.ebp, SHIFT_EBP_PARAM_VARIABLE + nodeBase_Declare.asm_addr);
-                            } else if (nodeBase_Declare.isGlobal) {
-
-                            }
-                            // создаем нужный тип
-                        } else if (triad_base.left_lexemStr != null && !triad_base.left_lexemStr.isEmpty() &&
-                                triad_base.left_lexTypeTERMINAL != null) {
-                            // если константа
-                            firstArea = new IMM(triad_base.left_lexemStr);
-                        } else if (triad_base.left_triad != null && triad_base.left_triad_index >= 0) {
-                            // Если в стек кладем значение другой триады
-                            //TODO Нужно добавить в объект триаду - ссылку на объект памяти где сейчас находится ее результат
-                            firstArea = triad_base.left_triad.triad_base.result;
-                        } else
-                            throw new Exception("это и не триада и не переменная и не константа!");
-                    }
                 }
+
 //                tmp = this.asmComandList.get(this.asmComandList.size() - 1).get_STRING() + "\n";
 //                System.out.print(tmp);
             }
@@ -452,6 +296,272 @@ public class Asm {
 
         printSectionText();
     }
+
+    private NextNode createASM_Proc(Triad triad) throws Exception {
+        NextNode inFunc;
+        final Triad_Proc triad_base = (Triad_Proc) triad.triad_base;
+        _AsmCommand command;
+        if (triad_base.funcId.equals("main"))
+            command = new AC_FuncLabel("CMAIN", triad_base.node);
+        else
+            command = new AC_FuncLabel(triad_base.funcId, triad_base.node);
+        this.addCommand(command);
+        inFunc = triad_base.node;
+        return inFunc;
+    }
+
+    private int createASM_Prolog(NextNode inFunc) throws Exception {
+        //  push ebp            ; сохраняем базу    +8
+        _AsmCommand push_ebp = new AC_Push(new REG(poolRegister.ebp));
+        this.addCommand(push_ebp);
+        //  push ebx            ; сохраняем регистры    +12
+        _AsmCommand push_ebx = new AC_Push(new REG(poolRegister.ebx));
+        this.addCommand(push_ebx);
+        //  push ecx            ;   +16
+        _AsmCommand push_ecx = new AC_Push(new REG(poolRegister.ecx));
+        this.addCommand(push_ecx);
+        //  push edx            ;   +20
+        _AsmCommand push_edx = new AC_Push(new REG(poolRegister.edx));
+        this.addCommand(push_edx);
+        //    mov ebp, esp        ; сохраняем указатель стека
+        InfoArea mov_to = new REG(poolRegister.ebp);
+        InfoArea mov_from = new REG(poolRegister.esp);
+        _AsmCommand mov = new AC_Mov(mov_to, mov_from);
+        this.addCommand(mov);
+
+        // sub  esp, XXX        ; выделяем память под локальные переменные
+        // получаем количество локальных переменных
+        final _NextNode_Func currentFuncNodeBase = (_NextNode_Func) inFunc.nodeBase;
+        final int countLocalVariable = currentFuncNodeBase.localVariableList.size();
+        sumByteForLocalVariable = 0;
+        // Считаем количество байт
+        for (NextNode nextNode : currentFuncNodeBase.localVariableList) {
+            final _NextNode_DeclareVariable decl = (_NextNode_DeclareVariable) nextNode.nodeBase;
+            sumByteForLocalVariable += decl.asm_len;
+        }
+        sumByteForLocalVariable = (sumByteForLocalVariable / 32);
+        sumByteForLocalVariable++;
+        sumByteForLocalVariable = sumByteForLocalVariable * 32;
+        _AsmCommand sub =
+                new AC_Sub(
+                        new REG(poolRegister.esp),
+                        new IMM(sumByteForLocalVariable)
+                );
+        this.addCommand(sub);
+        // помечаем, что память под локальные переменные занята
+        // остальную область будем использовать как временное хранилище под промежуточные вычисления
+        inFuncFreeLocalMemory_4byte = new ArrayList<>(Collections.nCopies(sumByteForLocalVariable / 4, true));
+        for (int w = 0; w < currentFuncNodeBase.localVariableList.size(); w++) {
+            inFuncFreeLocalMemory_4byte.set(w, false);
+        }
+        return sumByteForLocalVariable;
+    }
+
+    private void createASM_Epilog(int sumByteForLocalVariable) throws Exception {
+        //  add esp, 32   очищаем память от локальных переменных
+        InfoArea firstArea = new REG(poolRegister.esp);
+        InfoArea secondArea = new IMM(sumByteForLocalVariable);
+        _AsmCommand ac_add = new AC_Add(firstArea, secondArea, poolRegister, this.asmComandList);
+        this.addCommand(ac_add);
+        //  pop edx
+        _AsmCommand pop_edx = new AC_Pop(new REG(poolRegister.edx));
+        this.addCommand(pop_edx);
+        //  pop ecx
+        _AsmCommand pop_ecx = new AC_Pop(new REG(poolRegister.ecx));
+        this.addCommand(pop_ecx);
+        //  pop ebx
+        _AsmCommand pop_ebx = new AC_Pop(new REG(poolRegister.ebx));
+        this.addCommand(pop_ebx);
+        //  pop ebp
+        _AsmCommand pop_ebp = new AC_Pop(new REG(poolRegister.ebp));
+        this.addCommand(pop_ebp);
+    }
+
+    private void createASM_Ret() throws Exception {
+        //  ret;
+        _AsmCommand ret = new AC_Ret();
+        this.addCommand(ret);
+    }
+
+    private void createASM_PushForReturn(Triad triad) throws Exception {
+        final Triad_Push_For_Return triad_base = (Triad_Push_For_Return) triad.triad_base;
+        InfoArea area = null;
+        {
+
+            if (triad_base.isNode) {
+                // Если переменная
+                // узнаем, глобальная она или локальная
+                final _NextNode_ID nodeBase_ID = (_NextNode_ID) triad_base.node.nodeBase;
+                final _NextNode_DeclareVariable nodeBase_Declare =
+                        (_NextNode_DeclareVariable) nodeBase_ID.nextNode.nodeBase;
+                if (nodeBase_Declare.isLocal) {
+                    area = new MEM_LOCAL(poolRegister.ebp, -nodeBase_Declare.asm_addr);
+                } else if (nodeBase_Declare.isParam) {
+                    area = new MEM_LOCAL(poolRegister.ebp, SHIFT_EBP_PARAM_VARIABLE + nodeBase_Declare.asm_addr);
+                } else if (nodeBase_Declare.isGlobal) {
+
+                }
+                // создаем нужный тип
+            } else if (triad_base.lexemStr != null && !triad_base.lexemStr.isEmpty() &&
+                    triad_base.lexTypeTERMINAL != null) {
+                // если константа
+                area = new IMM(triad_base.lexemStr);
+            } else if (triad_base.triad != null && triad_base.triad_index >= 0) {
+                // Если в стек кладем значение другой триады
+                //TODO Нужно добавить в объект триаду - ссылку на объект памяти где сейчас находится ее результат
+                area = triad_base.triad.triad_base.result;
+            } else
+                throw new Exception("это и не триада и не переменная и не константа!");
+        }
+
+        AC_Mov mov = new AC_Mov(new REG(poolRegister.eax), area);
+        this.addCommand(mov);
+//        if (triad_base.node != null && triad_base.lexemStr != null &&
+//                !triad_base.lexemStr.isEmpty() && triad_base.lexTypeTERMINAL != null) {
+//            // Если переменная
+//            System.out.print("");
+//            // TODO
+//        } else if (triad_base.lexemStr != null && !triad_base.lexemStr.isEmpty() && triad_base.lexTypeTERMINAL != null) {
+//            // если константа
+//            System.out.print("");
+//            // TODO
+//        } else if (triad_base.triad != null && triad_base.triad_index >= 0) {
+//            // Если в стек кладем значение другой триады
+//            System.out.print("");
+//            // TODO
+//        } else {
+//            throw new Exception("это и не триада и не переменная и не константа!");
+//        }
+    }
+
+    private void createASM_MathOperation(Triad triad) throws Exception {
+        final Triad_Math_Operation triad_base = (Triad_Math_Operation) triad.triad_base;
+        InfoArea firstArea = null;
+        InfoArea secondArea = null;
+        // left
+        {
+            if (triad_base.left_isNode) {
+                // Если переменная
+                // узнаем, глобальная она или локальная
+                final _NextNode_ID nodeBase_ID = (_NextNode_ID) triad_base.left_node.nodeBase;
+                final _NextNode_DeclareVariable nodeBase_Declare =
+                        (_NextNode_DeclareVariable) nodeBase_ID.nextNode.nodeBase;
+                if (nodeBase_Declare.isLocal) {
+                    firstArea = new MEM_LOCAL(poolRegister.ebp, -nodeBase_Declare.asm_addr);
+                } else if (nodeBase_Declare.isParam) {
+                    firstArea = new MEM_LOCAL(poolRegister.ebp, SHIFT_EBP_PARAM_VARIABLE + nodeBase_Declare.asm_addr);
+                } else if (nodeBase_Declare.isGlobal) {
+
+                }
+                // создаем нужный тип
+            } else if (triad_base.left_lexemStr != null && !triad_base.left_lexemStr.isEmpty() &&
+                    triad_base.left_lexTypeTERMINAL != null) {
+                // если константа
+                firstArea = new IMM(triad_base.left_lexemStr);
+            } else if (triad_base.left_triad != null && triad_base.left_triad_index >= 0) {
+                // Если в стек кладем значение другой триады
+                //TODO Нужно добавить в объект триаду - ссылку на объект памяти где сейчас находится ее результат
+                firstArea = triad_base.left_triad.triad_base.result;
+            } else
+                throw new Exception("это и не триада и не переменная и не константа!");
+        }
+        // right
+        {
+            // создаем вторую область памяти (  переменная, константа или триада)
+            if (triad_base.right_isNode) {
+                // Если переменная
+                // узнаем, глобальная она или локальная
+                final _NextNode_ID nodeBase_ID = (_NextNode_ID) triad_base.right_node.nodeBase;
+                final _NextNode_DeclareVariable nodeBase_Declare =
+                        (_NextNode_DeclareVariable) nodeBase_ID.nextNode.nodeBase;
+                if (nodeBase_Declare.isLocal) {
+                    secondArea = new MEM_LOCAL(poolRegister.ebp, -nodeBase_Declare.asm_addr);
+                } else if (nodeBase_Declare.isParam) {
+                    secondArea = new MEM_LOCAL(poolRegister.ebp, SHIFT_EBP_PARAM_VARIABLE + nodeBase_Declare.asm_addr);
+                } else if (nodeBase_Declare.isGlobal) {
+
+                }
+                // создаем нужный тип
+            } else if (triad_base.right_lexemStr != null && !triad_base.right_lexemStr.isEmpty() &&
+                    triad_base.right_lexTypeTERMINAL != null) {
+                // если константа
+                secondArea = new IMM(triad_base.right_lexemStr);
+            } else if (triad_base.right_triad != null && triad_base.right_triad_index >= 0) {
+                // Если в стек кладем значение другой триады
+                //TODO Нужно добавить в объект триаду - ссылку на объект памяти где сейчас находится ее результат
+                secondArea = triad_base.right_triad.triad_base.result;
+            } else
+                throw new Exception("это и не триада и не переменная и не константа!");
+        }
+
+        _AsmCommand asmCommand;
+        switch (triad.operation) {
+            case "+": {
+                final AC_Add ac_add = new AC_Add(firstArea, secondArea, poolRegister, this.asmComandList);
+                asmCommand = ac_add;
+                this.addCommand(asmCommand);
+                // выгружаем значение из регистра в локальную память
+                // выгружаем из результата сложения, в область памяти
+                //int shift = getShiftInFreeLocalMemory(inFuncFreeLocalMemory_4byte);
+                //AC_Mov ac_mov = new AC_Mov(new MEM_LOCAL(poolRegister.getRegister("ebp"), shift * 4), ac_add.first);
+                // запоминаем, где лежит результат
+                triad.triad_base.result = ac_add.first;
+
+                break;
+            }
+
+            case "=": {
+                System.out.println();
+                _AsmCommand mov = new AC_Mov(firstArea, secondArea);
+                this.addCommand(mov);
+            }
+            default: {
+                //throw new Exception("ты еще не реализовал данную триаду " + triad.operation);
+            }
+        }
+        // Освобождаем регист, если можем
+        releaseIfRegister(secondArea);
+        System.out.print("");
+    }
+
+    private void createASM_PUSH(Triad triad) throws Exception {
+        final Triad_PUSH triad_base = (Triad_PUSH) triad.triad_base;
+
+        InfoArea firstArea = null;
+        {
+            if (triad_base.isNode) {
+                // Если переменная
+                // узнаем, глобальная она или локальная
+                final _NextNode_ID nodeBase_ID = (_NextNode_ID) triad_base.node.nodeBase;
+                final _NextNode_DeclareVariable nodeBase_Declare =
+                        (_NextNode_DeclareVariable) nodeBase_ID.nextNode.nodeBase;
+                if (nodeBase_Declare.isLocal) {
+                    firstArea = new MEM_LOCAL(poolRegister.ebp, -nodeBase_Declare.asm_addr);
+                } else if (nodeBase_Declare.isParam) {
+                    firstArea = new MEM_LOCAL(poolRegister.ebp, SHIFT_EBP_PARAM_VARIABLE + nodeBase_Declare.asm_addr);
+                } else if (nodeBase_Declare.isGlobal) {
+
+                }
+                // создаем нужный тип
+            } else if (triad_base.lexemStr != null && !triad_base.lexemStr.isEmpty() &&
+                    triad_base.lexTypeTERMINAL != null) {
+                // если константа
+                firstArea = new IMM(triad_base.lexemStr);
+            } else if (triad_base.triad != null && triad_base.triad_index >= 0) {
+                // Если в стек кладем значение другой триады
+                //TODO Нужно добавить в объект триаду - ссылку на объект памяти где сейчас находится ее результат
+                firstArea = triad_base.triad.triad_base.result;
+            } else
+                throw new Exception("это и не триада и не переменная и не константа!");
+        }
+
+        _AsmCommand push = new AC_Push(firstArea);
+        this.addCommand(push);
+
+        // Если это регистр освободим его
+        releaseIfRegister(firstArea);
+    }
+
 
     private int getShiftInFreeLocalMemory(List<Boolean> inFuncFreeLocalMemory_4byte) {
         int shift = -999;
@@ -484,5 +594,15 @@ public class Asm {
         return result;
     }
 
-
+    /**
+     * Если данная область памяти  - регистр, то освобождаем его обратно в пул регистров
+     *
+     * @param secondArea область памяти, которую пытаемся освободить
+     */
+    private void releaseIfRegister(InfoArea secondArea) {
+        if (secondArea.getType() == InfoAreaType.REG) {
+            final Register register = ((REG) secondArea).register;
+            poolRegister.release(register);
+        }
+    }
 }

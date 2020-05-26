@@ -12,12 +12,16 @@ import main.Lab4.TriadType;
 public class Triad_PUSH extends _Triad_Base {
 
 
-    public String lexemStr;
+    public boolean isNode  = false;
     public NextNode node;  // Если переменная
+
     //public int index = Integer.MIN_VALUE;
+
     public Triad triad;    // если триада
     public Integer triad_index;
+
     public LexTypeTERMINAL lexTypeTERMINAL;   // если константа
+    public String lexemStr;
 
     public Triad_PUSH() {
         this.triadType = TriadType.PUSH;

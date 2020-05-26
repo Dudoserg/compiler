@@ -13,11 +13,15 @@ import main.Lab4.TriadType;
 public class Triad_Push_For_Return extends _Triad_Base {
     //public int index = Integer.MIN_VALUE;
 
-    public String lexemStr;
+    public boolean isNode = false;
     public NextNode node;  // Если переменная
-    public LexTypeTERMINAL lexTypeTERMINAL;   // если константа
+
+
     public Triad triad;    // если триада
     public Integer triad_index;
+
+    public LexTypeTERMINAL lexTypeTERMINAL;   // если константа
+    public String lexemStr;
 
     public Triad_Push_For_Return() {
         this.triadType = TriadType.PUSH_FOR_RETURN;

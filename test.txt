@@ -1,41 +1,11 @@
-int global1 = 136;
-int global2  = global1 * 2;
-int global3 = global2;
 
-int square(int x){
-    int sq1 = 3 + 7 + 8;
-    int k = square(2 + x);
-    return x * x;
+int sum(int x, int y, int z){
+    int tmp = x + y + z;
+    return tmp;
 }
 int main(){
-    //int u = 0, v = 0, w = 0, x = 0, y = 0, z = 0;
-    //int first = ((u + v) + (w + x)) + (y + z);
 
-    int a, b, c, d, e, f , g;
-    int t, h,  k;
-
-    a = square(2);
-    b = 3;
-    c = 4;
-    c = a + b + c;
-    //a = b * c / (f * k / h) / d * t;
-
-    //int first = b * c / (f * k / h) / d * t;
-    //double dbl  = 18;
-
-    //int second = d / (37 * (12 * 4 / 5) / t / 59) ;
-    //int shiftVariable = (d * t) * 51;
-
-    //int two = (e / ((a / b) * (c * (d + d)))) * (f / g);
-
-
-    //int a = 228;
-    //int b = 1337;
-
-    //double c = a / b + a / b;
-
-    //double d = (a / b) * (a / b);
-    int kekf = 213;
-    return 0 + 1;
+    int res = sum(2, 31, sum(4, 4, 1));
+    return 0;
 }
 
