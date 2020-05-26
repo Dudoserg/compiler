@@ -96,7 +96,7 @@ public class AC_Add extends _AsmCommand {
 //                exception(first, second);
 //        }
 
-        if (!check_OK(first, second)) {
+        if (!check_OK(first, second, rules)) {
             // надо сделать REG XXX, если сюда зашли, явно что первый не регистр
             // Получаем свободный регистр
             final Register freeRegister = poolRegister.getFree();
@@ -115,7 +115,7 @@ public class AC_Add extends _AsmCommand {
             InfoArea firstChange = new REG(freeRegister);
             first = firstChange;
             // Еще раз чекнем, если что то не то - значит что то не то)00
-            if (!check_OK(first, second))
+            if (!check_OK(first, second, rules))
                 exception("Wrong infoArea for ADD command!", first, second);
         }
         this.first = first;

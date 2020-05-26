@@ -37,7 +37,7 @@ public class AC_Xor extends _AsmCommand {
     };
 
     public AC_Xor(InfoArea first, InfoArea second) throws Exception {
-        if (!check_OK(first, second))
+        if (!check_OK(first, second, rules))
             exception("Wrong infoArea for XOR command!", first, second);
 
         this.first = first;

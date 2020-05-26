@@ -24,8 +24,9 @@ v2 -- v5[color="blue"]
 } 
 v1[style=filled, fillcolor="#ebcccc"]
 v1[label="decl. global1
-0
-null"]
+shift 0
+null
+# 0"]
 v1[xlabel="(1) int Global"]
 v1center[style=invis, width=0, label=""];
 v1 -- v1center[style=invis]
@@ -93,8 +94,9 @@ v8 -- v13[color="blue"]
 } 
 v7[style=filled, fillcolor="#ebcccc"]
 v7[label="decl. global2
-0
-null"]
+shift 0
+null
+# 0"]
 v7[xlabel="(7) int Global"]
 v7center[style=invis, width=0, label=""];
 v7 -- v7center[style=invis]
@@ -185,8 +187,9 @@ v16 -- v19[color="blue"]
 } 
 v15[style=filled, fillcolor="#ebcccc"]
 v15[label="decl. global3
-0
-null"]
+shift 0
+null
+# 0"]
 v15[xlabel="(15) int Global"]
 v15center[style=invis, width=0, label=""];
 v15 -- v15center[style=invis]
@@ -255,7 +258,7 @@ v21 -- v58[color="blue"]
 } 
 v22[style=filled, fillcolor=red]
 v22[label="square
-loc_v = 0"]
+loc_v = 2"]
 v22[xlabel="(22) int"]
 v22center[style=invis, width=0, label=""];
 v22 -- v22center[style=invis]
@@ -288,8 +291,9 @@ v25 -- v27[color="blue"]
 } 
 v24[style=filled, fillcolor="#ebcccc"]
 v24[label="decl. x
-0
-null"]
+shift 4
+x_1
+# 1"]
 v24[xlabel="(24) int Param"]
 v24center[style=invis, width=0, label=""];
 v24 -- v24center[style=invis]
@@ -332,8 +336,9 @@ v30 -- v37[color="blue"]
 } 
 v29[style=filled, fillcolor="#ebcccc"]
 v29[label="decl. sq1
-0
-null"]
+shift 4
+sq1_2
+# 1"]
 v29[xlabel="(29) int Local"]
 v29center[style=invis, width=0, label=""];
 v29 -- v29center[style=invis]
@@ -366,7 +371,7 @@ v38 -- v36[color="blue"]
 } 
 v31[style=filled, fillcolor="#9991e3"]
 v31[label="sq1
-null"]
+sq1_2"]
 v31[xlabel="(31) int"]
 v31center[style=invis, width=0, label=""];
 v31 -- v31center[style=invis]
@@ -445,8 +450,9 @@ v40 -- v49[color="blue"]
 } 
 v39[style=filled, fillcolor="#ebcccc"]
 v39[label="decl. k
-0
-null"]
+shift 8
+k_3
+# 2"]
 v39[xlabel="(39) int Local"]
 v39center[style=invis, width=0, label=""];
 v39 -- v39center[style=invis]
@@ -479,7 +485,7 @@ v50 -- v46[color="blue"]
 } 
 v41[style=filled, fillcolor="#9991e3"]
 v41[label="k
-null"]
+k_3"]
 v41[xlabel="(41) int"]
 v41center[style=invis, width=0, label=""];
 v41 -- v41center[style=invis]
@@ -558,7 +564,7 @@ v42 -- v42notVisibleR[style=invis][style=invis]
 } 
 v43[style=filled, fillcolor="#9991e3"]
 v43[label="x
-null"]
+x_1"]
 v43[xlabel="(43) int"]
 v43center[style=invis, width=0, label=""];
 v43 -- v43center[style=invis]
@@ -603,7 +609,7 @@ v53 -- v52[color="blue"]
 } 
 v51[style=filled, fillcolor="#9991e3"]
 v51[label="x
-null"]
+x_1"]
 v51[xlabel="(51) int"]
 v51center[style=invis, width=0, label=""];
 v51 -- v51center[style=invis]
@@ -616,7 +622,7 @@ v51 -- v51notVisibleR[style=invis][style=invis]
 } 
 v52[style=filled, fillcolor="#9991e3"]
 v52[label="x
-null"]
+x_1"]
 v52[xlabel="(52) int"]
 v52center[style=invis, width=0, label=""];
 v52 -- v52center[style=invis]
@@ -663,7 +669,7 @@ v58 -- v58notVisibleR[style=invis]
 } 
 v59[style=filled, fillcolor=red]
 v59[label="main
-loc_v = 0"]
+loc_v = 11"]
 v59[xlabel="(59) int"]
 v59center[style=invis, width=0, label=""];
 v59 -- v59center[style=invis]
@@ -716,8 +722,9 @@ v64 -- v67[color="blue"]
 } 
 v63[style=filled, fillcolor="#ebcccc"]
 v63[label="decl. a
-0
-null"]
+shift 4
+a_4
+# 1"]
 v63[xlabel="(63) int Local"]
 v63center[style=invis, width=0, label=""];
 v63 -- v63center[style=invis]
@@ -740,8 +747,9 @@ v67 -- v70[color="blue"]
 } 
 v66[style=filled, fillcolor="#ebcccc"]
 v66[label="decl. b
-0
-null"]
+shift 8
+b_5
+# 2"]
 v66[xlabel="(66) int Local"]
 v66center[style=invis, width=0, label=""];
 v66 -- v66center[style=invis]
@@ -764,8 +772,9 @@ v70 -- v73[color="blue"]
 } 
 v69[style=filled, fillcolor="#ebcccc"]
 v69[label="decl. c
-0
-null"]
+shift 12
+c_6
+# 3"]
 v69[xlabel="(69) int Local"]
 v69center[style=invis, width=0, label=""];
 v69 -- v69center[style=invis]
@@ -788,8 +797,9 @@ v73 -- v76[color="blue"]
 } 
 v72[style=filled, fillcolor="#ebcccc"]
 v72[label="decl. d
-0
-null"]
+shift 16
+d_7
+# 4"]
 v72[xlabel="(72) int Local"]
 v72center[style=invis, width=0, label=""];
 v72 -- v72center[style=invis]
@@ -812,8 +822,9 @@ v76 -- v79[color="blue"]
 } 
 v75[style=filled, fillcolor="#ebcccc"]
 v75[label="decl. e
-0
-null"]
+shift 20
+e_8
+# 5"]
 v75[xlabel="(75) int Local"]
 v75center[style=invis, width=0, label=""];
 v75 -- v75center[style=invis]
@@ -836,8 +847,9 @@ v79 -- v82[color="blue"]
 } 
 v78[style=filled, fillcolor="#ebcccc"]
 v78[label="decl. f
-0
-null"]
+shift 24
+f_9
+# 6"]
 v78[xlabel="(78) int Local"]
 v78center[style=invis, width=0, label=""];
 v78 -- v78center[style=invis]
@@ -860,8 +872,9 @@ v82 -- v85[color="blue"]
 } 
 v81[style=filled, fillcolor="#ebcccc"]
 v81[label="decl. g
-0
-null"]
+shift 28
+g_10
+# 7"]
 v81[xlabel="(81) int Local"]
 v81center[style=invis, width=0, label=""];
 v81 -- v81center[style=invis]
@@ -884,8 +897,9 @@ v85 -- v88[color="blue"]
 } 
 v84[style=filled, fillcolor="#ebcccc"]
 v84[label="decl. t
-0
-null"]
+shift 32
+t_11
+# 8"]
 v84[xlabel="(84) int Local"]
 v84center[style=invis, width=0, label=""];
 v84 -- v84center[style=invis]
@@ -908,8 +922,9 @@ v88 -- v91[color="blue"]
 } 
 v87[style=filled, fillcolor="#ebcccc"]
 v87[label="decl. h
-0
-null"]
+shift 36
+h_12
+# 9"]
 v87[xlabel="(87) int Local"]
 v87center[style=invis, width=0, label=""];
 v87 -- v87center[style=invis]
@@ -932,8 +947,9 @@ v91 -- v99[color="blue"]
 } 
 v90[style=filled, fillcolor="#ebcccc"]
 v90[label="decl. k
-0
-null"]
+shift 40
+k_13
+# 10"]
 v90[xlabel="(90) int Local"]
 v90center[style=invis, width=0, label=""];
 v90 -- v90center[style=invis]
@@ -966,7 +982,7 @@ v100 -- v96[color="blue"]
 } 
 v93[style=filled, fillcolor="#9991e3"]
 v93[label="a
-null"]
+a_4"]
 v93[xlabel="(93) int"]
 v93center[style=invis, width=0, label=""];
 v93 -- v93center[style=invis]
@@ -1055,7 +1071,7 @@ v104 -- v102[color="blue"]
 } 
 v101[style=filled, fillcolor="#9991e3"]
 v101[label="b
-null"]
+b_5"]
 v101[xlabel="(101) int"]
 v101center[style=invis, width=0, label=""];
 v101 -- v101center[style=invis]
@@ -1100,7 +1116,7 @@ v108 -- v106[color="blue"]
 } 
 v105[style=filled, fillcolor="#9991e3"]
 v105[label="c
-null"]
+c_6"]
 v105[xlabel="(105) int"]
 v105center[style=invis, width=0, label=""];
 v105 -- v105center[style=invis]
@@ -1145,7 +1161,7 @@ v116 -- v114[color="blue"]
 } 
 v109[style=filled, fillcolor="#9991e3"]
 v109[label="c
-null"]
+c_6"]
 v109[xlabel="(109) int"]
 v109center[style=invis, width=0, label=""];
 v109 -- v109center[style=invis]
@@ -1178,7 +1194,7 @@ v112 -- v111[color="blue"]
 } 
 v110[style=filled, fillcolor="#9991e3"]
 v110[label="a
-null"]
+a_4"]
 v110[xlabel="(110) int"]
 v110center[style=invis, width=0, label=""];
 v110 -- v110center[style=invis]
@@ -1191,7 +1207,7 @@ v110 -- v110notVisibleR[style=invis][style=invis]
 } 
 v111[style=filled, fillcolor="#9991e3"]
 v111[label="b
-null"]
+b_5"]
 v111[xlabel="(111) int"]
 v111center[style=invis, width=0, label=""];
 v111 -- v111center[style=invis]
@@ -1204,7 +1220,7 @@ v111 -- v111notVisibleR[style=invis][style=invis]
 } 
 v113[style=filled, fillcolor="#9991e3"]
 v113[label="c
-null"]
+c_6"]
 v113[xlabel="(113) int"]
 v113center[style=invis, width=0, label=""];
 v113 -- v113center[style=invis]
@@ -1227,8 +1243,9 @@ v118 -- v121[color="blue"]
 } 
 v117[style=filled, fillcolor="#ebcccc"]
 v117[label="decl. kekf
-0
-null"]
+shift 44
+kekf_14
+# 11"]
 v117[xlabel="(117) int Local"]
 v117center[style=invis, width=0, label=""];
 v117 -- v117center[style=invis]
@@ -1261,7 +1278,7 @@ v122 -- v120[color="blue"]
 } 
 v119[style=filled, fillcolor="#9991e3"]
 v119[label="kekf
-null"]
+kekf_14"]
 v119[xlabel="(119) int"]
 v119center[style=invis, width=0, label=""];
 v119 -- v119center[style=invis]

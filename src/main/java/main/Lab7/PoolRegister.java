@@ -2,6 +2,7 @@ package main.Lab7;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PoolRegister {
     public List<Register> poolRegister = new ArrayList<Register>();
@@ -34,12 +35,23 @@ public class PoolRegister {
         if (poolRegister.size() >= 1) {
             final Register register = poolRegister.get(poolRegister.size() - 1);
             poolRegister.remove(register);
+            System.out.println("Забираем из пула регистр " + register.name + "\tСвободны: "
+                    + poolRegister.stream()
+                    .map(r -> r.name)
+                    .collect(Collectors.joining(" "))
+            );
             return register;
         } else
             throw new Exception("Нет свободных регистров");
     }
-    public void release(Register register){
+
+    public void release(Register register) {
         this.poolRegister.add(register);
+        System.out.println("Освобождаем регистр " + register.name + "\t\t\tСвободны: "
+                + poolRegister.stream()
+                .map(r -> r.name)
+                .collect(Collectors.joining(" "))
+        );
     }
 
     public void add(Register r) {

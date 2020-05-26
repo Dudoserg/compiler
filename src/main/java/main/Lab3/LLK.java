@@ -483,7 +483,8 @@ public class LLK {
             Asm asm = new Asm(treeNext);
             asm.renameVariableAsm();
             asm.createSectionData();
-
+            if (devMode)
+                treeNext.draw(null,"_before");
             asm.createAsmFile();
             System.out.print("");
 

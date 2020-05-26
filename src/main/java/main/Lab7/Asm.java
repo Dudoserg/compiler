@@ -5,16 +5,14 @@ import main.Lab4.TreeNext.*;
 import main.Lab4.Triad;
 import main.Lab4.TriadsByType.*;
 import main.Lab7.AsmCommands.*;
-import main.Lab7.AsmCommands.infoArea.IMM;
-import main.Lab7.AsmCommands.infoArea.InfoArea;
-import main.Lab7.AsmCommands.infoArea.MEM_LOCAL;
-import main.Lab7.AsmCommands.infoArea.REG;
+import main.Lab7.AsmCommands.infoArea.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class Asm {
+    public static Integer SHIFT_EBP_PARAM_VARIABLE = 12;
     public static String LEVEL_1_INDENT = "    ";   // отступ для кода асемблерного
     public static String LEVEL_2_INDENT = "        ";   // отступ для кода асемблерного
 
@@ -46,7 +44,7 @@ public class Asm {
     /**
      * Тут мы обходим дерево и назначаем новые имена и адреса для объявленныъ переменных
      */
-    public void renameVariableAsm() {
+    public void renameVariableAsm() throws Exception {
         this.renameVariableAsm_recursion(treeNext.root.right);
     }
 
@@ -55,27 +53,57 @@ public class Asm {
      *
      * @param currentNode вершина с которой начинается рекурсия
      */
-    private void renameVariableAsm_recursion(NextNode currentNode) {
+    private int shift_LocalVariable = 0;
+    private int shift_ParamVariable = 0;
+    private boolean isLocalVariable = false;
+    private boolean isParamVariable = false;
+
+    private void renameVariableAsm_recursion(NextNode currentNode) throws Exception {
         // Если функция, то обновлляем счетчик переменных, для подсчета смещения каждой из локальных переменных
         if (currentNode.nodeBase instanceof _NextNode_Func) {
-            _NextNode_DeclareVariable.asm_addr_counter = 0;
             lastFuncNodeBase = (_NextNode_Func) currentNode.nodeBase;
             lastFunc = currentNode;
+            isParamVariable = true;
+            isLocalVariable = false;
+            shift_LocalVariable = 0;
+            shift_ParamVariable = 0;
         }
         if (currentNode.nodeBase instanceof _NextNode_FuncEnd) {
-            lastFuncNodeBase.asm_countLocalVariable = _NextNode_DeclareVariable.asm_addr_counter;
+            lastFuncNodeBase.asm_countLocalVariable = shift_LocalVariable;
             lastFuncNodeBase = null;
             lastFunc = null;
+
+            isParamVariable = false;
+            isLocalVariable = false;
+            shift_LocalVariable = 0;
+            shift_ParamVariable = 0;
+        } else if(currentNode.nodeBase instanceof  _NextNode_StartLevel){
+            if( isParamVariable && !isLocalVariable){
+                isParamVariable = false;
+                isLocalVariable = true;
+            }
         }
         // Если это локальная переменная функции, то назначаем ей новое имя, и смещение( относительно верхушки стека bp)
         else if (currentNode.nodeBase instanceof _NextNode_DeclareVariable) {
-            final _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) currentNode.nodeBase;
-            nodeBase.asm_len = 4;   // 4 бита, т.к. разрешено делать только один тип данных ( ну сделаю int)
-            nodeBase.asm_addr = -((++_NextNode_DeclareVariable.asm_addr_counter) * nodeBase.asm_len);   // адрес(смещение)
-            nodeBase.asm_name = nodeBase.lexem + "_" + (++Asm.asm_name_counter);    // новое название переменной
+            if (isLocalVariable && !isParamVariable) {
+                final _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) currentNode.nodeBase;
+                nodeBase.asm_len = 4;   // 4 бита, т.к. разрешено делать только один тип данных ( ну сделаю int)
+                nodeBase.asm_addr = ++shift_LocalVariable * nodeBase.asm_len;   // адрес(смещение)
+                nodeBase.asm_index = shift_LocalVariable;   // адрес(смещение)
+                nodeBase.asm_name = nodeBase.lexem + "_" + (++Asm.asm_name_counter);    // новое название переменной
 
-            if (this.lastFuncNodeBase != null)
-                this.lastFuncNodeBase.localVariableList.add(currentNode);
+                if (this.lastFuncNodeBase != null)
+                    this.lastFuncNodeBase.localVariableList.add(currentNode);
+            }else if (!isLocalVariable && isParamVariable){
+                final _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) currentNode.nodeBase;
+                nodeBase.asm_len = 4;   // 4 бита, т.к. разрешено делать только один тип данных ( ну сделаю int)
+                nodeBase.asm_addr = ++shift_ParamVariable * nodeBase.asm_len;   // адрес(смещение)
+                nodeBase.asm_index = shift_ParamVariable;
+                nodeBase.asm_name = nodeBase.lexem + "_" + (++Asm.asm_name_counter);    // новое название переменной
+
+                if (this.lastFuncNodeBase != null)
+                    this.lastFuncNodeBase.localVariableList.add(currentNode);
+            }
         } else {
 
         }
@@ -202,6 +230,7 @@ public class Asm {
 
                 final Triad triad = currentTriad.triad;
 
+
                 if (triad.triad_base instanceof Triad_Proc) {
                     final Triad_Proc triad_base = (Triad_Proc) triad.triad_base;
                     _AsmCommand command = new AC_FuncLabel(triad_base.funcId, triad_base.node);
@@ -248,7 +277,7 @@ public class Asm {
                     // помечаем, что память под локальные переменные занята
                     // остальную область будем использовать как временное хранилище под промежуточные вычисления
                     inFuncFreeLocalMemory_4byte = new ArrayList<>(Collections.nCopies(sumByteForLocalVariable / 4, true));
-                    for(int w = 0 ; w < currentFuncNodeBase.localVariableList.size(); w++){
+                    for (int w = 0; w < currentFuncNodeBase.localVariableList.size(); w++) {
                         inFuncFreeLocalMemory_4byte.set(w, false);
                     }
                 } else if (triad.triad_base instanceof Triad_Epilog) {
@@ -296,20 +325,26 @@ public class Asm {
                     InfoArea secondArea = null;
                     // left
                     {
-                        // создаем первую область памяти (  переменная, константа или триада)
                         if (triad_base.left_isNode) {
                             // Если переменная
-                            System.out.print("");
                             // узнаем, глобальная она или локальная
+                            final _NextNode_ID nodeBase_ID = (_NextNode_ID) triad_base.left_node.nodeBase;
+                            final _NextNode_DeclareVariable nodeBase_Declare =
+                                    (_NextNode_DeclareVariable) nodeBase_ID.nextNode.nodeBase;
+                            if (nodeBase_Declare.isLocal) {
+                                firstArea = new MEM_LOCAL(poolRegister.ebp, -nodeBase_Declare.asm_addr);
+                            } else if (nodeBase_Declare.isParam) {
+                                firstArea = new MEM_LOCAL(poolRegister.ebp, SHIFT_EBP_PARAM_VARIABLE + nodeBase_Declare.asm_addr);
+                            } else if (nodeBase_Declare.isGlobal) {
+
+                            }
                             // создаем нужный тип
                         } else if (triad_base.left_lexemStr != null && !triad_base.left_lexemStr.isEmpty() &&
                                 triad_base.left_lexTypeTERMINAL != null) {
                             // если константа
-                            System.out.print("");
                             firstArea = new IMM(triad_base.left_lexemStr);
                         } else if (triad_base.left_triad != null && triad_base.left_triad_index >= 0) {
                             // Если в стек кладем значение другой триады
-                            System.out.print("");
                             //TODO Нужно добавить в объект триаду - ссылку на объект памяти где сейчас находится ее результат
                             firstArea = triad_base.left_triad.triad_base.result;
                         } else
@@ -320,22 +355,30 @@ public class Asm {
                         // создаем вторую область памяти (  переменная, константа или триада)
                         if (triad_base.right_isNode) {
                             // Если переменная
-                            System.out.print("");
                             // узнаем, глобальная она или локальная
+                            final _NextNode_ID nodeBase_ID = (_NextNode_ID) triad_base.right_node.nodeBase;
+                            final _NextNode_DeclareVariable nodeBase_Declare =
+                                    (_NextNode_DeclareVariable) nodeBase_ID.nextNode.nodeBase;
+                            if (nodeBase_Declare.isLocal) {
+                                secondArea = new MEM_LOCAL(poolRegister.ebp, -nodeBase_Declare.asm_addr);
+                            } else if (nodeBase_Declare.isParam) {
+                                secondArea = new MEM_LOCAL(poolRegister.ebp, SHIFT_EBP_PARAM_VARIABLE + nodeBase_Declare.asm_addr);
+                            } else if (nodeBase_Declare.isGlobal) {
+
+                            }
                             // создаем нужный тип
                         } else if (triad_base.right_lexemStr != null && !triad_base.right_lexemStr.isEmpty() &&
                                 triad_base.right_lexTypeTERMINAL != null) {
                             // если константа
-                            System.out.print("");
                             secondArea = new IMM(triad_base.right_lexemStr);
                         } else if (triad_base.right_triad != null && triad_base.right_triad_index >= 0) {
                             // Если в стек кладем значение другой триады
-                            System.out.print("");
                             //TODO Нужно добавить в объект триаду - ссылку на объект памяти где сейчас находится ее результат
                             secondArea = triad_base.right_triad.triad_base.result;
                         } else
                             throw new Exception("это и не триада и не переменная и не константа!");
                     }
+
                     _AsmCommand asmCommand;
                     switch (triad.operation) {
                         case "+": {
@@ -352,15 +395,51 @@ public class Asm {
                             break;
                         }
 
-                        case "=":{
+                        case "=": {
                             System.out.println();
+                            _AsmCommand mov = new AC_Mov(firstArea, secondArea);
+                            this.addCommand(mov);
                         }
                         default: {
                             //throw new Exception("ты еще не реализовал данную триаду " + triad.operation);
                         }
                     }
-
+                    // Освобождаем регист, если можем
+                    if(secondArea.getType() == InfoAreaType.REG){
+                        final Register register = ((REG) secondArea).register;
+                        poolRegister.release(register);
+                    }
                     System.out.print("");
+                }else if (triad.triad_base instanceof Triad_PUSH) {
+                    final Triad_PUSH triad_base = (Triad_PUSH) triad.triad_base;
+
+                    InfoArea infoArea;
+                    {
+                        if (triad_base.left_isNode) {
+                            // Если переменная
+                            // узнаем, глобальная она или локальная
+                            final _NextNode_ID nodeBase_ID = (_NextNode_ID) triad_base.left_node.nodeBase;
+                            final _NextNode_DeclareVariable nodeBase_Declare =
+                                    (_NextNode_DeclareVariable) nodeBase_ID.nextNode.nodeBase;
+                            if (nodeBase_Declare.isLocal) {
+                                firstArea = new MEM_LOCAL(poolRegister.ebp, -nodeBase_Declare.asm_addr);
+                            } else if (nodeBase_Declare.isParam) {
+                                firstArea = new MEM_LOCAL(poolRegister.ebp, SHIFT_EBP_PARAM_VARIABLE + nodeBase_Declare.asm_addr);
+                            } else if (nodeBase_Declare.isGlobal) {
+
+                            }
+                            // создаем нужный тип
+                        } else if (triad_base.left_lexemStr != null && !triad_base.left_lexemStr.isEmpty() &&
+                                triad_base.left_lexTypeTERMINAL != null) {
+                            // если константа
+                            firstArea = new IMM(triad_base.left_lexemStr);
+                        } else if (triad_base.left_triad != null && triad_base.left_triad_index >= 0) {
+                            // Если в стек кладем значение другой триады
+                            //TODO Нужно добавить в объект триаду - ссылку на объект памяти где сейчас находится ее результат
+                            firstArea = triad_base.left_triad.triad_base.result;
+                        } else
+                            throw new Exception("это и не триада и не переменная и не константа!");
+                    }
                 }
 //                tmp = this.asmComandList.get(this.asmComandList.size() - 1).get_STRING() + "\n";
 //                System.out.print(tmp);
@@ -376,20 +455,20 @@ public class Asm {
 
     private int getShiftInFreeLocalMemory(List<Boolean> inFuncFreeLocalMemory_4byte) {
         int shift = -999;
-        for(int i = 0 ; i < inFuncFreeLocalMemory_4byte.size(); i++){
-            if(inFuncFreeLocalMemory_4byte.get(i) == true){
+        for (int i = 0; i < inFuncFreeLocalMemory_4byte.size(); i++) {
+            if (inFuncFreeLocalMemory_4byte.get(i) == true) {
                 shift = i + 1;
                 break;
             }
         }
         // значит памяти не хватило
-        if( shift < 0){
+        if (shift < 0) {
             // выделим еще 32 байта
-            for(int i = 0 ; i < 32 / 4 ; i++){
+            for (int i = 0; i < 32 / 4; i++) {
                 inFuncFreeLocalMemory_4byte.add(true);
             }
             return getShiftInFreeLocalMemory(inFuncFreeLocalMemory_4byte);
-        }else{
+        } else {
             return shift;
         }
     }

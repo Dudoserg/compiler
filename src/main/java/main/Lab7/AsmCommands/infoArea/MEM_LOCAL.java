@@ -6,7 +6,7 @@ import main.Lab7.Register;
 //  [ebp-4]
 public class MEM_LOCAL implements InfoArea {
     public static InfoAreaType type = InfoAreaType.MEM_LOCAL;
-                        // dword
+    // dword
     Register register;  // ebp
     Integer shift;      // -4
 
@@ -21,8 +21,10 @@ public class MEM_LOCAL implements InfoArea {
         stringBuilder.append("[");
         stringBuilder.append(register.name);
         if (shift < 0)
-            throw new Exception("Ну тут не может быть отрицательное число");
-        stringBuilder.append("-");
+//            throw new Exception("Ну тут не может быть отрицательное число");
+            stringBuilder.append("");
+        else
+            stringBuilder.append("+");
         stringBuilder.append(shift);
         stringBuilder.append("]");
 

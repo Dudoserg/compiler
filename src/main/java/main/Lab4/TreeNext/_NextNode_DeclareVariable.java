@@ -22,7 +22,7 @@ public class _NextNode_DeclareVariable extends _NextNodeBase implements Interfac
 
 
 
-    public static int asm_addr_counter = 0;
+    //public static int asm_addr_counter = 0;
     public LexTypeTERMINAL lexTypeTERMINAL;
     public String lexem;
     public String currentValue = null;
@@ -30,7 +30,7 @@ public class _NextNode_DeclareVariable extends _NextNodeBase implements Interfac
     public String asm_name;
     public int asm_addr;
     public int asm_len;
-
+    public int asm_index;   // номер  переменной по порядку следвоания
     public _NextNode_DeclareVariable(SavePoint savePoint) {
         super(savePoint);
     }

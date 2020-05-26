@@ -111,13 +111,18 @@ public class NextNode {
         } else if (nodeBase instanceof _NextNode_DeclareVariable) {
             _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) this.nodeBase;
             set_Color(writer, "v", "#ebcccc", current);
-            set_Label(writer, "v", "decl. " + nodeBase.lexem + "\n" + nodeBase.asm_addr + "\n" + nodeBase.asm_name);
+            set_Label(writer, "v",
+                    "decl. " + nodeBase.lexem + "\n" +
+                            "shift " + nodeBase.asm_addr + "\n" +
+                            nodeBase.asm_name + "\n" +
+                            "# " + nodeBase.asm_index
+            );
             String globalLocalParamType = "";
-            if(nodeBase.isGlobal)
+            if (nodeBase.isGlobal)
                 globalLocalParamType = "Global";
-            if(nodeBase.isLocal)
+            if (nodeBase.isLocal)
                 globalLocalParamType = "Local";
-            if(nodeBase.isParam)
+            if (nodeBase.isParam)
                 globalLocalParamType = "Param";
             set_Xlabel(writer, "v", nodeBase.lexTypeTERMINAL.getMin() + " " + globalLocalParamType, this.id);
         } else if (nodeBase instanceof _NextNode_Assign) {
@@ -384,8 +389,7 @@ public class NextNode {
                 }
             }
             System.out.print("");
-        }
-        else if (nodeBase instanceof _NextNode_Cast) {
+        } else if (nodeBase instanceof _NextNode_Cast) {
             _NextNode_Cast nodeBase = (_NextNode_Cast) this.nodeBase;
             if (left != null) this.left.createTriads_str(listTriads);
             if (right != null) this.right.createTriads_str(listTriads);
@@ -511,22 +515,21 @@ public class NextNode {
             nop.triad.triad_base = new Triad_NOP();
 
 
-
             final NextNode_Triad popGOTO = stack_GOTO.pop();
             popGOTO.second = "(" + String.valueOf(listTriads.size() - 1) + ")";
-            ((Triad_GOTO)popGOTO.triad.triad_base).jumpTo = listTriads.get(listTriads.size() - 1).triad;
-            ((Triad_GOTO)popGOTO.triad.triad_base).jumpTo_index = listTriads.size() - 1;
+            ((Triad_GOTO) popGOTO.triad.triad_base).jumpTo = listTriads.get(listTriads.size() - 1).triad;
+            ((Triad_GOTO) popGOTO.triad.triad_base).jumpTo_index = listTriads.size() - 1;
 
 
             final NextNode_Triad popIf = stack_IF.pop();
             popIf.second = "(" + String.valueOf(popGOTO.index + 1) + ")";
             popIf.triad.second = "(" + String.valueOf(popGOTO.index + 1) + ")";
-            ((Triad_IF)popIf.triad.triad_base).triad_true = listTriads.get(((Triad_IF)popIf.triad.triad_base).triad_true_index).triad;
-            ((Triad_IF)popIf.triad.triad_base).triad_false = listTriads.get(popGOTO.index + 1).triad;
-            ((Triad_IF)popIf.triad.triad_base).triad_false_index = popGOTO.index + 1;
+            ((Triad_IF) popIf.triad.triad_base).triad_true = listTriads.get(((Triad_IF) popIf.triad.triad_base).triad_true_index).triad;
+            ((Triad_IF) popIf.triad.triad_base).triad_false = listTriads.get(popGOTO.index + 1).triad;
+            ((Triad_IF) popIf.triad.triad_base).triad_false_index = popGOTO.index + 1;
 
             // Если goto и NOP Рядом, то значит GOTO не нужен
-            if (nop.index.equals(popGOTO.index + 1)){
+            if (nop.index.equals(popGOTO.index + 1)) {
                 // удаляем goto из массива
                 listTriads.remove(popGOTO);
             }
