@@ -358,6 +358,7 @@ public class NextNode {
             assignTriad.triad.triad_base = triad_math_operation;
             {
                 triad_math_operation.left_node = left;
+                triad_math_operation.left_isNode = true;
                 triad_math_operation.left_lexTypeTERMINAL = ((Interface_LexType) left.nodeBase).getType();
                 triad_math_operation.left_lexemStr = ((Interface_Const) left.nodeBase).getLexem_();
 
@@ -368,10 +369,11 @@ public class NextNode {
                     triad_math_operation.right_lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
                 } else if (right.nodeBase.isTriad()) {
                     triad_math_operation.right_triad = listTriads.get(right.nodeBase.triad_number).triad;
-                    triad_math_operation.right_triad_num = right.nodeBase.triad_number;
+                    triad_math_operation.right_triad_index = right.nodeBase.triad_number;
                 } else if (right.nodeBase instanceof _NextNode_ID) {
                     triad_math_operation.right_lexTypeTERMINAL = ((Interface_LexType) right.nodeBase).getType();
                     triad_math_operation.right_lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
+                    triad_math_operation.right_isNode = true;
                 }
             }
             System.out.print("");
@@ -572,6 +574,7 @@ public class NextNode {
                 } else if (right.nodeBase instanceof _NextNode_ID) {
                     triad_push_for_return.lexTypeTERMINAL = ((Interface_LexType) right.nodeBase).getType();
                     triad_push_for_return.lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
+                    triad_push_for_return.node = right;
                 }
             }
 
@@ -694,10 +697,11 @@ public class NextNode {
                 triad_math_operation.left_lexemStr = ((Interface_Const) left.nodeBase).getLexem_();
             } else if (left.nodeBase.isTriad()) {
                 triad_math_operation.left_triad = list.get(left.nodeBase.triad_number).triad;
-                triad_math_operation.left_triad_num = left.nodeBase.triad_number;
+                triad_math_operation.left_triad_index = left.nodeBase.triad_number;
             } else if (left.nodeBase instanceof _NextNode_ID) {
                 triad_math_operation.left_lexTypeTERMINAL = ((Interface_LexType) left.nodeBase).getType();
                 triad_math_operation.left_lexemStr = ((Interface_Const) left.nodeBase).getLexem_();
+                triad_math_operation.left_isNode = true;
             }
         }
 
@@ -709,10 +713,12 @@ public class NextNode {
                 triad_math_operation.right_lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
             } else if (right.nodeBase.isTriad()) {
                 triad_math_operation.right_triad = list.get(right.nodeBase.triad_number).triad;
-                triad_math_operation.right_triad_num = right.nodeBase.triad_number;
+                triad_math_operation.right_triad_index = right.nodeBase.triad_number;
             } else if (right.nodeBase instanceof _NextNode_ID) {
                 triad_math_operation.right_lexTypeTERMINAL = ((Interface_LexType) right.nodeBase).getType();
                 triad_math_operation.right_lexemStr = ((Interface_Const) right.nodeBase).getLexem_();
+                triad_math_operation.right_isNode = true;
+
             }
         }
 

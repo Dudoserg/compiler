@@ -5,22 +5,22 @@ import main.Lab7.AsmCommands.infoArea.IMM;
 import main.Lab7.AsmCommands.infoArea.InfoArea;
 import main.Lab7.AsmCommands.infoArea.REG;
 
-public class AC_Push extends _AsmCommand {
+public class AC_Pop extends _AsmCommand {
     InfoArea first;     // ПРИЕМНИК
 
 
-    public AC_Push(REG reg) {
+    public AC_Pop(REG reg) {
         this.first = reg;
     }
 
-    public AC_Push(IMM imm) {
+    public AC_Pop(IMM imm) {
         this.first = imm;
     }
 
     @Override
     public String get_STRING() throws Exception {
         String result = Asm.LEVEL_1_INDENT +
-                "push" +
+                "pop" +
                 " " +
                 first.get_STRING();
         return result;

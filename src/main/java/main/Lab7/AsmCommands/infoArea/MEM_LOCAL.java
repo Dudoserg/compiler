@@ -5,6 +5,7 @@ import main.Lab7.Register;
 // Область памяти (MEM)
 //  [ebp-4]
 public class MEM_LOCAL implements InfoArea {
+    public static InfoAreaType type = InfoAreaType.MEM_LOCAL;
                         // dword
     Register register;  // ebp
     Integer shift;      // -4
@@ -26,5 +27,10 @@ public class MEM_LOCAL implements InfoArea {
         stringBuilder.append("]");
 
         return stringBuilder.toString();
+    }
+
+    @Override
+    public InfoAreaType getType() {
+        return MEM_LOCAL.type;
     }
 }

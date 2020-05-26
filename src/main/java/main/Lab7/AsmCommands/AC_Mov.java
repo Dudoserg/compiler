@@ -1,5 +1,6 @@
 package main.Lab7.AsmCommands;
 
+import main.Lab7.Asm;
 import main.Lab7.AsmCommands.infoArea.InfoArea;
 
 public class AC_Mov extends _AsmCommand {
@@ -13,7 +14,7 @@ public class AC_Mov extends _AsmCommand {
 
     @Override
     public String get_STRING() throws Exception {
-        String stringBuilder = "    " +
+        String stringBuilder = Asm.LEVEL_1_INDENT +
                 "mov" +
                 " " +
                 first.get_STRING() +

@@ -3,11 +3,13 @@ package main.Lab4;
 import lombok.Getter;
 import lombok.Setter;
 import main.Lab4.TriadsByType._Triad_Base;
+import main.Lab7.AsmCommands.infoArea.InfoArea;
 
 
 @Getter
 @Setter
 public class Triad {
+
     public String operation;
     public String first;
     public String second;
