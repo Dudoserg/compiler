@@ -6,6 +6,8 @@ import main.Lab4.TriadsByType.*;
 import main.Lab7.AsmCommands.*;
 import main.Lab7.AsmCommands.infoArea.*;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -416,6 +418,10 @@ public class Asm {
     }
 
     private void createASM_Epilog(int sumByteForLocalVariable) throws Exception {
+        // Добавляем метку для выхода
+        String metka = "." + this.inFuncNodeBase.lexem + "_" + "END";
+        AC_Metka ac_metka = new AC_Metka(metka);
+        this.addCommand(ac_metka);
         //  add esp, 32   очищаем память от локальных переменных
         InfoArea firstArea = new REG(poolRegister.esp);
         InfoArea secondArea = new IMM(sumByteForLocalVariable);
@@ -474,6 +480,11 @@ public class Asm {
 
         AC_Mov mov = new AC_Mov(new REG(poolRegister.eax), area, poolRegister, asmComandList);
         this.addCommand(mov);
+
+        // добавляем безуслновный переход на метку выхода
+        String metka = "." + this.inFuncNodeBase.lexem + "_" + "END";
+        AC_Conditional ac_conditional = new AC_Conditional(Conditionals.JMP, metka );
+        this.addCommand(ac_conditional);
 //        if (triad_base.node != null && triad_base.lexemStr != null &&
 //                !triad_base.lexemStr.isEmpty() && triad_base.lexTypeTERMINAL != null) {
 //            // Если переменная
@@ -702,5 +713,33 @@ public class Asm {
             final Register register = ((REG) secondArea).register;
             poolRegister.release(register);
         }
+    }
+
+    public void printToFile() {
+        String path = System.getProperty("user.dir") + "/деревья" + "/asm.asm";
+        try (FileWriter writer = new FileWriter(path, false)) {
+            String result = "";
+
+
+            final String sectionData = printSectionData();
+            writer.write(sectionData);
+
+            writer.write("section .text\n");
+            writer.write("    global CMAIN\n");
+            writer.write("\n");
+
+            final String sectionText = printSectionText();
+            writer.write(sectionText);
+
+            // запись всей строки
+            writer.write(result);
+            writer.flush();
+        } catch (IOException ex) {
+
+            System.out.println(ex.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

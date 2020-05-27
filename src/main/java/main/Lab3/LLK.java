@@ -486,6 +486,7 @@ public class LLK {
             if (devMode)
                 treeNext.draw(null,"_before");
             asm.createAsmFile();
+            asm.printToFile();
             System.out.print("");
 
 

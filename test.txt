@@ -1,15 +1,13 @@
-
-int sum(int x){
-    int tmp = x ;
-    return tmp;
+int fibonacci(int N)  // рекурсивная функция
+{
+    if (N == 1)
+        return 1; // первые 2 числа равны 1
+    if(N == 2)
+        return 1; // первые 2 числа равны 1
+    return fibonacci(N - 1) + fibonacci(N - 2); // складываем предыдущие 2 числа
 }
-
-int main(){
-    //int N = 228;
-    //int res = sum(N - 1) + sum(N + 1);
-    int res = 7;
-    if( res == 10)
-        res = 1;
-    return res;
+int main()
+{
+    int result = fibonacci(30);
+    return result;
 }
-
