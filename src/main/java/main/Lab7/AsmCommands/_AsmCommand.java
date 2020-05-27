@@ -48,4 +48,11 @@ public class _AsmCommand {
         message += "\n" + first.getClass().toString() + "\n\n";
         throw new Exception(message);
     }
+
+
+    public void addCommand(_AsmCommand asmCommand, List<_AsmCommand> asmCommandList) throws Exception {
+        asmCommandList.add(asmCommand);
+        String tmp = asmCommand.get_STRING() + "\n";
+        System.out.print(tmp);
+    }
 }

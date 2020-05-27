@@ -94,7 +94,7 @@ public class Asm {
                 nodeBase.asm_index = shift_LocalVariable;   // адрес(смещение)
                 nodeBase.asm_name = nodeBase.lexem + "_" + (++Asm.asm_name_counter);    // новое название переменной
 
-                if (this.lastFuncNodeBase != null)
+                if (this.lastFuncNodeBase != null && ((_NextNode_DeclareVariable) currentNode.nodeBase).isLocal)
                     this.lastFuncNodeBase.localVariableList.add(currentNode);
             } else if (!isLocalVariable && isParamVariable) {
                 final _NextNode_DeclareVariable nodeBase = (_NextNode_DeclareVariable) currentNode.nodeBase;
@@ -103,7 +103,7 @@ public class Asm {
                 nodeBase.asm_index = shift_ParamVariable;
                 nodeBase.asm_name = nodeBase.lexem + "_" + (++Asm.asm_name_counter);    // новое название переменной
 
-                if (this.lastFuncNodeBase != null)
+                if (this.lastFuncNodeBase != null && ((_NextNode_DeclareVariable) currentNode.nodeBase).isLocal)
                     this.lastFuncNodeBase.localVariableList.add(currentNode);
             }
         } else {
@@ -157,8 +157,13 @@ public class Asm {
 
     private String printSectionData() {
         String result = "";
-        System.out.println("section .data");
-        result += "section .data" + "\n";
+        String _tmp;
+        _tmp = "%include \"io.inc\"\n";
+        System.out.println(_tmp);
+        result += _tmp + "\n";
+        _tmp = "section .data";
+        System.out.println(_tmp);
+        result += _tmp + "\n";
         for (SectionData row : this.sectionDataList) {
             String tmp = "    " + row.variable_str + ": " + row.type_str + " " + row.value_str;
             result += tmp + "\n";
@@ -275,7 +280,9 @@ public class Asm {
                     final MEM_LOCAL mem_local = new MEM_LOCAL(poolRegister.ebp, -shift * 4);
                     _AsmCommand mov = new AC_Mov(
                             mem_local,
-                            new REG(poolRegister.eax)
+                            new REG(poolRegister.eax),
+                            poolRegister,
+                            asmComandList
                     );
                     // TODO Нужно потом еще дописать, чтобы при использовании временной памяти она очищалась
                     //нигде не освобождаю память от временных переменных
@@ -312,21 +319,21 @@ public class Asm {
 
     private int createASM_Prolog(NextNode inFunc) throws Exception {
         //  push ebp            ; сохраняем базу    +8
-        _AsmCommand push_ebp = new AC_Push(new REG(poolRegister.ebp));
+        _AsmCommand push_ebp = new AC_Push(new REG(poolRegister.ebp), poolRegister, asmComandList);
         this.addCommand(push_ebp);
         //  push ebx            ; сохраняем регистры    +12
-        _AsmCommand push_ebx = new AC_Push(new REG(poolRegister.ebx));
+        _AsmCommand push_ebx = new AC_Push(new REG(poolRegister.ebx), poolRegister, asmComandList);
         this.addCommand(push_ebx);
         //  push ecx            ;   +16
-        _AsmCommand push_ecx = new AC_Push(new REG(poolRegister.ecx));
+        _AsmCommand push_ecx = new AC_Push(new REG(poolRegister.ecx), poolRegister, asmComandList);
         this.addCommand(push_ecx);
         //  push edx            ;   +20
-        _AsmCommand push_edx = new AC_Push(new REG(poolRegister.edx));
+        _AsmCommand push_edx = new AC_Push(new REG(poolRegister.edx), poolRegister, asmComandList);
         this.addCommand(push_edx);
         //    mov ebp, esp        ; сохраняем указатель стека
         InfoArea mov_to = new REG(poolRegister.ebp);
         InfoArea mov_from = new REG(poolRegister.esp);
-        _AsmCommand mov = new AC_Mov(mov_to, mov_from);
+        _AsmCommand mov = new AC_Mov(mov_to, mov_from, poolRegister, asmComandList);
         this.addCommand(mov);
 
         // sub  esp, XXX        ; выделяем память под локальные переменные
@@ -345,7 +352,9 @@ public class Asm {
         _AsmCommand sub =
                 new AC_Sub(
                         new REG(poolRegister.esp),
-                        new IMM(sumByteForLocalVariable)
+                        new IMM(sumByteForLocalVariable),
+                        poolRegister,
+                        asmComandList
                 );
         this.addCommand(sub);
         // помечаем, что память под локальные переменные занята
@@ -414,7 +423,7 @@ public class Asm {
                 throw new Exception("это и не триада и не переменная и не константа!");
         }
 
-        AC_Mov mov = new AC_Mov(new REG(poolRegister.eax), area);
+        AC_Mov mov = new AC_Mov(new REG(poolRegister.eax), area, poolRegister, asmComandList);
         this.addCommand(mov);
 //        if (triad_base.node != null && triad_base.lexemStr != null &&
 //                !triad_base.lexemStr.isEmpty() && triad_base.lexTypeTERMINAL != null) {
@@ -509,10 +518,22 @@ public class Asm {
 
                 break;
             }
+            case "-": {
+                final AC_Sub ac_sub = new AC_Sub(firstArea, secondArea, poolRegister, this.asmComandList);
+                asmCommand = ac_sub;
+                this.addCommand(asmCommand);
+                // выгружаем значение из регистра в локальную память
+                // выгружаем из результата сложения, в область памяти
+                //int shift = getShiftInFreeLocalMemory(inFuncFreeLocalMemory_4byte);
+                //AC_Mov ac_mov = new AC_Mov(new MEM_LOCAL(poolRegister.getRegister("ebp"), shift * 4), ac_add.first);
+                // запоминаем, где лежит результат
+                triad.triad_base.result = ac_sub.first;
 
+                break;
+            }
             case "=": {
                 System.out.println();
-                _AsmCommand mov = new AC_Mov(firstArea, secondArea);
+                _AsmCommand mov = new AC_Mov(firstArea, secondArea, poolRegister, asmComandList);
                 this.addCommand(mov);
             }
             default: {
@@ -555,7 +576,7 @@ public class Asm {
                 throw new Exception("это и не триада и не переменная и не константа!");
         }
 
-        _AsmCommand push = new AC_Push(firstArea);
+        _AsmCommand push = new AC_Push(firstArea, poolRegister, asmComandList);
         this.addCommand(push);
 
         // Если это регистр освободим его
@@ -567,7 +588,7 @@ public class Asm {
         int shift = -999;
         for (int i = 0; i < inFuncFreeLocalMemory_4byte.size(); i++) {
             if (inFuncFreeLocalMemory_4byte.get(i) == true) {
-                shift = i + 1;
+                shift = i;
                 break;
             }
         }
@@ -577,9 +598,10 @@ public class Asm {
             for (int i = 0; i < 32 / 4; i++) {
                 inFuncFreeLocalMemory_4byte.add(true);
             }
-            return getShiftInFreeLocalMemory(inFuncFreeLocalMemory_4byte);
+            return getShiftInFreeLocalMemory(inFuncFreeLocalMemory_4byte) + 1;
         } else {
-            return shift;
+            inFuncFreeLocalMemory_4byte.set(shift, false);
+            return shift + 1;
         }
     }
 

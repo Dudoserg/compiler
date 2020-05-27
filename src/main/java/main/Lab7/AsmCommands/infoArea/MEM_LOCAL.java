@@ -7,8 +7,9 @@ import main.Lab7.Register;
 public class MEM_LOCAL implements InfoArea {
     public static InfoAreaType type = InfoAreaType.MEM_LOCAL;
     // dword
-    Register register;  // ebp
-    Integer shift;      // -4
+    public String dword = "";
+    public Register register;  // ebp
+    public Integer shift;      // -4
 
     public MEM_LOCAL(Register register, Integer shift) {
         this.register = register;
@@ -18,6 +19,11 @@ public class MEM_LOCAL implements InfoArea {
     @Override
     public String get_STRING() throws Exception {
         StringBuilder stringBuilder = new StringBuilder();
+        if(!dword.equals("")){
+            stringBuilder.append(" ");
+            stringBuilder.append(dword);
+            stringBuilder.append(" ");
+        }
         stringBuilder.append("[");
         stringBuilder.append(register.name);
         if (shift < 0)

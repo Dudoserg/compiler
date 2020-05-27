@@ -3,6 +3,8 @@ package main.Lab7.AsmCommands;
 import javafx.util.Pair;
 import main.Lab7.Asm;
 import main.Lab7.AsmCommands.infoArea.*;
+import main.Lab7.PoolRegister;
+import main.Lab7.Register;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,18 +16,35 @@ public class AC_Push extends _AsmCommand {
     static List<InfoAreaType> rules = new ArrayList<InfoAreaType>() {
         {
             this.add(REG.type);
-            this.add(MEM_LOCAL.type);
-            this.add(MEM_GLOBAL.type);
+//            this.add(MEM_LOCAL.type);
+//            this.add(MEM_GLOBAL.type);
             this.add(IMM.type);
         }
     };
 
 
-    public AC_Push(InfoArea first) throws Exception {
-        if (!check_OK(first, rules)) {
-            exception("Wrong infoArea for PUSH command!", first);
+    public AC_Push(InfoArea area,
+                   PoolRegister poolRegister, List<_AsmCommand> asmCommandList) throws Exception {
+
+        if (!check_OK(area, rules)) {
+            if (area instanceof MEM_LOCAL) {
+                // Перемещаем нажу память в регистр
+                final Register freeRegister = poolRegister.getFree();
+                REG freeREG = new REG(freeRegister);
+                AC_Mov ac_mov = new AC_Mov(freeREG, area, poolRegister, asmCommandList);
+                super.addCommand(ac_mov, asmCommandList);
+                // Теперь пушим наш регистр
+                area = freeREG;
+                // освобождаем регистр
+                poolRegister.release(freeRegister);
+            }
         }
-        this.first = first;
+
+        if (!check_OK(area, rules)) {
+            exception("Wrong infoArea for PUSH command!", area);
+
+        }
+        this.first = area;
     }
 
 

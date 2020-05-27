@@ -102,14 +102,10 @@ public class AC_Add extends _AsmCommand {
             final Register freeRegister = poolRegister.getFree();
             // Очищаем его
             AC_Xor ac_xor = new AC_Xor(new REG(freeRegister), new REG(freeRegister));
-            asmComandList.add(ac_xor);
-            String str_ac_xor = ac_xor.get_STRING() + "\n";
-            System.out.print(str_ac_xor);
+            super.addCommand(ac_xor, asmComandList);
             // Помещаем в него первый операнд
-            AC_Mov ac_mov = new AC_Mov(new REG(freeRegister), first);
-            asmComandList.add(ac_mov);
-            String str_ac_mov = ac_mov.get_STRING() + "\n";
-            System.out.print(str_ac_mov);
+            AC_Mov ac_mov = new AC_Mov(new REG(freeRegister), first, poolRegister, asmComandList);
+            super.addCommand(ac_mov, asmComandList);
             // теперь в этот регистр прибавляем второй операнд
 
             InfoArea firstChange = new REG(freeRegister);
