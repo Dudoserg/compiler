@@ -1,6 +1,5 @@
 package main.Lab7;
 
-import com.sun.org.apache.regexp.internal.RE;
 import main.Lab4.TreeNext.*;
 import main.Lab4.Triad;
 import main.Lab4.TriadsByType.*;
@@ -262,34 +261,13 @@ public class Asm {
                 } else if (triad.triad_base instanceof Triad_PUSH) {
                     createASM_PUSH(triad);
                 } else if (triad.triad_base instanceof Triad_CALL) {
-                    final Triad_CALL triad_base = (Triad_CALL) triad.triad_base;
-                    final NextNode callFuncNode = triad_base.node_callFunc;
-                    final _NextNode_Func callFuncNodeBase = (_NextNode_Func) callFuncNode.nodeBase;
-                    AC_Call call = new AC_Call(triad_base.lexemStr, triad_base.node_callFunc);
-                    this.addCommand(call);
-
-                    // add esp, x очищаем память от параметров функции
-                    AC_Add add = new AC_Add(new REG(poolRegister.esp), new IMM(callFuncNodeBase.countParam * 4), poolRegister, asmComandList);
-                    this.addCommand(add);
-
-
-                    // запоминаем, где лежит результат ( после вызова функции результат лежит в EAX)
-                    // сначала скопируем EAX в локальные переменные во временное хранилище
-                    int shift = getShiftInFreeLocalMemory(inFuncFreeLocalMemory_4byte);
-
-                    final MEM_LOCAL mem_local = new MEM_LOCAL(poolRegister.ebp, -shift * 4);
-                    _AsmCommand mov = new AC_Mov(
-                            mem_local,
-                            new REG(poolRegister.eax),
-                            poolRegister,
-                            asmComandList
-                    );
-                    // TODO Нужно потом еще дописать, чтобы при использовании временной памяти она очищалась
-                    //нигде не освобождаю память от временных переменных
-                    triad.triad_base.result = mem_local;
-                    this.addCommand(mov);
-
-
+                    createASM_CALL(triad);
+                } else if (triad.triad_base instanceof Triad_IF) {
+                    createASM_IF(triad);
+                } else if (triad.triad_base instanceof Triad_GOTO) {
+                    createASM_GOTO(triad);
+                } else if (triad.triad_base instanceof Triad_NOP) {
+                    createASM_NOP(triad);
                 }
 
 //                tmp = this.asmComandList.get(this.asmComandList.size() - 1).get_STRING() + "\n";
@@ -302,6 +280,77 @@ public class Asm {
 
 
         printSectionText();
+    }
+
+    private void createASM_NOP(Triad triad) throws Exception {
+        final Triad_NOP triad_base = (Triad_NOP) triad.triad_base;
+        final Triad triadIForGOTO = triad_base.triadIForGOTO;
+        String triad_index;
+        String metka;
+        if (triadIForGOTO.triad_base instanceof Triad_GOTO) {
+            final Triad_GOTO triadGoto_base = (Triad_GOTO) triadIForGOTO.triad_base;
+            triad_index = String.valueOf(triadGoto_base.jumpTo_index);
+            metka = "." + this.inFuncNodeBase.lexem + "_" + triad_index;
+        } else if (triadIForGOTO.triad_base instanceof Triad_IF) {
+            final Triad_IF triadGoto_base = (Triad_IF) triadIForGOTO.triad_base;
+            triad_index = String.valueOf(triadGoto_base.triad_false_index);
+            metka = "." + this.inFuncNodeBase.lexem + "_" + triad_index;
+        } else
+            throw new Exception("asd219cjm1");
+        AC_Metka ac_metka = new AC_Metka(metka);
+        this.addCommand(ac_metka);
+    }
+
+    private void createASM_GOTO(Triad triad) throws Exception {
+        final Triad_GOTO triad_base = (Triad_GOTO) triad.triad_base;
+        final int jumpTo_index = triad_base.jumpTo_index;
+        String metka = "." + this.inFuncNodeBase.lexem + "_" + jumpTo_index;
+        AC_Conditional ac_conditional = new AC_Conditional(Conditionals.JMP, metka);
+        this.addCommand(ac_conditional);
+
+        final String second = triad_base.triadIf.second;
+        String metka2 = "." + this.inFuncNodeBase.lexem + "_" + second;
+        AC_Metka ac_metka = new AC_Metka(metka2);
+        this.addCommand(ac_metka);
+    }
+
+    private void createASM_IF(Triad triad) throws Exception {
+        final Triad_IF triad_base = (Triad_IF) triad.triad_base;
+        final Integer triad_false_index = triad_base.triad_false_index;
+        String metka = "." + this.inFuncNodeBase.lexem + "_" + triad_false_index;
+        AC_Conditional ac_conditional = new AC_Conditional(lastConditionals, metka);
+        this.addCommand(ac_conditional);
+        lastConditionals = null;
+        System.out.print("");
+    }
+
+    private void createASM_CALL(Triad triad) throws Exception {
+        final Triad_CALL triad_base = (Triad_CALL) triad.triad_base;
+        final NextNode callFuncNode = triad_base.node_callFunc;
+        final _NextNode_Func callFuncNodeBase = (_NextNode_Func) callFuncNode.nodeBase;
+        AC_Call call = new AC_Call(triad_base.lexemStr, triad_base.node_callFunc);
+        this.addCommand(call);
+
+        // add esp, x очищаем память от параметров функции
+        AC_Add add = new AC_Add(new REG(poolRegister.esp), new IMM(callFuncNodeBase.countParam * 4), poolRegister, asmComandList);
+        this.addCommand(add);
+
+
+        // запоминаем, где лежит результат ( после вызова функции результат лежит в EAX)
+        // сначала скопируем EAX в локальные переменные во временное хранилище
+        int shift = getShiftInFreeLocalMemory(inFuncFreeLocalMemory_4byte);
+
+        final MEM_LOCAL mem_local = new MEM_LOCAL(poolRegister.ebp, -shift * 4);
+        _AsmCommand mov = new AC_Mov(
+                mem_local,
+                new REG(poolRegister.eax),
+                poolRegister,
+                asmComandList
+        );
+        // TODO Нужно потом еще дописать, чтобы при использовании временной памяти она очищалась
+        //нигде не освобождаю память от временных переменных
+        triad.triad_base.result = mem_local;
+        this.addCommand(mov);
     }
 
     private NextNode createASM_Proc(Triad triad) throws Exception {
@@ -443,6 +492,8 @@ public class Asm {
 //        }
     }
 
+    Conditionals lastConditionals = null;
+
     private void createASM_MathOperation(Triad triad) throws Exception {
         final Triad_Math_Operation triad_base = (Triad_Math_Operation) triad.triad_base;
         InfoArea firstArea = null;
@@ -535,6 +586,31 @@ public class Asm {
                 System.out.println();
                 _AsmCommand mov = new AC_Mov(firstArea, secondArea, poolRegister, asmComandList);
                 this.addCommand(mov);
+                break;
+            }
+            case "==": {
+                AC_CMP ac_cmp = new AC_CMP(firstArea, secondArea, poolRegister, asmComandList);
+                this.addCommand(ac_cmp);
+                lastConditionals = Conditionals.getType("==");
+                break;
+            }
+            case "!=": {
+                AC_CMP ac_cmp = new AC_CMP(firstArea, secondArea, poolRegister, asmComandList);
+                this.addCommand(ac_cmp);
+                lastConditionals = Conditionals.getType("!=");
+                break;
+            }
+            case ">": {
+                AC_CMP ac_cmp = new AC_CMP(firstArea, secondArea, poolRegister, asmComandList);
+                this.addCommand(ac_cmp);
+                lastConditionals = Conditionals.getType(">");
+                break;
+            }
+            case "<": {
+                AC_CMP ac_cmp = new AC_CMP(firstArea, secondArea, poolRegister, asmComandList);
+                this.addCommand(ac_cmp);
+                lastConditionals = Conditionals.getType("<");
+                break;
             }
             default: {
                 //throw new Exception("ты еще не реализовал данную триаду " + triad.operation);

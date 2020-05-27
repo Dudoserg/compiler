@@ -505,21 +505,21 @@ public class NextNode {
             // GOTO
             final NextNode_Triad triad_GOTO = addTriad("goto", null, null, listTriads);
             triad_GOTO.triad = new Triad(triad_GOTO.operation, triad_GOTO.first, triad_GOTO.second);
-            triad_GOTO.triad.triad_base = new Triad_GOTO();
+            triad_GOTO.triad.triad_base = new Triad_GOTO(stack_IF.peek().triad);
             NextNode.stack_GOTO.add(triad_GOTO);
             // иф ложь
             if (right != null) this.right.createTriads_str(listTriads);
             // NOP
             final NextNode_Triad nop = addTriad("NOP", null, null, listTriads);
             nop.triad = new Triad(nop.operation, nop.first, nop.second);
-            nop.triad.triad_base = new Triad_NOP();
+            nop.triad.triad_base = new Triad_NOP(stack_GOTO.peek().triad);
 
 
             final NextNode_Triad popGOTO = stack_GOTO.pop();
             popGOTO.second = "(" + String.valueOf(listTriads.size() - 1) + ")";
             ((Triad_GOTO) popGOTO.triad.triad_base).jumpTo = listTriads.get(listTriads.size() - 1).triad;
             ((Triad_GOTO) popGOTO.triad.triad_base).jumpTo_index = listTriads.size() - 1;
-
+//            ((Triad_GOTO) popGOTO.triad.triad_base).nodeIf  = ;// Запоминаем в GOTO указатель на IF
 
             final NextNode_Triad popIf = stack_IF.pop();
             popIf.second = "(" + String.valueOf(popGOTO.index + 1) + ")";

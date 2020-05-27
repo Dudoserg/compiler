@@ -313,17 +313,17 @@ public class Triads {
     }
 
     public void triad_gener_goto() {
-        if (!isTriads) return ;
-
-        Triad triad = new Triad("goto", "xz", null);
-
-        Triad_GOTO triad_goto = new Triad_GOTO();
-
-        triad.triad_base = triad_goto;
-
-        this.triadList.add(triad);
-//        this.add("goto", "xz", null);
-        this.triad_remember_goto_num.push(this.triadList.size() - 1);
+//        if (!isTriads) return ;
+//
+//        Triad triad = new Triad("goto", "xz", null);
+//
+//        Triad_GOTO triad_goto = new Triad_GOTO();
+//
+//        triad.triad_base = triad_goto;
+//
+//        this.triadList.add(triad);
+////        this.add("goto", "xz", null);
+//        this.triad_remember_goto_num.push(this.triadList.size() - 1);
     }
 
     public void triad_gener_if_NOP() throws Exception {

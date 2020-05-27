@@ -46,7 +46,7 @@ public class AC_Xor extends _AsmCommand {
 
     @Override
     public String get_STRING() throws Exception {
-        String stringBuilder = Asm.LEVEL_1_INDENT +
+        String stringBuilder = Asm.LEVEL_2_INDENT +
                 "xor" +
                 " " +
                 first.get_STRING() +

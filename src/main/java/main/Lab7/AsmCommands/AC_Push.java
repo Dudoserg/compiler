@@ -1,6 +1,5 @@
 package main.Lab7.AsmCommands;
 
-import javafx.util.Pair;
 import main.Lab7.Asm;
 import main.Lab7.AsmCommands.infoArea.*;
 import main.Lab7.PoolRegister;
@@ -50,7 +49,7 @@ public class AC_Push extends _AsmCommand {
 
     @Override
     public String get_STRING() throws Exception {
-        String result = Asm.LEVEL_1_INDENT +
+        String result = Asm.LEVEL_2_INDENT +
                 "push" +
                 " " +
                 first.get_STRING();

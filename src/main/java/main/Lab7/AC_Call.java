@@ -13,7 +13,7 @@ public class AC_Call extends _AsmCommand {
 
     @Override
     public String get_STRING() throws Exception {
-        String result = Asm.LEVEL_1_INDENT +
+        String result = Asm.LEVEL_2_INDENT +
                 "call" +
                 "  " +
                 this.lexemStr;

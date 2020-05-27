@@ -121,7 +121,7 @@ public class AC_Add extends _AsmCommand {
 
     @Override
     public String get_STRING() throws Exception {
-        String stringBuilder = Asm.LEVEL_1_INDENT +
+        String stringBuilder = Asm.LEVEL_2_INDENT +
                 "add" +
                 " " +
                 first.get_STRING() +

@@ -19,7 +19,7 @@ public class AC_Pop extends _AsmCommand {
 
     @Override
     public String get_STRING() throws Exception {
-        String result = Asm.LEVEL_1_INDENT +
+        String result = Asm.LEVEL_2_INDENT +
                 "pop" +
                 " " +
                 first.get_STRING();
